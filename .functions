@@ -12,7 +12,7 @@ function ub() {
   git merge $base_branch
 }
 
-function gcdd(){
+function gccd(){
   if [[ -z "$2" ]]; then
     folder_name="$(basename $1 | sed -e 's/\.git//g')"
   else
