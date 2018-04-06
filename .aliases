@@ -1,0 +1,13 @@
+alias c=clear
+alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
+
+alias gc="git checkout"
+alias gac="git add --all :/ && git commit"
+alias gp="git push origin $(git symbolic-ref --short -q HEAD) -u"
+alias gacp="git add --all :/ && git commit && gp"
+alias grao="git remote add origin"
+alias gs="git status"
+alias devr="dev down; dev up; dev server"
+alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>" --abbrev-commit -14 | emojify'
+alias gco='git checkout'
+alias rps='cd ~/Desktop/repos'

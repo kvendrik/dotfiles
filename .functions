@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+function ub() {
+  branch="$(git symbolic-ref --short -q HEAD)"
+  git checkout master
+  git pull
+  git checkout $branch
+  git merge master
+}
+
+function gcdd(){
+  if [[ -z "$2" ]]; then
+    folder_name="$(basename $1 | sed -e 's/\.git//g')"
+  else
+    folder_name="$2"
+  fi
+  git clone $1 && cd $folder_name
+}

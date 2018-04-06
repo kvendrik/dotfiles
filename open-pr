@@ -1,0 +1,40 @@
+#!/bin/sh
+
+_get_repo_from_origin() {
+  echo "$1" | sed -e "s/.git$//" -e "s/.*github.com[:/]\(.*\)/\1/"
+}
+
+_get_repo() {
+  local origin repo pr_url
+  origin="$(git config --get remote.origin.url)"
+  repo="$(_get_repo_from_origin "$origin")"
+  echo $repo
+}
+
+_build_url() {
+  local branch
+  repo="$(_get_repo)"
+  pr_url="https://github.com/$repo/pull/new"
+  branch="$(git symbolic-ref --short HEAD)"
+  base='master'
+  if [ "$1" != "" ]; then
+    base="$1"
+  fi
+  echo "$pr_url/$base...$branch"
+}
+
+opr() {
+  repo="$(_get_repo)"
+
+  if [ "$repo" = "" ]; then
+    return
+  fi
+
+  local url
+  url="$(_build_url "$*")"
+  if [ "$(uname -s)" = "Darwin" ]; then
+    open "$url" 2> /dev/null
+  else
+    xdg-open "$url" > /dev/null 2> /dev/null
+  fi
+}
