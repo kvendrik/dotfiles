@@ -2,10 +2,14 @@
 
 function ub() {
   branch="$(git symbolic-ref --short -q HEAD)"
-  git checkout master
+  base_branch='master'
+  if [ "$1" != "" ]; then
+    base_branch="$1"
+  fi
+  git checkout $base_branch
   git pull
   git checkout $branch
-  git merge master
+  git merge $base_branch
 }
 
 function gcdd(){
