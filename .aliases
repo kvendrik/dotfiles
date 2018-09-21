@@ -3,7 +3,7 @@ alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 
 alias gc="git checkout"
 alias gac="git add --all :/ && git commit"
-alias gp="git push -u origin $(git symbolic-ref --short -q HEAD)"
+alias gp="git push -u origin $(git rev-parse --abbrev-ref HEAD)"
 alias gacp="git add --all :/ && git commit && git push"
 alias grao="git remote add origin"
 alias gs="git status"
