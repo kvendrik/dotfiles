@@ -10,10 +10,13 @@ _get_repo() {
   local origin repo pr_url
   origin="$(git config --get remote.origin.url)"
   repo="$(_get_repo_from_origin "$origin")"
+  if [ "$repo" = "" ]; then
+    exit 1
+  fi
   echo $repo
 }
 
-_build_url() {
+_build_create_pr_url() {
   local branch
   repo="$(_get_repo)"
   pr_url="https://github.com/$repo/pull/new"
@@ -34,29 +37,13 @@ _open_url() {
 }
 
 opr() {
-  repo="$(_get_repo)"
-
-  if [ "$repo" = "" ]; then
-    return
-  fi
-
-  local url
-  url="$(_build_url "$*")"
-  _open_url $url
+  _open_url "$(_build_create_pr_url "$*")"
 }
 
 mpr() {
-  repo="$(_get_repo)"
-
-  local url
-  url="https://github.com/$repo/pulls/$GH_USER"
-  _open_url $url
+  _open_url "https://github.com/$(_get_repo)/pulls/$GH_USER"
 }
 
 mi() {
-  repo="$(_get_repo)"
-
-  local url
-  url="https://github.com/$repo/issues/created_by/$GH_USER"
-  _open_url $url
+  _open_url "https://github.com/$(_get_repo)/issues/created_by/$GH_USER"
 }
