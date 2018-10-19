@@ -21,6 +21,10 @@ function gccd(){
   git clone $1 && cd $folder_name
 }
 
+function ntcp() {
+  netstat -vanp tcp | grep $1
+}
+
 gifify() {
   if [[ -n "$1" ]]; then
     if [[ $2 == '--good' ]]; then
