@@ -1,49 +1,58 @@
 #!/bin/sh
 
-GH_USER='kvendrik'
+_git_user=$(git config user.name)
 
-_get_repo_from_origin() {
-  echo "$1" | sed -e "s/.git$//" -e "s/.*github.com[:/]\(.*\)/\1/"
+_get_remote_url() {
+  remote_name=$([ ! -z "$1" ] && echo "$1" || echo origin)
+  remote_url="$(git config --get remote.${remote_name}.url)"
+  echo $remote_url
 }
 
-_get_repo() {
-  local origin repo pr_url
-  origin="$(git config --get remote.origin.url)"
-  repo="$(_get_repo_from_origin "$origin")"
-  if [ "$repo" = "" ]; then
-    exit 1
-  fi
-  echo $repo
-}
-
-_build_create_pr_url() {
-  local branch
-  repo="$(_get_repo)"
-  pr_url="https://github.com/$repo/pull/new"
-  branch="$(git symbolic-ref --short HEAD)"
-  base='master'
-  if [ "$1" != "" ]; then
-    base="$1"
-  fi
-  echo "$pr_url/$base...$branch"
-}
-
-_open_url() {
-  if [ "$(uname -s)" = "Darwin" ]; then
-    open "$1" 2> /dev/null
-  else
-    xdg-open "$1" > /dev/null 2> /dev/null
-  fi
+_remote_url_to_web_url() {
+  local base=$(echo "$remote_url" | sed -e "s/.git$//" -e "s/^git\@//" -e "s/\(.*[:/].*\)/\1/" -e "s/https\:\/\///" -e "s/\:/\//")
+  echo "https://$base"
 }
 
 opr() {
-  _open_url "$(_build_create_pr_url "$*")"
+  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    echo 'Not a git repository.'
+    return
+  fi
+  local base_branch_name=$([ ! -z "$1" ] && echo "$1" || echo master)
+  local pr_branch_name="$(git symbolic-ref --short HEAD)"
+  local remote_url=$(_get_remote_url "$2")
+  if [ -z "$remote_url" ]; then
+    echo "Remote $2 does not exist."
+    return
+  fi
+  local repository_web_url=$(_remote_url_to_web_url "$remote_url")
+  open "$repository_web_url/compare/$base_branch_name...$pr_branch_name"
 }
 
 mpr() {
-  _open_url "https://github.com/$(_get_repo)/pulls/$GH_USER"
+  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    echo 'Not a git repository.'
+    return
+  fi
+  local remote_url=$(_get_remote_url "$1")
+  if [ -z "$remote_url" ]; then
+    echo "Remote $1 does not exist."
+    return
+  fi
+  local repository_web_url="$(_remote_url_to_web_url "$remote_url")"
+  open "$repository_web_url/pulls/$_git_user"
 }
 
 mi() {
-  _open_url "https://github.com/$(_get_repo)/issues/created_by/$GH_USER"
+  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    echo 'Not a git repository.'
+    return
+  fi
+  local remote_url=$(_get_remote_url "$1")
+  if [ -z "$remote_url" ]; then
+    echo "Remote $1 does not exist."
+    return
+  fi
+  local repository_web_url="$(_remote_url_to_web_url "$remote_url")"
+  open "$repository_web_url/issues/created_by/$_git_user"
 }
