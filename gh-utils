@@ -1,6 +1,6 @@
 #!/bin/sh
 
-_git_user=$(git config user.name)
+_git_user='kvendrik'
 
 _get_remote_url() {
   remote_name=$([ ! -z "$1" ] && echo "$1" || echo origin)
