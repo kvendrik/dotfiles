@@ -13,6 +13,7 @@ _remote_url_to_web_url() {
   echo "https://$base"
 }
 
+# Usage: opr [<base_branch>] [<remote_name>]
 opr() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     echo 'Not a git repository.'
@@ -29,6 +30,7 @@ opr() {
   open "$repository_web_url/compare/$base_branch_name...$pr_branch_name"
 }
 
+# Usage: mpr [<remote_name>]
 mpr() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     echo 'Not a git repository.'
@@ -43,6 +45,7 @@ mpr() {
   open "$repository_web_url/pulls/$_git_user"
 }
 
+# Usage: mi [<remote_name>]
 mi() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     echo 'Not a git repository.'
