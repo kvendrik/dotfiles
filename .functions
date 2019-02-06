@@ -6,9 +6,7 @@ function ub() {
   if [ "$1" != "" ]; then
     base_branch="$1"
   fi
-  git checkout $base_branch
-  git pull
-  git checkout $branch
+  git fetch origin $base_branch
   git merge $base_branch
 }
 
@@ -29,7 +27,20 @@ function ntp() {
   fi
 }
 
-gifify() {
+function create-app() {
+  if [[ -z "$1" ]] || [[ -z "$2" ]]; then
+    echo 'Usage: create-app <template_name> <app_name>'
+    return
+  fi
+
+  git clone "git@github.com:kvendrik/project-template-$1.git" $2
+  cd $2
+  rm -rf .git
+  rm README.md
+  yarn install
+}
+
+function gifify() {
   if [[ -n "$1" ]]; then
     if [[ $2 == '--good' ]]; then
       ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png

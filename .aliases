@@ -1,7 +1,7 @@
 alias c=clear
 alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 
-alias gp="git push -u origin $(git rev-parse --abbrev-ref HEAD)"
+alias gp="git push -u origin $(git branch | grep \* | cut -d ' ' -f2)"
 alias gpl="git pull"
 alias gac="git add --all :/ && git commit"
 alias gacp="git add --all :/ && git commit && git push"
