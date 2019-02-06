@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+function git_current_branch() {
+  echo "$(git branch | grep \* | cut -d ' ' -f2)"
+}
+
 function ub() {
   branch="$(git symbolic-ref --short -q HEAD)"
   base_branch='master'
@@ -38,6 +42,34 @@ function create-app() {
   rm -rf .git
   rm README.md
   yarn install
+}
+
+function reset-branch() {
+  branch_name="$(git_current_branch)"
+
+  echo -n "This will do a hard reset on your current branch ($branch_name). Continue? [y/N] "
+  read do_reset
+
+  if [ "$do_reset" != "y" ]; then
+    return
+  fi
+
+  git checkout master
+  git branch -D $branch_name
+  git fetch origin $branch_name
+  git checkout $branch_name
+}
+
+function polaris-tophat() {
+  if [ ! -f ./playground/Playground.tsx ]; then
+    echo Project does not seem to have a playground (playground/Playground.tsx)
+    return
+  fi
+
+  mv playground/Playground.tsx playground/Playground-old.tsx
+  vim playground/Playground.tsx
+
+  yarn dev
 }
 
 function gifify() {

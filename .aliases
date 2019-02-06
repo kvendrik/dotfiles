@@ -1,7 +1,8 @@
 alias c=clear
+alias o="open -a Finder"
 alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 
-alias gp="git push -u origin $(git branch | grep \* | cut -d ' ' -f2)"
+alias gp="git push -u origin $(git_current_branch)"
 alias gpl="git pull"
 alias gac="git add --all :/ && git commit"
 alias gacp="git add --all :/ && git commit && git push"
