@@ -4,6 +4,18 @@ function git_current_branch() {
   echo "$(git branch | grep \* | cut -d ' ' -f2)"
 }
 
+function git_current_repo_name() {
+  echo -e $(basename `git rev-parse --show-toplevel`)
+}
+
+function git_check_uncommited_changes() {
+  echo $(git diff-index --quiet HEAD -- || echo "uncommited changes found")
+}
+
+function get_http_status_code() {
+  echo "$(curl -I $1 | grep -Eo "Status\: \d+" | grep -Eo "\d+")"
+}
+
 function ub() {
   branch="$(git symbolic-ref --short -q HEAD)"
   base_branch='master'
@@ -37,6 +49,11 @@ function create-app() {
     return
   fi
 
+  if [ "$(get_http_status_code "https://github.com/kvendrik/project-template-$1")" != "200" ]; then
+    echo "'$1' is not an existing project template"
+    return
+  fi
+
   git clone "git@github.com:kvendrik/project-template-$1.git" $2
   cd $2
   rm -rf .git
@@ -61,14 +78,28 @@ function reset-branch() {
 }
 
 function polaris-tophat() {
-  if [ ! -f ./playground/Playground.tsx ]; then
-    echo Project does not seem to have a playground (playground/Playground.tsx)
+  if [[ -z "$1" ]]; then
+    echo 'Usage: polaris-tophat <branch_name>'
     return
   fi
 
-  mv playground/Playground.tsx playground/Playground-old.tsx
-  vim playground/Playground.tsx
+  rps
+  cd polaris-react
 
+  if [ "$(git_current_repo_name)" != "polaris-react" ]; then
+    echo 'Could not switch to polaris-react folder'
+    return
+  fi
+
+  if [ "$(git_check_uncommited_changes)" != "" ]; then
+    echo 'Uncommited changes found. Please commit/stash those first.'
+    return
+  fi
+
+  git fetch origin $1
+  gco $1
+
+  code playground/Playground.tsx
   yarn dev
 }
 
