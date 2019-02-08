@@ -54,7 +54,10 @@ function create-app() {
     return
   fi
 
-  git clone "git@github.com:kvendrik/project-template-$1.git" $2
+  if ! git clone "git@github.com:kvendrik/project-template-$1.git" $2; then
+    return
+  fi
+
   cd $2
   rm -rf .git
   rm README.md
