@@ -49,8 +49,15 @@ function create-app() {
     return
   fi
 
-  if [ "$(get_http_status_code "https://github.com/kvendrik/project-template-$1")" != "200" ]; then
-    echo "'$1' is not an existing project template"
+  status_code="$(get_http_status_code "https://github.com/kvendrik/project-template-$1")"
+
+  if [ "$status_code" -eq "404" ]; then
+    echo "Project template '$1' does not exist"
+    return
+  fi
+
+  if [ "$status_code" != "200" ]; then
+    echo "Something went wrong. Make sure you have an internet connection."
     return
   fi
 
