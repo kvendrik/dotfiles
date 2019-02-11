@@ -8,7 +8,7 @@ alias gac="git add --all :/ && git commit"
 alias gacp="git add --all :/ && git commit && git push"
 alias grao="git remote add origin"
 alias gs="git status"
-alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>" --abbrev-commit -14 | emojify'
+alias gl='git log --graph --pretty=format:"%C(dim white)%h%Creset %C(dim white)%d%Creset %s %C(dim white)(%cr) %C(dim white)<%an>" --abbrev-commit -14'
 alias gco='git checkout'
 alias devr="dev down; dev up; dev server"
 alias rps='cd ~/Desktop/repos'
