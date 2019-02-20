@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 if [[ -z "$(brew ls --versions shellcheck)" ]]; then
   if ! brew install shellcheck; then
