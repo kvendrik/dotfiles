@@ -1,11 +1,5 @@
 #!/usr/bin/env sh
 
-if [[ -z "$(brew ls --versions shellcheck)" ]]; then
-  if ! brew install shellcheck; then
-    exit 1
-  fi
-fi
-
 all_files=$(ls -pa | grep -v / | sed /README.md/d | tr '\n' ' ')
 
 echo "Checking $all_files"
