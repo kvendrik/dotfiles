@@ -1,12 +1,16 @@
 version: 2
 jobs:
-  build:
+  lint:
     docker:
-      - image: debian:stretch
-
+      - image: koalaman/shellcheck-alpine:stable
     steps:
       - checkout
-
       - run:
           name: Linting
           command: ./lint
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - lint
