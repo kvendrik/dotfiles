@@ -80,7 +80,7 @@ function create-app() {
     return
   fi
 
-  status_code="$(get_http_status_code "https://github.com/kvendrik/project-template-$1")"
+  status_code="$(get_http_status_code "https://github.com/$GITHUB_USERNAME/project-template-$1")"
 
   if [ "$status_code" -eq "404" ]; then
     echo "Project template '$1' does not exist"
@@ -92,7 +92,7 @@ function create-app() {
     return
   fi
 
-  if ! git clone "git@github.com:kvendrik/project-template-$1.git" $2; then
+  if ! git clone "git@github.com:$GITHUB_USERNAME/project-template-$1.git" $2; then
     return
   fi
 

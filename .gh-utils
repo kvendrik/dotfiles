@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-_git_user='kvendrik'
+_git_user=$GITHUB_USERNAME
 
 _get_remote_url() {
   remote_name=$([ ! -z "$1" ] && echo "$1" || echo origin)
