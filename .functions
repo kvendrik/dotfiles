@@ -16,6 +16,10 @@ function get_http_status_code() {
   echo "$(curl -I $1 | grep -Eo "Status\: \d+" | grep -Eo "\d+")"
 }
 
+function git_branch_exists() {
+  echo "$(git branch | grep $1)"
+}
+
 function ub() {
   branch="$(git symbolic-ref --short -q HEAD)"
   base_branch='master'
@@ -41,6 +45,33 @@ function ntp() {
   else
     netstat -vanp tcp
   fi
+}
+
+function kill_port() {
+  if [[ -z "$1" ]]; then
+    echo 'Usage: kill_port <port>'
+    return
+  fi
+
+  match="$(netstat -vanp tcp | grep -Ei "192\.168\.\d+\.\d+\.$1" | grep -Ei '\s\d{2,5}[^\.0-9]')"
+
+  if [[ -z "$match" ]]; then
+    echo "No netstat processes found for $1. Try running 'ntp $1' to manually check for processes matching $1."
+    return
+  fi
+
+  pid="$(echo $match | grep -Eio -m 1 '\s\d{2,5}[^\.0-9]' | tr -d ' ')"
+
+  echo "Found the following matches:\n$match\n"
+
+  echo -n "Are you sure you would like to kill pid id $pid? [y/N] "
+  read do_kill_pid
+
+  if [ "$do_kill_pid" != "y" ]; then
+    return
+  fi
+
+  kill $pid
 }
 
 function create-app() {
@@ -74,6 +105,11 @@ function create-app() {
 function reset-branch() {
   branch_name="$(git_current_branch)"
 
+  if [ "$(git_check_uncommited_changes)" != "" ]; then
+    echo 'Uncommited changes found. Please commit/stash those first.'
+    return
+  fi
+
   echo -n "This will do a hard reset on your current branch ($branch_name). Continue? [y/N] "
   read do_reset
 
@@ -106,10 +142,17 @@ function polaris-tophat() {
     return
   fi
 
-  git fetch origin $1
+  nvm use 10.11.0
+
+  if [ "$(git_branch_exists $1)" -eq "" ]; then
+    git fetch origin $1
+  fi
+
   gco $1
+  git pull
 
   code playground/Playground.tsx
+  yarn
   yarn dev
 }
 

@@ -4,4 +4,4 @@ DIR=$(dirname "$0")
 
 source $DIR/.aliases
 source $DIR/.functions
-source $DIR/gh-utils
+source $DIR/.gh-utils
