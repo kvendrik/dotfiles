@@ -21,13 +21,19 @@ function git_branch_exists() {
 }
 
 function ub() {
+  # Merges the latest given branch (origin/master by default) into the current branch
+  # Usage: ub [<remote_name>] [<branch_name>]
   branch="$(git symbolic-ref --short -q HEAD)"
+  remote_name='origin'
   base_branch='master'
   if [ "$1" != "" ]; then
-    base_branch="$1"
+    remote_name="$1"
   fi
-  git fetch origin $base_branch
-  git merge $base_branch
+  if [ "$2" != "" ]; then
+    base_branch="$2"
+  fi
+  git fetch $remote_name $base_branch
+  git merge $remote_name/$base_branch
 }
 
 function gccd(){
