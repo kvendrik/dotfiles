@@ -2,6 +2,9 @@
 
 DIR=$(dirname "$0")
 
-source $DIR/.aliases
-source $DIR/.functions
-source $DIR/.gh-utils
+source $DIR/.file-system
+source $DIR/.git-utilities
+source $DIR/.github
+source $DIR/.images
+source $DIR/.network
+source $DIR/.random

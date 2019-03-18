@@ -57,3 +57,64 @@ function mi() {
   local repository_web_url="$(_remote_url_to_web_url "$remote_url")"
   open "$repository_web_url/issues/created_by/$GITHUB_USERNAME"
 }
+
+function create-app() {
+  if [[ -z "$1" ]] || [[ -z "$2" ]]; then
+    echo 'Usage: create-app <template_name> <app_name>'
+    return
+  fi
+
+  local status_code="$(get_http_status_code "https://github.com/$GITHUB_USERNAME/project-template-$1")"
+
+  if [ "$status_code" -eq "404" ]; then
+    echo "Project template '$1' does not exist"
+    return
+  fi
+
+  if [ "$status_code" != "200" ]; then
+    echo "Something went wrong. Make sure you have an internet connection."
+    return
+  fi
+
+  if ! git clone "git@github.com:$GITHUB_USERNAME/project-template-$1.git" $2; then
+    return
+  fi
+
+  cd $2
+  rm -rf .git
+  rm README.md
+  yarn install
+}
+
+function polaris-tophat() {
+  if [[ -z "$1" ]]; then
+    echo 'Usage: polaris-tophat <branch_name>'
+    return
+  fi
+
+  rps
+  cd polaris-react
+
+  if [ "$(git_current_repo_name)" != "polaris-react" ]; then
+    echo 'Could not switch to polaris-react folder'
+    return
+  fi
+
+  if [ "$(git_check_uncommited_changes)" != "" ]; then
+    echo 'Uncommited changes found. Please commit/stash those first.'
+    return
+  fi
+
+  nvm use 10.11.0
+
+  if [ "$(git_branch_exists $1)" -eq "" ]; then
+    git fetch origin $1
+  fi
+
+  gco $1
+  git pull
+
+  code playground/Playground.tsx
+  yarn
+  yarn dev
+}

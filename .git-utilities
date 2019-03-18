@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+alias rps='cd ~/Desktop/repos'
+alias gp="git push -u origin $(git_current_branch)"
+alias gpl="git pull"
+alias gac="git add --all :/ && git commit"
+alias gacp="git add --all :/ && git commit && git push"
+alias grao="git remote add origin"
+alias gs="git status"
+alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
+alias gco='git checkout'
+
 function git_current_branch() {
   echo "$(git branch | grep \* | cut -d ' ' -f2)"
 }
@@ -113,69 +123,6 @@ function gccd(){
   log "$repo_name_url could not be found"
 }
 
-function ntp() {
-  if [ "$1" != "" ]; then
-    netstat -vanp tcp | grep $1
-  else
-    netstat -vanp tcp
-  fi
-}
-
-function kill_port() {
-  if [[ -z "$1" ]]; then
-    echo 'Usage: kill_port <port>'
-    return
-  fi
-
-  local match="$(netstat -vanp tcp | grep -Ei "192\.168\.\d+\.\d+\.$1" | grep -Ei '\s\d{2,5}[^\.0-9]')"
-
-  if [[ -z "$match" ]]; then
-    echo "No netstat processes found for $1. Try running 'ntp $1' to manually check for processes matching $1."
-    return
-  fi
-
-  local pid="$(echo $match | grep -Eio -m 1 '\s\d{2,5}[^\.0-9]' | tr -d ' ')"
-
-  echo "Found the following matches:\n$match\n"
-
-  echo -n "Are you sure you would like to kill pid id $pid? [y/N] "
-  read local do_kill_pid
-
-  if [ "$do_kill_pid" != "y" ]; then
-    return
-  fi
-
-  kill $pid
-}
-
-function create-app() {
-  if [[ -z "$1" ]] || [[ -z "$2" ]]; then
-    echo 'Usage: create-app <template_name> <app_name>'
-    return
-  fi
-
-  local status_code="$(get_http_status_code "https://github.com/$GITHUB_USERNAME/project-template-$1")"
-
-  if [ "$status_code" -eq "404" ]; then
-    echo "Project template '$1' does not exist"
-    return
-  fi
-
-  if [ "$status_code" != "200" ]; then
-    echo "Something went wrong. Make sure you have an internet connection."
-    return
-  fi
-
-  if ! git clone "git@github.com:$GITHUB_USERNAME/project-template-$1.git" $2; then
-    return
-  fi
-
-  cd $2
-  rm -rf .git
-  rm README.md
-  yarn install
-}
-
 function reset-branch() {
   local branch_name="$(git_current_branch)"
 
@@ -195,55 +142,4 @@ function reset-branch() {
   git branch -D $branch_name
   git fetch origin $branch_name
   git checkout $branch_name
-}
-
-function polaris-tophat() {
-  if [[ -z "$1" ]]; then
-    echo 'Usage: polaris-tophat <branch_name>'
-    return
-  fi
-
-  rps
-  cd polaris-react
-
-  if [ "$(git_current_repo_name)" != "polaris-react" ]; then
-    echo 'Could not switch to polaris-react folder'
-    return
-  fi
-
-  if [ "$(git_check_uncommited_changes)" != "" ]; then
-    echo 'Uncommited changes found. Please commit/stash those first.'
-    return
-  fi
-
-  nvm use 10.11.0
-
-  if [ "$(git_branch_exists $1)" -eq "" ]; then
-    git fetch origin $1
-  fi
-
-  gco $1
-  git pull
-
-  code playground/Playground.tsx
-  yarn
-  yarn dev
-}
-
-function mcd() {
-  mkdir $1 && cd $_
-}
-
-function gifify() {
-  if [[ -n "$1" ]]; then
-    if [[ $2 == '--good' ]]; then
-      ffmpeg -i $1 -r 10 -vcodec png out-static-%05d.png
-      time convert -verbose +dither -layers Optimize -resize 600x600\> out-static*.png  GIF:- | gifsicle --colors 128 --delay=5 --loop --optimize=3 --multifile - > $1.gif
-      rm out-static*.png
-    else
-      ffmpeg -i $1 -s 600x400 -pix_fmt rgb24 -r 10 -f gif - | gifsicle --optimize=3 --delay=3 > $1.gif
-    fi
-  else
-    echo "proper usage: gifify <input_movie.mov>. You DO need to include extension."
-  fi
 }
