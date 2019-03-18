@@ -37,14 +37,9 @@ function ub() {
 }
 
 function gccd(){
-  # Usage: gccd <ssh_url_or_repo_name> [-v|--verbose]
-
-  verbose=false
-  log_count=0
-
-  if [[ "$3" == '-v' || "$3" == '--verbose' ]]; then
-    verbose=true
-  fi
+  local print_help() {
+    echo 'Usage: gccd <ssh_url_or_repo_name> [<folder_name>] [-v|--verbose]'
+  }
 
   local function git_clone() {
     if [[ "$verbose" == true ]]; then
@@ -54,14 +49,10 @@ function gccd(){
     fi
   }
 
-  local function log() {
-    if [[ "$verbose" == true && $log_count > 0 ]]; then
-      echo "\n$1"
-    else
-      echo $1
-    fi
-    log_count=$log_count+1
-  }
+  if [[ -z "$1" ]]; then
+    print_help
+    return
+  fi
 
   if [[ $1 =~ ^git@ ]]; then
     if [[ -z "$2" ]]; then
@@ -74,22 +65,44 @@ function gccd(){
     return
   fi
 
+  local verbose=false
+  local first_log=true
+
+  local function log() {
+    if [[ "$verbose" == true && $first_log == false ]]; then
+      echo "\n$1"
+    else
+      echo $1
+    fi
+    first_log=false
+  }
+
+  if [[ "$2" == '-v' || "$2" == '--verbose' ]]; then
+    echo 'Verbose flag has to be the third argument'
+    print_help
+    return
+  fi
+
+  if [[ "$3" == '-v' || "$3" == '--verbose' ]]; then
+    verbose=true
+  fi
+
   if [[ -z "$2" ]]; then
     folder_name="$1"
   else
     folder_name="$2"
   fi
 
-  clone_url="git@github.com:$GITHUB_ORG_USERNAME/$1.git"
-  log "Trying $clone_url"
+  local clone_url="git@github.com:$GITHUB_ORG_USERNAME/$1.git"
+  log "Trying $clone_url. Cloning into $folder_name."
 
   if git_clone $clone_url $folder_name; then
     cd $folder_name
     return
   fi
 
-  clone_url="git@github.com:$GITHUB_USERNAME/$1.git"
-  log "Trying $clone_url"
+  local clone_url="git@github.com:$GITHUB_USERNAME/$1.git"
+  log "Trying $clone_url. Cloning into $folder_name."
 
   if git_clone $clone_url $folder_name; then
     cd $folder_name
