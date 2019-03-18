@@ -66,8 +66,9 @@ function gccd(){
     return
   fi
 
-  repo_name_url=$1
-  folder_name=$2
+  local repo_name_url=$1
+  local folder_name=$2
+  local final_folder_name
 
   if [[ "$1" == '-v' || "$1" == '--verbose' ]]; then
     verbose=true
