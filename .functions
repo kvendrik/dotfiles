@@ -41,7 +41,7 @@ function gccd(){
   local first_log=true
 
   local print_help() {
-    echo 'Usage: gccd <ssh_url_or_repo_name> [<folder_name>] [-v|--verbose]'
+    echo 'Usage: gccd [-v|--verbose|-h|--help] <ssh_url_or_repo_name> [<folder_name>]'
   }
 
   local function log() {
@@ -61,55 +61,55 @@ function gccd(){
     fi
   }
 
-  if [[ -z "$1" ]]; then
+  if [[ -z "$1" || "$1" == '-h' || "$1" == '--help' ]]; then
     print_help
     return
   fi
 
-  if [[ "$2" == '-v' || "$2" == '--verbose' ]]; then
-    echo 'Verbose flag has to be the third argument'
-    print_help
-    return
-  fi
+  repo_name_url=$1
+  folder_name=$2
 
-  if [[ "$3" == '-v' || "$3" == '--verbose' ]]; then
+  if [[ "$1" == '-v' || "$1" == '--verbose' ]]; then
     verbose=true
+    repo_name_url=$2
+    folder_name=$3
   fi
 
-  if [[ $1 =~ ^git@ ]]; then
-    if [[ -z "$2" ]]; then
-      folder_name="$(basename $1 | sed -e 's/\.git//g')"
+  if [[ $repo_name_url =~ ^git@ ]]; then
+    if [[ -z "$folder_name" ]]; then
+      final_folder_name="$(basename $repo_name_url | sed -e 's/\.git//g')"
     else
-      folder_name="$2"
+      final_folder_name="$folder_name"
     fi
 
-    git_clone $1 $folder_name && cd $folder_name
+    verbose=true
+    git_clone $1 $final_folder_name && cd $final_folder_name
     return
   fi
 
-  if [[ -z "$2" ]]; then
-    folder_name="$1"
+  if [[ -z "$folder_name" ]]; then
+    final_folder_name="$repo_name_url"
   else
-    folder_name="$2"
+    final_folder_name="$folder_name"
   fi
 
-  local clone_url="git@github.com:$GITHUB_ORG_USERNAME/$1.git"
-  log "Trying $clone_url. Cloning into $folder_name."
+  local clone_url="git@github.com:$GITHUB_ORG_USERNAME/$repo_name_url.git"
+  log "Trying $clone_url. Cloning into $final_folder_name."
 
-  if git_clone $clone_url $folder_name; then
-    cd $folder_name
+  if git_clone $clone_url $final_folder_name; then
+    cd $final_folder_name
     return
   fi
 
-  local clone_url="git@github.com:$GITHUB_USERNAME/$1.git"
-  log "Trying $clone_url. Cloning into $folder_name."
+  local clone_url="git@github.com:$GITHUB_USERNAME/$repo_name_url.git"
+  log "Trying $clone_url. Cloning into $final_folder_name."
 
-  if git_clone $clone_url $folder_name; then
-    cd $folder_name
+  if git_clone $clone_url $final_folder_name; then
+    cd $final_folder_name
     return
   fi
 
-  log "$1 could not be found"
+  log "$repo_name_url could not be found"
 }
 
 function ntp() {
