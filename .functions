@@ -23,9 +23,9 @@ function git_branch_exists() {
 function ub() {
   # Merges the latest given branch (origin/master by default) into the current branch
   # Usage: ub [<remote_name>] [<branch_name>]
-  branch="$(git symbolic-ref --short -q HEAD)"
-  remote_name='origin'
-  base_branch='master'
+  local branch="$(git symbolic-ref --short -q HEAD)"
+  local remote_name='origin'
+  local base_branch='master'
   if [ "$1" != "" ]; then
     remote_name="$1"
   fi
@@ -127,19 +127,19 @@ function kill_port() {
     return
   fi
 
-  match="$(netstat -vanp tcp | grep -Ei "192\.168\.\d+\.\d+\.$1" | grep -Ei '\s\d{2,5}[^\.0-9]')"
+  local match="$(netstat -vanp tcp | grep -Ei "192\.168\.\d+\.\d+\.$1" | grep -Ei '\s\d{2,5}[^\.0-9]')"
 
   if [[ -z "$match" ]]; then
     echo "No netstat processes found for $1. Try running 'ntp $1' to manually check for processes matching $1."
     return
   fi
 
-  pid="$(echo $match | grep -Eio -m 1 '\s\d{2,5}[^\.0-9]' | tr -d ' ')"
+  local pid="$(echo $match | grep -Eio -m 1 '\s\d{2,5}[^\.0-9]' | tr -d ' ')"
 
   echo "Found the following matches:\n$match\n"
 
   echo -n "Are you sure you would like to kill pid id $pid? [y/N] "
-  read do_kill_pid
+  read local do_kill_pid
 
   if [ "$do_kill_pid" != "y" ]; then
     return
@@ -154,7 +154,7 @@ function create-app() {
     return
   fi
 
-  status_code="$(get_http_status_code "https://github.com/$GITHUB_USERNAME/project-template-$1")"
+  local status_code="$(get_http_status_code "https://github.com/$GITHUB_USERNAME/project-template-$1")"
 
   if [ "$status_code" -eq "404" ]; then
     echo "Project template '$1' does not exist"
@@ -177,7 +177,7 @@ function create-app() {
 }
 
 function reset-branch() {
-  branch_name="$(git_current_branch)"
+  local branch_name="$(git_current_branch)"
 
   if [ "$(git_check_uncommited_changes)" != "" ]; then
     echo 'Uncommited changes found. Please commit/stash those first.'
@@ -185,7 +185,7 @@ function reset-branch() {
   fi
 
   echo -n "This will do a hard reset on your current branch ($branch_name). Continue? [y/N] "
-  read do_reset
+  read local do_reset
 
   if [ "$do_reset" != "y" ]; then
     return
