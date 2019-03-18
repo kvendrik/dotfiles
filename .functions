@@ -37,12 +37,66 @@ function ub() {
 }
 
 function gccd(){
+  # Usage: gccd <ssh_url_or_repo_name> [-v|--verbose]
+
+  verbose=false
+  log_count=0
+
+  if [[ "$3" == '-v' || "$3" == '--verbose' ]]; then
+    verbose=true
+  fi
+
+  local function git_clone() {
+    if [[ "$verbose" == true ]]; then
+      git clone $1 $2
+    else
+      git clone $1 $2 &> /dev/null
+    fi
+  }
+
+  local function log() {
+    if [[ "$verbose" == true && $log_count > 0 ]]; then
+      echo "\n$1"
+    else
+      echo $1
+    fi
+    log_count=$log_count+1
+  }
+
+  if [[ $1 =~ ^git@ ]]; then
+    if [[ -z "$2" ]]; then
+      folder_name="$(basename $1 | sed -e 's/\.git//g')"
+    else
+      folder_name="$2"
+    fi
+
+    git_clone $1 $folder_name && cd $folder_name
+    return
+  fi
+
   if [[ -z "$2" ]]; then
-    folder_name="$(basename $1 | sed -e 's/\.git//g')"
+    folder_name="$1"
   else
     folder_name="$2"
   fi
-  git clone $1 && cd $folder_name
+
+  clone_url="git@github.com:$GITHUB_ORG_USERNAME/$1.git"
+  log "Trying $clone_url"
+
+  if git_clone $clone_url $folder_name; then
+    cd $folder_name
+    return
+  fi
+
+  clone_url="git@github.com:$GITHUB_USERNAME/$1.git"
+  log "Trying $clone_url"
+
+  if git_clone $clone_url $folder_name; then
+    cd $folder_name
+    return
+  fi
+
+  log "$1 could not be found"
 }
 
 function ntp() {
@@ -160,6 +214,10 @@ function polaris-tophat() {
   code playground/Playground.tsx
   yarn
   yarn dev
+}
+
+function mcd() {
+  mkdir $1 && cd $_
 }
 
 function gifify() {
