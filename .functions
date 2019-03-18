@@ -46,9 +46,9 @@ function gccd(){
 
   local function log() {
     if [[ "$verbose" == true && $first_log == false ]]; then
-      echo "\n$1"
+      echo -e "\n$1"
     else
-      echo $1
+      echo -e $1
     fi
     first_log=false
   }
@@ -94,7 +94,7 @@ function gccd(){
   fi
 
   local clone_url="git@github.com:$GITHUB_ORG_USERNAME/$repo_name_url.git"
-  log "Trying $clone_url. Cloning into $final_folder_name."
+  log "Trying $clone_url. \e[2mCloning into $final_folder_name.\e[0m"
 
   if git_clone $clone_url $final_folder_name; then
     cd $final_folder_name
@@ -102,7 +102,7 @@ function gccd(){
   fi
 
   local clone_url="git@github.com:$GITHUB_USERNAME/$repo_name_url.git"
-  log "Trying $clone_url. Cloning into $final_folder_name."
+  log "Trying $clone_url. \e[2mCloning into $final_folder_name.\e[0m"
 
   if git_clone $clone_url $final_folder_name; then
     cd $final_folder_name
