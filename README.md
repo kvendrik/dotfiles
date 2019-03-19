@@ -5,7 +5,7 @@ To be used with [Oh My ZSH](http://ohmyz.sh/).
 In your `~/.zshrc`:
 ```bash
 export GITHUB_USERNAME='kvendrik'
-export GITHUB_ORG_USERNAME='my_org'
+export GITHUB_ORGS_USERNAMES=('my_org1' 'my_org2')
 source path_to_this_repo/index
 ```
 
