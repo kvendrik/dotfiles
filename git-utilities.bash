@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 alias gp="git push -u origin $(git_current_branch)"
 alias gpl="git pull"
 alias gac="git add --all :/ && git commit"

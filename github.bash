@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function _get_remote_url() {
   local remote_name=$([ ! -z "$1" ] && echo "$1" || echo origin)
   local remote_url="$(git config --get remote.${remote_name}.url)"

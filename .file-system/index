@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-FILE_SYSTEM_DIR=$(dirname "$0")
-
-source $FILE_SYSTEM_DIR/.miscellaneous
-source $FILE_SYSTEM_DIR/.rps
-
-unset FILE_SYSTEM_DIR

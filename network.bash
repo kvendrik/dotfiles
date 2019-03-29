@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function ntp() {
   if [ "$1" != "" ]; then
     netstat -vanp tcp | grep $1

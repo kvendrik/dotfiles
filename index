@@ -5,11 +5,11 @@ bashcompinit
 
 DIR=$(dirname "$0")
 
-source $DIR/.file-system/index
-source $DIR/.git-utilities
-source $DIR/.github
-source $DIR/.images
-source $DIR/.network
-source $DIR/.random
+source $DIR/file-system/index.bash
+source $DIR/git-utilities.bash
+source $DIR/github.bash
+source $DIR/images.bash
+source $DIR/network.bash
+source $DIR/random.bash
 
 unset DIR

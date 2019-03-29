@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function gifify() {
   if [[ -n "$1" ]]; then
     if [[ $2 == '--good' ]]; then

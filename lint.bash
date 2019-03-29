@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 if [[ -z "$(command -v shellcheck)" ]]; then
   if ! brew install shellcheck; then
     echo 'ShellCheck not found and failed to install through brew. Check shellcheck.net for instructions on how to install ShellCheck.'

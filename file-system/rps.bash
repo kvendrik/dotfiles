@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 REPOSITORY_DIRECTORY="$HOME/Desktop/repos"
 
 function rps() {
