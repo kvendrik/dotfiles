@@ -1,7 +1,12 @@
-REPOSITORY_DIRECTORY="$HOME/Desktop/repos"
+REPOSITORIES_DIRECTORY="$HOME/Desktop/repos"
 
-function rps() {
-  [ -z "$1" ] && cd "$REPOSITORY_DIRECTORY" || cd "$REPOSITORY_DIRECTORY/$1"
+function rpse() {
+  [ -z "$1" ] && echo "$REPOSITORIES_DIRECTORY" || echo "$REPOSITORIES_DIRECTORY/$1"
 }
 
-complete -W "$(ls "$REPOSITORY_DIRECTORY")" rps
+function rps() {
+  cd "$(rpse $@)"
+}
+
+complete -W "$(ls "$REPOSITORIES_DIRECTORY")" rpse
+complete -W "$(ls "$REPOSITORIES_DIRECTORY")" rps
