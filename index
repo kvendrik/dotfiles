@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
+autoload bashcompinit
+bashcompinit
+
 DIR=$(dirname "$0")
 
-source $DIR/.file-system
+source $DIR/.file-system/index
 source $DIR/.git-utilities
 source $DIR/.github
 source $DIR/.images
 source $DIR/.network
 source $DIR/.random
+
+unset DIR
