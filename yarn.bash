@@ -1,6 +1,10 @@
 alias yt="yarn test"
 
 function yre {
+  if [ ! -f 'package.json' ]; then
+    echo './package.json not found.'
+    return
+  fi
   if [ -z "$1" ]; then
     jq ".scripts" package.json
   else
@@ -13,6 +17,9 @@ function yr {
 }
 
 function get_npm_package_scripts {
+  if [ ! -f 'package.json' ]; then
+    return
+  fi
   COMPREPLY=($(jq '.scripts | keys | join(" ")' package.json | tr -d '"'))
 }
 
