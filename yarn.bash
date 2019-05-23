@@ -12,5 +12,9 @@ function yr {
   yarn run $@
 }
 
-complete -W "$(jq '.scripts | keys | join(" ")' package.json | tr -d '"')" yre
-complete -W "$(jq '.scripts | keys | join(" ")' package.json | tr -d '"')" yr
+function get_npm_package_scripts {
+  COMPREPLY=($(jq '.scripts | keys | join(" ")' package.json | tr -d '"'))
+}
+
+complete -F get_npm_package_scripts yre
+complete -F get_npm_package_scripts yr
