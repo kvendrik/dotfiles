@@ -1,14 +1,34 @@
-alias yt="yarn test"
+function find_closest_npm_package {
+  current_relative_path=''
+  while [ ! -f "package.json" ]; do
+    if [[ "$(pwd)" == '/' ]]; then
+      return
+    fi
+    cd ../
+    current_relative_path="$current_relative_path../"
+  done
+  echo "$(echo $current_relative_path)package.json"
+}
+
+function get_npm_package_scripts_autocomplete {
+  closest_package_path="$(find_closest_npm_package)"
+  if [ -z "$closest_package_path" ]; then
+    return
+  fi
+  COMPREPLY=($(jq '.scripts | keys | join(" ")' $closest_package_path | tr -d '"'))
+}
 
 function yre {
-  if [ ! -f 'package.json' ]; then
-    echo './package.json not found.'
+  closest_package_path="$(find_closest_npm_package)"
+  echo $closest_package_path
+  if [ -z "$closest_package_path" ]; then
+    echo 'package.json not found.'
     return
   fi
   if [ -z "$1" ]; then
-    jq ".scripts" package.json
+    jq ".scripts" $closest_package_path
   else
-    jq ".scripts[\"$1\"]" package.json
+    jq ".scripts[\"$1\"]" $closest_package_path
   fi
 }
 
@@ -16,12 +36,7 @@ function yr {
   yarn run $@
 }
 
-function get_npm_package_scripts {
-  if [ ! -f 'package.json' ]; then
-    return
-  fi
-  COMPREPLY=($(jq '.scripts | keys | join(" ")' package.json | tr -d '"'))
-}
+alias yt="yarn test"
 
-complete -F get_npm_package_scripts yre
-complete -F get_npm_package_scripts yr
+complete -F get_npm_package_scripts_autocomplete yre
+complete -F get_npm_package_scripts_autocomplete yr
