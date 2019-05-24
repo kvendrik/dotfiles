@@ -1,4 +1,8 @@
 function find_closest_npm_package {
+  if [ -f 'package.json' ]; then
+    echo 'package.json'
+    return
+  fi
   current_relative_path=''
   while [ ! -f "package.json" ]; do
     if [[ "$(pwd)" == '/' ]]; then
@@ -20,7 +24,6 @@ function get_npm_package_scripts_autocomplete {
 
 function yre {
   closest_package_path="$(find_closest_npm_package)"
-  echo $closest_package_path
   if [ -z "$closest_package_path" ]; then
     echo 'package.json not found.'
     return
