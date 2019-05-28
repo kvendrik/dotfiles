@@ -44,8 +44,8 @@ function opr() {
 }
 
 # Open a list of your PRs on <remote_name> (origin by default)
-# Usage: mpr [<remote_name>]
-function mpr() {
+# Usage: ompr [<remote_name>]
+function ompr() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     echo 'Not a git repository.'
     return
@@ -62,8 +62,8 @@ function mpr() {
 }
 
 # Open a list of your issues on <remote_name> (origin by default)
-# Usage: mi [<remote_name>]
-function mi() {
+# Usage: omi [<remote_name>]
+function omi() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     echo 'Not a git repository.'
     return
