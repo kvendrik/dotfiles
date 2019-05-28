@@ -21,3 +21,10 @@ source path_to_this_repo/index
 1. Make your changes.
 2. Run `path_to_this_repo/lint` to lint changes you make to the dotfiles.
 3. Open a PR.
+
+## Other frameworks, plugins and tools I use
+I try to keep the files in this repo a clean collection of things that speed up my workflow without any side effects (no configuration or settings changes without implicit request). Therefor it doesn't include any references to some of the other frameworks, plugins and tools that I use. Here are some of my favorite ones that I thought were worth mentioning:
+
+- [Oh My ZSH](https://ohmyz.sh)
+- [ZSH Autosuggestions](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md)
+- [git_clone_find](https://github.com/kvendrik/git_clone_find)
