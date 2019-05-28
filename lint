@@ -1,14 +1,30 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
-if [[ -z "$(command -v shellcheck)" ]]; then
+if [ -z "$(command -v shellcheck)" ]; then
   if ! brew install shellcheck; then
     echo 'ShellCheck not found and failed to install through brew. Check shellcheck.net for instructions on how to install ShellCheck.'
     exit 1
   fi
 fi
 
-all_files=$(ls -pa | grep -v / | sed /README.md/d | tr '\n' ' ')
+function get_all_files_in_directory() {
+  local all_files
+  local all_local_files
+  all_files=''
+  all_local_files=$(echo "$1"* | sed -E 's/([^\s\/]+\/)?README\.md//g')
+  for file in $(echo $all_local_files); do
+    if [ -d "$file" ]; then
+      add_files="$(get_all_files_in_directory "$file/")"
+      all_files+="$add_files"
+    else
+      all_files+="$file "
+    fi
+  done
+  echo "$all_files"
+}
 
-echo "Checking $all_files"
+all_files_to_lint=$(get_all_files_in_directory ./ | sed 's/\.\/lint//')
 
-shellcheck $all_files
+echo "Checking $all_files_to_lint"
+
+shellcheck $all_files_to_lint

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function find_closest_npm_package {
   if [ -f 'package.json' ]; then
     echo 'package.json'
@@ -8,10 +10,10 @@ function find_closest_npm_package {
     if [[ "$(pwd)" == '/' ]]; then
       return
     fi
-    cd ../
+    cd ../ || return
     current_relative_path="$current_relative_path../"
   done
-  echo "$(echo $current_relative_path)package.json"
+  echo "$($current_relative_path)package.json"
 }
 
 function get_npm_package_scripts_autocomplete {
@@ -19,7 +21,8 @@ function get_npm_package_scripts_autocomplete {
   if [ -z "$closest_package_path" ]; then
     return
   fi
-  COMPREPLY=($(jq '.scripts | keys | join(" ")' $closest_package_path | tr -d '"'))
+  # shellcheck disable=SC2207
+  COMPREPLY=($(jq '.scripts | keys | join(" ")' "$closest_package_path" | tr -d '"'))
 }
 
 function yre {
@@ -29,13 +32,14 @@ function yre {
     return
   fi
   if [ -z "$1" ]; then
-    jq ".scripts" $closest_package_path
+    jq ".scripts" "$closest_package_path"
   else
-    jq ".scripts[\"$1\"]" $closest_package_path
+    jq ".scripts[\"$1\"]" "$closest_package_path"
   fi
 }
 
 function yr {
+  # shellcheck disable=SC2068
   yarn run $@
 }
 

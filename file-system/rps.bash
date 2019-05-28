@@ -1,9 +1,11 @@
+#!/bin/bash
+
 function rpse() {
   [ -z "$1" ] && echo "$REPOSITORIES_DIRECTORY" || echo "$REPOSITORIES_DIRECTORY/$1"
 }
 
 function rps() {
-  cd "$(rpse $@)"
+  cd "$(rpse "$@")" || return
 }
 
 complete -W "$(ls "$REPOSITORIES_DIRECTORY")" rpse

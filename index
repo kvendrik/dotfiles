@@ -1,16 +1,17 @@
-#!/usr/bin/env bash
+#!/bin/bash
+# shellcheck source=/dev/null
 
 autoload bashcompinit
 bashcompinit
 
 DIR=$(dirname "$0")
 
-source $DIR/file-system/index.bash
-source $DIR/git-utilities.bash
-source $DIR/github.bash
-source $DIR/images.bash
-source $DIR/network.bash
-source $DIR/random.bash
-source $DIR/yarn.bash
+source "$DIR/file-system/index.bash"
+source "$DIR/git-utilities.bash"
+source "$DIR/github.bash"
+source "$DIR/images.bash"
+source "$DIR/network.bash"
+source "$DIR/random.bash"
+source "$DIR/yarn.bash"
 
 unset DIR
