@@ -19,7 +19,7 @@ function or() {
   local remote_url repository_web_url
   remote_url=$(_get_remote_url "$1")
   repository_web_url=$(_remote_url_to_web_url "$remote_url")
-  open $repository_web_url
+  open "$repository_web_url"
 }
 
 # Open a PR against <base_branch> (master by default) for the current branch
