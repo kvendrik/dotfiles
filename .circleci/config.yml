@@ -9,6 +9,7 @@ jobs:
       - image: quay.io/cfra/shellcheck-circleci
     steps:
       - checkout
+      - run: ls
       - run:
           name: Linting
           command: ./lint
