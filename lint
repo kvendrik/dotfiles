@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ -z "$(command -v shellcheck)" ]; then
   if ! brew install shellcheck; then
@@ -7,7 +7,7 @@ if [ -z "$(command -v shellcheck)" ]; then
   fi
 fi
 
-function get_all_files_in_directory() {
+get_all_files_in_directory() {
   local all_files
   local all_local_files
   all_files=''
