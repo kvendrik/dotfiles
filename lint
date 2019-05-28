@@ -7,24 +7,9 @@ if [ -z "$(command -v shellcheck)" ]; then
   fi
 fi
 
-get_all_files_in_directory() {
-  local all_files
-  local all_local_files
-  all_files=''
-  all_local_files=$(echo "$1"* | sed -E 's/([^\s\/]+\/)?README\.md//g')
-  for file in $(echo $all_local_files); do
-    if [ -d "$file" ]; then
-      add_files="$(get_all_files_in_directory "$file/")"
-      all_files="$all_files$add_files"
-    else
-      all_files="$all_files$file "
-    fi
-  done
-  echo "$all_files"
-}
+echo Checking files:
+find . -name '*.bash'
+echo ./index ./lint
 
-all_files_to_lint=$(get_all_files_in_directory ./ | sed 's/\.\/lint//')
-
-echo "Checking $all_files_to_lint"
-
-shellcheck $all_files_to_lint
+find . -name '*.bash' -exec shellcheck {} \;
+shellcheck ./index ./lint
