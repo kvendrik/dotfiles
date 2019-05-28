@@ -13,6 +13,17 @@ function _remote_url_to_web_url() {
   echo "https://$base"
 }
 
+# Open the remote repository
+# Usage: or [<remote_name>]
+function or() {
+  local remote_url repository_web_url
+  remote_url=$(_get_remote_url "$1")
+  repository_web_url=$(_remote_url_to_web_url "$remote_url")
+  open $repository_web_url
+}
+
+# Open a PR against <base_branch> (master by default) for the current branch
+# on <remote_name> (origin by default)
 # Usage: opr [<base_branch>] [<remote_name>]
 function opr() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
@@ -32,6 +43,7 @@ function opr() {
   open "$repository_web_url/compare/$base_branch_name...$pr_branch_name"
 }
 
+# Open a list of your PRs on <remote_name> (origin by default)
 # Usage: mpr [<remote_name>]
 function mpr() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
@@ -49,6 +61,7 @@ function mpr() {
   open "$repository_web_url/pulls/$GITHUB_USERNAME"
 }
 
+# Open a list of your issues on <remote_name> (origin by default)
 # Usage: mi [<remote_name>]
 function mi() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
