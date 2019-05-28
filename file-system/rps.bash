@@ -1,5 +1,3 @@
-REPOSITORIES_DIRECTORY="$HOME/Desktop/repos"
-
 function rpse() {
   [ -z "$1" ] && echo "$REPOSITORIES_DIRECTORY" || echo "$REPOSITORIES_DIRECTORY/$1"
 }

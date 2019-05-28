@@ -12,6 +12,8 @@ I try to make these dotfiles reusable by keeping things like usernames etc confi
 In your `~/.zshrc` (if you use [Oh My ZSH](http://ohmyz.sh) like I do):
 ```bash
 export GITHUB_USERNAME='kvendrik'
+export REPOSITORIES_DIRECTORY='path/to/all/your/cloned/repositories'
+
 source path_to_this_repo/index
 ```
 
