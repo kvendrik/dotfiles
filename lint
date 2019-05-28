@@ -15,9 +15,9 @@ get_all_files_in_directory() {
   for file in $(echo $all_local_files); do
     if [ -d "$file" ]; then
       add_files="$(get_all_files_in_directory "$file/")"
-      all_files+="$add_files"
+      all_files="$all_files$add_files"
     else
-      all_files+="$file "
+      all_files="$all_files$file "
     fi
   done
   echo "$all_files"
