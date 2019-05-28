@@ -1,15 +1,10 @@
 version: 2
-
-orbs:
-  shellcheck: circleci/shellcheck@1.0.0
-
 jobs:
   lint:
     docker:
-      - image: quay.io/cfra/shellcheck-circleci
+      - image: koalaman/shellcheck-alpine:stable
     steps:
       - checkout
-      - run: ls
       - run:
           name: Linting
           command: ./lint
