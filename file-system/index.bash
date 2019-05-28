@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck source=/dev/null
+# shellcheck source=./file-system/index.bash
 
 FILE_SYSTEM_DIR=$(dirname "$0")
 

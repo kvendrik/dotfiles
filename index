@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck source=/dev/null
+# shellcheck source=./index
 
 autoload bashcompinit
 bashcompinit
