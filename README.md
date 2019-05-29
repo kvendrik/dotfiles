@@ -1,12 +1,11 @@
 [![CircleCI](https://circleci.com/gh/kvendrik/dotfiles.svg?style=svg)](https://circleci.com/gh/kvendrik/dotfiles)
 
 ## Good to know
-I try to keep my dotfiles a clean collection of aliases and methods that speed up my workflow without any side-effects (no configuration or settings changes without implicit request). They don't make any changes to how your command line works or looks as I leave most of those things to [Oh My ZSH](https://ohmyz.sh) and some other [plugins](https://github.com/kvendrik/dotfiles#other-frameworks-plugins-and-tools-i-use) I use.
+I try to keep my dotfiles a clean collection of aliases and methods that speed up my workflow without any side-effects (no configuration or settings changes without implicit request). They don't make any changes to how your command line works or looks as I leave most of those things to [Oh My ZSH](https://ohmyz.sh) and some other [plugins](#other-frameworks-plugins-and-tools-i-use) I use.
 
-They are reusable as I keep things like usernames etc configurable, but as they are primarely built and maintained for personal use I can't guarantee that everything will be relevant to you or will work out of the box. Feel free to make changes as needed and optionally contribute them back to here, to cherry-pick some methods or aliases that you like and add them to your own setup or to just use this for inspiration.
+Most of the aliases and methods should be pretty self explanatory, everything is grouped by category and contain either a usage message or comments that explain what it does and why. If you see anything that is unclear feel free to clear it up by e.g. adding an extra comment and opening up a pull request.
 
-## What is in here?
-Most of the things in here should be pretty self explanatory. Everything is grouped by category and a good amount of the aliases and methods contain either a usage message or one or multiple comments that explain what it does. If you see anything that is unclear feel free to clear it up by e.g. adding an extra comment and opening up a pull request.
+Everything is reusable as I keep things like usernames etc configurable, but as everything in here is primarely built and maintained for personal use I can't guarantee that everything will be relevant to you or will work out of the box. Feel free to make changes as needed and optionally contribute them back to here, to cherry-pick some methods or aliases that you like and add them to your own setup or to just use this for inspiration.
 
 ## Setup
 1. Clone the dotfiles to your home folder (`~`).
