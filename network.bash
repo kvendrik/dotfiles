@@ -29,8 +29,8 @@ function kill_port() {
 
   echo -n "Are you sure you would like to kill pid id $pid? [y/N] "
 
-  # shellcheck disable=SC2034
-  read -r local do_kill_pid
+  local do_kill_pid
+  read -r do_kill_pid
 
   if [ "$do_kill_pid" != "y" ]; then
     return

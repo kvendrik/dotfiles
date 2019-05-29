@@ -64,8 +64,8 @@ function reset-branch() {
 
   echo -n "This will do a hard reset on your current branch ($branch_name). Continue? [y/N] "
 
-  # shellcheck disable=SC2034
-  read -r local do_reset
+  local do_reset
+  read -r do_reset
 
   if [ "$do_reset" != "y" ]; then
     return

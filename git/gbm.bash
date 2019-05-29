@@ -17,20 +17,18 @@ Usage: gbm [<bookmark_name>|help|path|rm] [<bookmark_value>]
 EndOfMessage
 }
 
+function __gbm_repository_id() {
+  git_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+"
+}
+
 function __gbm_repository_folder_path() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     return
   fi
 
-  local bookmarks_dir repository_id repository_folder_name repository_folder_path
-  bookmarks_dir="$DOTFILES_DIRECTORY/.gbm-bookmarks"
-  repository_id="$(git_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+")"
-  repository_folder_name="$(echo "$repository_id" | tr / '-')"
-  repository_folder_path="$bookmarks_dir/$repository_folder_name"
-
-  if [ ! -d "$repository_folder_path" ]; then
-    return
-  fi
+  local repository_folder_name repository_folder_path
+  repository_folder_name="$(__gbm_repository_id | tr / '-')"
+  repository_folder_path="$DOTFILES_DIRECTORY/.gbm-bookmarks/$repository_folder_name"
 
   echo "$repository_folder_path"
 }
@@ -40,6 +38,10 @@ function __gbm_autocomplete() {
   repository_folder_path="$(__gbm_repository_folder_path)"
 
   if [ -z "$repository_folder_path" ]; then
+    return
+  fi
+
+  if [ ! -d "$repository_folder_path" ]; then
     return
   fi
 
@@ -57,23 +59,36 @@ function gbm() {
     return
   fi
 
-  local bookmark_name bookmark_value bookmarks_dir bookmark_file repository_id repository_folder_path
+  local bookmark_name bookmark_value bookmark_file repository_folder_path
 
   if [[ "$1" == "help" ]]; then
     __gbm_help
     return
   fi
 
-  bookmarks_dir="$DOTFILES_DIRECTORY/.gbm-bookmarks"
-
   bookmark_name="$1"
   bookmark_value="$2"
 
-  repository_id="$(git_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+")"
+  repository_id="$(__gbm_repository_id)"
   repository_folder_path="$(__gbm_repository_folder_path)"
 
   if [[ "$1" == "path" ]]; then
     echo "$repository_folder_path"
+    return
+  fi
+
+  if [[ "$1" == "clean" ]]; then
+    echo -n "This will remove all bookmarks for $repository_id by removing $repository_folder_path. Continue? [y/N] "
+
+    local do_clean
+    read -r do_clean
+
+    if [ "$do_clean" != "y" ]; then
+      echo 'Cancelled.'
+      return
+    fi
+
+    rm -rf "$repository_folder_path"
     return
   fi
 
