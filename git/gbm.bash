@@ -1,11 +1,11 @@
 #!/bin/bash
 
+__gbm_folder="$DOTFILES_DIRECTORY/.gbm-bookmarks"
+
 function __gbm_help() {
   cat << EndOfMessage
 Git Project Bookmarks
-
-An easy way to manage links related to a (Git) project. Within the project set related links using 
-'gbm name_of_bookmark http://your/url.com' and open them using 'gbm name_of_bookmark'.
+An easy way to store links related to a (Git) project.
 
 Why?
 As a developer, my homebase for a project is often its Git repository. Things that belong to the project however
@@ -13,7 +13,11 @@ often go further than just its repository, think things like Trello boards and I
 way to access those within the context of the project, hence this CLI which lets you bookmark URLs that are relevant 
 to the project and you need quick access to.
 
-Usage: gbm [<bookmark_name>|help|path|rm|clean] [<bookmark_value>]
+Getting started
+Within your project set related links using 'gbm edit' (opens up a file you can edit, use any format you like) and 
+display them using 'gbm'.
+
+Usage: gbm [edit|path|help|clean|nuke]
 EndOfMessage
 }
 
@@ -21,70 +25,29 @@ function __gbm_repository_id() {
   git_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+"
 }
 
-function __gbm_repository_folder_path() {
+function __gbm_repository_file_path() {
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     return
   fi
 
-  local repository_folder_name repository_folder_path
-  repository_folder_name="$(__gbm_repository_id | tr / '-')"
-  repository_folder_path="$DOTFILES_DIRECTORY/.gbm-bookmarks/$repository_folder_name"
+  local repository_file_name repository_file_path
+  repository_file_name="$(__gbm_repository_id | tr / '-')"
+  repository_file_path="$__gbm_folder/$repository_file_name.txt"
 
-  echo "$repository_folder_path"
-}
-
-function __gbm_autocomplete() {  
-  local repository_folder_path
-  repository_folder_path="$(__gbm_repository_folder_path)"
-
-  if [ -z "$repository_folder_path" ]; then
-    return
-  fi
-
-  if [ ! -d "$repository_folder_path" ]; then
-    return
-  fi
-
-  find "$repository_folder_path/" -name "*" -execdir sh -c 'printf "%s\n" "${0%.*}"' {} ';' -maxdepth 1 | while read -r file_name; do
-    if [ -z "$file_name" ]; then
-      continue
-    fi
-    COMPREPLY+=("$file_name")
-  done
+  echo "$repository_file_path"
 }
 
 function gbm() {
-  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
-    echo 'Not a git repository.'
-    return
-  fi
+  local cmd
+  cmd="$1"
 
-  local bookmark_name bookmark_value bookmark_file repository_folder_path
-
-  if [[ "$1" == "help" ]]; then
+  if [[ "$cmd" == 'help' ]]; then
     __gbm_help
     return
   fi
 
-  bookmark_name="$1"
-  # shellcheck disable=SC1003
-  bookmark_value="$(echo "$2" | tr -d '\')"
-
-  repository_id="$(__gbm_repository_id)"
-  repository_folder_path="$(__gbm_repository_folder_path)"
-
-  if [[ "$1" == "path" ]]; then
-    echo "$repository_folder_path"
-    return
-  fi
-
-  if [[ "$1" == "clean" ]]; then
-    if [ ! -d "$repository_folder_path" ]; then
-      echo "No bookmarks for $repository_id have been set."
-      return
-    fi
-
-    echo -n "This will remove all bookmarks for $repository_id by removing $repository_folder_path. Continue? [y/N] "
+  if [[ "$cmd" == 'nuke' ]]; then
+    echo -n "This will remove all bookmarks for all repositories by removing $__gbm_folder. Continue? [y/N] "
 
     local do_clean
     read -r do_clean
@@ -94,53 +57,54 @@ function gbm() {
       return
     fi
 
-    rm -rf "$repository_folder_path"
+    rm -rf $__gbm_folder
     return
   fi
 
-  if [[ "$bookmark_name" == "rm" ]]; then
-    if [ -n "$bookmark_value" ]; then
-      rm "$repository_folder_path/$bookmark_value.txt"
-    else
-      echo 'Usage: gbm rm <bookmark_name>'
-    fi
+  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    echo 'Not a git repository.'
     return
   fi
 
-  if [ ! -d "$repository_folder_path" ]; then
-    if [ -z "$bookmark_value" ]; then
-      echo "No bookmarks for $repository_id have been set."
-      return
-    else
-      mkdir -p "$repository_folder_path"
+  local repository_file_path repository_id no_bookmarks_message
+  repository_id="$(__gbm_repository_id)"
+  repository_file_path="$(__gbm_repository_file_path)"
+  no_bookmarks_message="No bookmarks for $repository_id. Run 'gbm edit' to create them."
+
+  if [[ "$cmd" == 'path' ]]; then
+    if [ ! -f "$repository_file_path" ]; then
+      echo "$no_bookmarks_message"
     fi
-  else
-    if [ -z "$bookmark_name" ]; then
-      echo "Bookmarks for $repository_id:"
-      find "$repository_folder_path/" -name "*" -execdir sh -c 'printf "%s\n" "${0%.*}"' {} ';' -maxdepth 1 | while read -r file_name; do
-        if [ -z "$file_name" ]; then
-          continue
-        fi
-        echo "$file_name $(cat "$repository_folder_path"/"$file_name".txt)"
-      done
-      return
-    fi
+    echo "$repository_file_path"
+    return
   fi
 
-  bookmark_file="$repository_folder_path/$bookmark_name.txt"
+  if [[ "$cmd" == 'edit' ]]; then
+    mkdir -p "$__gbm_folder"
+    vim $repository_file_path
+    return
+  fi
 
-  if [ ! -f "$bookmark_file" ]; then
-    if [ -z "$bookmark_value" ]; then
-      echo "Bookmark $bookmark_name does not exist for $repository_id."
+  if [ ! -f "$repository_file_path" ]; then
+    echo "$no_bookmarks_message"
+    return
+  fi
+
+  if [[ "$cmd" == 'clean' ]]; then
+    echo -n "This will remove all bookmarks for $repository_id by removing $repository_file_path. Continue? [y/N] "
+
+    local do_clean
+    read -r do_clean
+
+    if [ "$do_clean" != "y" ]; then
+      echo 'Cancelled.'
       return
     fi
+
+    rm $repository_file_path
+    return
   fi
 
-  if [ -z "$bookmark_value" ]; then
-    open "$(cat "$bookmark_file")"
-  else
-    echo "$bookmark_value" > "$bookmark_file"
-  fi
+  echo "Bookmarks for $repository_id:\n"
+  cat $repository_file_path
 }
-
-complete -F __gbm_autocomplete gbm
