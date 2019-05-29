@@ -14,10 +14,11 @@ way to access those within the context of the project, hence this CLI which lets
 to the project and you need quick access to.
 
 Getting started
-Within your project set related links using 'gbm edit' (opens up a file you can edit, use any format you like) and 
-display them using 'gbm'.
+Within your project set related links using 'gbm edit' (opens up a file you can edit. Use a name_of_bookmark: bookmark_url 
+format, every bookmark should be on a new line) and display them using 'gbm'. Use 'gbm name_of_bookmark' to directly open 
+it in your browser.
 
-Usage: gbm [edit|path|help|clean|nuke]
+Usage: gbm [edit|path|help|clean|nuke] [<bookmark_name>]
 EndOfMessage
 }
 
@@ -35,6 +36,18 @@ function __gbm_repository_file_path() {
   repository_file_path="$__gbm_folder/$repository_file_name.txt"
 
   echo "$repository_file_path"
+}
+
+function __gbm_autocomplete() {
+  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    return
+  fi
+
+  local repository_file_path
+  repository_file_path="$(__gbm_repository_file_path)"
+
+  # shellcheck disable=SC2207
+  COMPREPLY=($(grep -oE "^[^\:]+" "$repository_file_path" | tr '\n' ' '))
 }
 
 function gbm() {
@@ -57,7 +70,7 @@ function gbm() {
       return
     fi
 
-    rm -rf $__gbm_folder
+    rm -rf "$__gbm_folder"
     return
   fi
 
@@ -81,7 +94,7 @@ function gbm() {
 
   if [[ "$cmd" == 'edit' ]]; then
     mkdir -p "$__gbm_folder"
-    vim $repository_file_path
+    vim "$repository_file_path"
     return
   fi
 
@@ -101,10 +114,19 @@ function gbm() {
       return
     fi
 
-    rm $repository_file_path
+    rm "$repository_file_path"
     return
   fi
 
-  echo "Bookmarks for $repository_id:\n"
-  cat $repository_file_path
+  if [ -n "$cmd" ]; then
+    local url
+    url="$(grep -oE "$cmd\: (.+)$" "$repository_file_path" | cut -d ' ' -f2)"
+    open "$url"
+    return  
+  fi
+
+  echo -e "Bookmarks for $repository_id:\n"
+  cat "$repository_file_path"
 }
+
+complete -F __gbm_autocomplete gbm
