@@ -3,7 +3,10 @@
 ## Good to know
 I try to keep my dotfiles a clean collection of aliases and methods that speed up my workflow without any side-effects (no configuration or settings changes without implicit request). They don't make any changes to how your command line works or looks as I leave most of those things to [Oh My ZSH](https://ohmyz.sh) and some other [plugins](https://github.com/kvendrik/dotfiles#other-frameworks-plugins-and-tools-i-use) I use.
 
-I try to make these dotfiles reusable by keeping things like usernames etc configurable, but as they are primarely built and maintained for personal use I can't guarantee that everything will be relevant to you or will work out of the box. Feel free to make changes as needed and optionally contribute them back to here, to cherry-pick some methods or aliases that you like and add them to your own setup or to just use this for inspiration.
+They are reusable as I keep things like usernames etc configurable, but as they are primarely built and maintained for personal use I can't guarantee that everything will be relevant to you or will work out of the box. Feel free to make changes as needed and optionally contribute them back to here, to cherry-pick some methods or aliases that you like and add them to your own setup or to just use this for inspiration.
+
+## What is in here?
+Most of the things in here should be pretty self explanatory. Everything is grouped by category and a good amount of the aliases and methods contain either a usage message or one or multiple comments that explain what it does. If you see anything that is unclear feel free to clear it up by e.g. adding an extra comment and opening up a pull request.
 
 ## Setup
 1. Clone the dotfiles to your home folder (`~`).
@@ -23,7 +26,7 @@ source path_to_this_repo/index
 3. Open a PR.
 
 ## Other frameworks, plugins and tools I use
-I try to keep the files in this repo a clean collection of things that speed up my workflow without any side effects (no configuration or settings changes without implicit request). Therefor it doesn't include any references to some of the other frameworks, plugins and tools that I use. Here are some of my favorite ones that I thought were worth mentioning:
+I try to keep the files in this repo a clean collection of aliases and methods that speed up my workflow without any side effects (no configuration or settings changes without implicit request). Therefor it doesn't include any references to some of the other frameworks, plugins and tools that I use. Here are some of my favorite ones that I thought were worth mentioning:
 
 - [Oh My ZSH](https://ohmyz.sh)
 - [ZSH Autosuggestions](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md)
