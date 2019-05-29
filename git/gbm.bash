@@ -78,6 +78,11 @@ function gbm() {
   fi
 
   if [[ "$1" == "clean" ]]; then
+    if [ ! -d "$repository_folder_path" ]; then
+      echo "No bookmarks for $repository_id have been set."
+      return
+    fi
+
     echo -n "This will remove all bookmarks for $repository_id by removing $repository_folder_path. Continue? [y/N] "
 
     local do_clean
