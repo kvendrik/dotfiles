@@ -13,7 +13,7 @@ often go further than just its repository, think things like Trello boards and I
 way to access those within the context of the project, hence this CLI which lets you bookmark URLs that are relevant 
 to the project and you need quick access to.
 
-Usage: gbm [<bookmark_name>|help|path|rm] [<bookmark_value>]
+Usage: gbm [<bookmark_name>|help|path|rm|clean] [<bookmark_value>]
 EndOfMessage
 }
 
