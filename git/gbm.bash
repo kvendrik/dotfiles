@@ -16,9 +16,9 @@ to the project and you need quick access to.
 Getting started
 Within your project set related links using 'gbm edit' (opens up a file you can edit. Use a name_of_bookmark: bookmark_url 
 format, every bookmark should be on a new line) and display them using 'gbm'. Use 'gbm name_of_bookmark' to directly open 
-it in your browser.
+one in your browser.
 
-Usage: gbm [edit|path|help|clean|nuke] [<bookmark_name>]
+Usage: gbm [edit|path|help|clean|nuke|<bookmark_name>]
 EndOfMessage
 }
 
@@ -45,6 +45,10 @@ function __gbm_autocomplete() {
 
   local repository_file_path
   repository_file_path="$(__gbm_repository_file_path)"
+
+  if [ ! -f "$repository_file_path" ]; then
+    return
+  fi
 
   # shellcheck disable=SC2207
   COMPREPLY=($(grep -oE "^[^\:]+" "$repository_file_path" | tr '\n' ' '))
