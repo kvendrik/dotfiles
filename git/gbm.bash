@@ -13,7 +13,7 @@ often go further than just its repository, think things like Trello boards and I
 way to access those within the context of the project, hence this CLI which lets you bookmark URLs that are relevant 
 to the project and you need quick access to.
 
-Usage: gbm [<name_of_bookmark>|help|path|rm] [<value_of_bookmark>]
+Usage: gbm [<bookmark_name>|help|path|rm] [<bookmark_value>]
 EndOfMessage
 }
 
@@ -24,7 +24,7 @@ function __gbm_repository_folder_path() {
 
   local bookmarks_dir repository_id repository_folder_name repository_folder_path
   bookmarks_dir="$DOTFILES_DIRECTORY/.gbm-bookmarks"
-  repository_id="$(_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+")"
+  repository_id="$(git_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+")"
   repository_folder_name="$(echo "$repository_id" | tr / '-')"
   repository_folder_path="$bookmarks_dir/$repository_folder_name"
 
@@ -43,7 +43,7 @@ function __gbm_autocomplete() {
     return
   fi
 
-  find "$repository_folder_path/" -name "*" -execdir sh -c 'printf "%s\n" "${0%.*}"' {} ';' -maxdepth 1 | while read file_name; do
+  find "$repository_folder_path/" -name "*" -execdir sh -c 'printf "%s\n" "${0%.*}"' {} ';' -maxdepth 1 | while read -r file_name; do
     if [ -z "$file_name" ]; then
       continue
     fi
@@ -66,22 +66,23 @@ function gbm() {
 
   bookmarks_dir="$DOTFILES_DIRECTORY/.gbm-bookmarks"
 
-  if [[ "$1" == "path" ]]; then
-    echo "$bookmarks_dir"
-    return
-  fi
-
   bookmark_name="$1"
   bookmark_value="$2"
 
-  repository_id="$(_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+")"
+  repository_id="$(git_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+")"
   repository_folder_path="$(__gbm_repository_folder_path)"
+
+  if [[ "$1" == "path" ]]; then
+    echo "$repository_folder_path"
+    return
+  fi
 
   if [[ "$bookmark_name" == "rm" ]]; then
     if [ -n "$bookmark_value" ]; then
       rm "$repository_folder_path/$bookmark_value.txt"
+    else
+      echo 'Usage: gbm rm [<bookmark_name>]'
     fi
-    return
   fi
 
   if [ ! -d "$repository_folder_path" ]; then
@@ -94,11 +95,11 @@ function gbm() {
   else
     if [ -z "$bookmark_name" ]; then
       echo "Bookmarks for $repository_id:"
-      find "$repository_folder_path/" -name "*" -execdir sh -c 'printf "%s\n" "${0%.*}"' {} ';' -maxdepth 1 | while read file_name; do
+      find "$repository_folder_path/" -name "*" -execdir sh -c 'printf "%s\n" "${0%.*}"' {} ';' -maxdepth 1 | while read -r file_name; do
         if [ -z "$file_name" ]; then
           continue
         fi
-        echo "$file_name "$(cat $repository_folder_path/$file_name.txt)""
+        echo "$file_name $(cat "$repository_folder_path"/"$file_name".txt)"
       done
       return
     fi

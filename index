@@ -7,10 +7,8 @@ bashcompinit
 DOTFILES_DIRECTORY=$(dirname "$0")
 
 source "$DOTFILES_DIRECTORY/file-system/index.bash"
-source "$DOTFILES_DIRECTORY/git-utilities.bash"
-source "$DOTFILES_DIRECTORY/github.bash"
+source "$DOTFILES_DIRECTORY/git/index.bash"
 source "$DOTFILES_DIRECTORY/images.bash"
 source "$DOTFILES_DIRECTORY/network.bash"
 source "$DOTFILES_DIRECTORY/random.bash"
 source "$DOTFILES_DIRECTORY/yarn.bash"
-source "$DOTFILES_DIRECTORY/gbm.bash"

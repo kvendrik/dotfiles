@@ -21,12 +21,21 @@ function git_check_uncommited_changes() {
   git diff-index --quiet HEAD -- || echo "uncommited changes found"
 }
 
-function get_http_status_code() {
-  curl -I "$1" | grep -Eo "Status\: \d+" | grep -Eo "\d+"
-}
-
 function git_branch_exists() {
   git branch | grep "$1"
+}
+
+function git_get_remote_url() {
+  local remote_name remote_url
+  remote_name=$([ -n "$1" ] && echo "$1" || echo origin)
+  remote_url="$(git config --get remote."${remote_name}".url)"
+  echo "$remote_url"
+}
+
+function git_remote_url_to_web_url() {
+  local base
+  base=$(echo "$remote_url" | sed -e "s/.git$//" -e "s/^git\@//" -e "s/\(.*[:/].*\)/\1/" -e "s/https\:\/\///" -e "s/\:/\//")
+  echo "https://$base"
 }
 
 function ub() {

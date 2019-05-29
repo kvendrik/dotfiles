@@ -1,24 +1,15 @@
 #!/bin/bash
 
-function _get_remote_url() {
-  local remote_name remote_url
-  remote_name=$([ -n "$1" ] && echo "$1" || echo origin)
-  remote_url="$(git config --get remote."${remote_name}".url)"
-  echo "$remote_url"
-}
-
-function _remote_url_to_web_url() {
-  local base
-  base=$(echo "$remote_url" | sed -e "s/.git$//" -e "s/^git\@//" -e "s/\(.*[:/].*\)/\1/" -e "s/https\:\/\///" -e "s/\:/\//")
-  echo "https://$base"
+function __get_http_status_code() {
+  curl -I "$1" | grep -Eo "Status\: \d+" | grep -Eo "\d+"
 }
 
 # Open the remote repository
 # Usage: or [<remote_name>]
 function or() {
   local remote_url repository_web_url
-  remote_url=$(_get_remote_url "$1")
-  repository_web_url=$(_remote_url_to_web_url "$remote_url")
+  remote_url=$(git_get_remote_url "$1")
+  repository_web_url=$(git_remote_url_to_web_url "$remote_url")
   open "$repository_web_url"
 }
 
@@ -33,13 +24,13 @@ function opr() {
   local base_branch_name pr_branch_name remote_url
   base_branch_name=$([ -n "$1" ] && echo "$1" || echo master)
   pr_branch_name="$(git symbolic-ref --short HEAD)"
-  remote_url=$(_get_remote_url "$2")
+  remote_url=$(git_get_remote_url "$2")
   if [ -z "$remote_url" ]; then
     echo "Remote $2 does not exist."
     return
   fi
   local repository_web_url
-  repository_web_url=$(_remote_url_to_web_url "$remote_url")
+  repository_web_url=$(git_remote_url_to_web_url "$remote_url")
   open "$repository_web_url/compare/$base_branch_name...$pr_branch_name"
 }
 
@@ -51,13 +42,13 @@ function ompr() {
     return
   fi
   local remote_url
-  remote_url=$(_get_remote_url "$1")
+  remote_url=$(git_get_remote_url "$1")
   if [ -z "$remote_url" ]; then
     echo "Remote $1 does not exist."
     return
   fi
   local repository_web_url
-  repository_web_url="$(_remote_url_to_web_url "$remote_url")"
+  repository_web_url="$(git_remote_url_to_web_url "$remote_url")"
   open "$repository_web_url/pulls/$GITHUB_USERNAME"
 }
 
@@ -69,13 +60,13 @@ function omi() {
     return
   fi
   local remote_url
-  remote_url=$(_get_remote_url "$1")
+  remote_url=$(git_get_remote_url "$1")
   if [ -z "$remote_url" ]; then
     echo "Remote $1 does not exist."
     return
   fi
   local repository_web_url
-  repository_web_url="$(_remote_url_to_web_url "$remote_url")"
+  repository_web_url="$(git_remote_url_to_web_url "$remote_url")"
   open "$repository_web_url/issues/created_by/$GITHUB_USERNAME"
 }
 
@@ -86,7 +77,7 @@ function create-app() {
   fi
 
   local status_code
-  status_code="$(get_http_status_code "https://github.com/$GITHUB_USERNAME/project-template-$1")"
+  status_code="$(__get_http_status_code "https://github.com/$GITHUB_USERNAME/project-template-$1")"
 
   if [ "$status_code" -eq "404" ]; then
     echo "Project template '$1' does not exist"
