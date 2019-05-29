@@ -102,7 +102,7 @@ function gbm() {
     if [ -n "$bookmark_value" ]; then
       rm "$repository_folder_path/$bookmark_value.txt"
     else
-      echo 'Usage: gbm rm [<bookmark_name>]'
+      echo 'Usage: gbm rm <bookmark_name>'
     fi
     return
   fi
