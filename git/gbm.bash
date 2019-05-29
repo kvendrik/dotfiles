@@ -67,6 +67,7 @@ function gbm() {
   fi
 
   bookmark_name="$1"
+  # shellcheck disable=SC1003
   bookmark_value="$(echo "$2" | tr -d '\')"
 
   repository_id="$(__gbm_repository_id)"
