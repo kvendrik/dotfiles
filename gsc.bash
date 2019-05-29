@@ -6,7 +6,7 @@ function gsc_help() {
   cat << EndOfMessage
 Git Project Shortcuts
 
-An easy way to manage links related to a Git(hub) project. Within the project set related links using 
+An easy way to manage links related to a (Git) project. Within the project set related links using 
 'gsc name_of_shortcut http://your/url.com' and open them using 'gsc name_of_shortcut'.
 
 Usage: gsc [<name_of_shortcut>|help|path|rm] [<value_of_shortcut>]
@@ -14,6 +14,11 @@ EndOfMessage
 }
 
 function gsc() {
+  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    echo 'Not a git repository.'
+    return
+  fi
+
   local shortcut_name shortcut_value shortcuts_dir shortcut_file repository_id repository_dir
 
   if [[ "$1" == "help" ]]; then
