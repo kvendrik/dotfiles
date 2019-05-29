@@ -67,7 +67,7 @@ function gbm() {
   fi
 
   bookmark_name="$1"
-  bookmark_value="$2"
+  bookmark_value="$(echo "$2" | tr -d '\')"
 
   repository_id="$(__gbm_repository_id)"
   repository_folder_path="$(__gbm_repository_folder_path)"
@@ -103,6 +103,7 @@ function gbm() {
     else
       echo 'Usage: gbm rm [<bookmark_name>]'
     fi
+    return
   fi
 
   if [ ! -d "$repository_folder_path" ]; then
