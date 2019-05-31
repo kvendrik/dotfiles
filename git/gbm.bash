@@ -27,7 +27,7 @@ function __gbm_repository_id() {
 }
 
 function __gbm_repository_file_path() {
-  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+  if ! git_is_repository; then
     return
   fi
 
@@ -39,7 +39,7 @@ function __gbm_repository_file_path() {
 }
 
 function __gbm_autocomplete() {
-  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+  if ! git_is_repository; then
     return
   fi
 
@@ -78,7 +78,7 @@ function gbm() {
     return
   fi
 
-  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+  if ! git_is_repository; then
     echo 'Not a git repository.'
     return
   fi

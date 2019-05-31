@@ -9,6 +9,10 @@ alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
 alias gco='git checkout'
 
+function git_is_repository() {
+  git rev-parse --is-inside-work-tree &> /dev/null
+}
+
 function git_current_branch() {
   git branch | grep '\*' | cut -d ' ' -f2
 }

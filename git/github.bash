@@ -17,7 +17,7 @@ function or() {
 # on <remote_name> (origin by default)
 # Usage: opr [<base_branch>] [<remote_name>]
 function opr() {
-  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+  if ! git_is_repository; then
     echo 'Not a git repository.'
     return
   fi
@@ -37,7 +37,7 @@ function opr() {
 # Open a list of your PRs on <remote_name> (origin by default)
 # Usage: ompr [<remote_name>]
 function ompr() {
-  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+  if ! git_is_repository; then
     echo 'Not a git repository.'
     return
   fi
@@ -55,7 +55,7 @@ function ompr() {
 # Open a list of your issues on <remote_name> (origin by default)
 # Usage: omi [<remote_name>]
 function omi() {
-  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+  if ! git_is_repository; then
     echo 'Not a git repository.'
     return
   fi
