@@ -86,24 +86,24 @@ function gbm() {
   local repository_file_path repository_id no_bookmarks_message
   repository_id="$(__gbm_repository_id)"
   repository_file_path="$(__gbm_repository_file_path)"
-  no_bookmarks_message="No bookmarks for $repository_id. Run 'gbm edit' to create them."
-
-  if [[ "$cmd" == 'path' ]]; then
-    if [ ! -f "$repository_file_path" ]; then
-      echo "$no_bookmarks_message"
-    fi
-    echo "$repository_file_path"
-    return
-  fi
+  no_bookmarks_message="No bookmarks for $repository_id. Run 'gbm edit' to create them. Run 'gbm help' for help."
 
   if [[ "$cmd" == 'edit' ]]; then
     mkdir -p "$__gbm_folder"
     vim "$repository_file_path"
+    if [ -z "$(cat "$repository_file_path")" ]; then
+      rm $repository_file_path
+    fi
     return
   fi
 
   if [ ! -f "$repository_file_path" ]; then
     echo "$no_bookmarks_message"
+    return
+  fi
+
+  if [[ "$cmd" == 'path' ]]; then
+    echo "$repository_file_path"
     return
   fi
 
@@ -125,6 +125,10 @@ function gbm() {
   if [ -n "$cmd" ]; then
     local url
     url="$(grep -oE "$cmd\: (.+)$" "$repository_file_path" | cut -d ' ' -f2)"
+    if [ -z "$url" ]; then
+      echo "Bookmark '$cmd' not found. Run 'gbm help' for help."
+      return
+    fi
     open "$url"
     return  
   fi
