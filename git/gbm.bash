@@ -28,7 +28,7 @@ function __gbm_repository_id() {
 
 function __gbm_repository_file_path() {
   if ! git_is_repository; then
-    return
+    return 1
   fi
 
   local repository_file_name repository_file_path
@@ -40,14 +40,14 @@ function __gbm_repository_file_path() {
 
 function __gbm_autocomplete() {
   if ! git_is_repository; then
-    return
+    return 1
   fi
 
   local repository_file_path
   repository_file_path="$(__gbm_repository_file_path)"
 
   if [ ! -f "$repository_file_path" ]; then
-    return
+    return 1
   fi
 
   # shellcheck disable=SC2207
@@ -80,7 +80,7 @@ function gbm() {
 
   if ! git_is_repository; then
     echo 'Not a git repository.'
-    return
+    return 1
   fi
 
   local repository_file_path repository_id no_bookmarks_message
@@ -92,7 +92,7 @@ function gbm() {
     mkdir -p "$__gbm_folder"
     vim "$repository_file_path"
     if [ -z "$(cat "$repository_file_path")" ]; then
-      rm $repository_file_path
+      rm "$repository_file_path"
     fi
     return
   fi
@@ -127,10 +127,10 @@ function gbm() {
     url="$(grep -oE "$cmd\: (.+)$" "$repository_file_path" | cut -d ' ' -f2)"
     if [ -z "$url" ]; then
       echo "Bookmark '$cmd' not found. Run 'gbm help' for help."
-      return
+      return 1
     fi
     open "$url"
-    return  
+    return
   fi
 
   echo -e "Bookmarks for $repository_id:\n"
