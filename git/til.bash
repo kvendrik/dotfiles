@@ -23,13 +23,21 @@ of you learnings (run 'til path' to view the path).
 EndOfMessage
 }
 
-function __til_autocomplete() {
+function __til_list() {
   find "$__til_folder" -name "*" -execdir sh -c 'printf "%s\n" "${0%.*}"' {} ';' -maxdepth 1 | while read -r file_name; do
     if [ -z "$file_name" ]; then
       continue
     fi
-    COMPREPLY+=("$file_name")
+    $1 "$file_name"
   done
+}
+
+function __til_add_compreply() {
+  COMPREPLY+=("$1")
+}
+
+function __til_autocomplete() {
+  __til_list __til_add_compreply
 }
 
 function til() {
@@ -78,14 +86,14 @@ EndOfMessage
 
   if [[ "$1" == 'rm' ]]; then
     if [ -z "$2" ]; then
-      echo "Usage: til rm <file_name>. Run 'til list' to see all files."
+      echo "Usage: til rm <learning_name>. Run 'til list' to see all learnings."
       return 1
     fi
-    if [ ! -f "$__til_folder/$2" ]; then
+    if [ ! -f "$__til_folder/$2.md" ]; then
       echo "No learning called '$2' found. Run 'til list' to see all learnings."
       return
     fi
-    rm "$__til_folder/$2"
+    rm "$__til_folder/$2.md"
     git -C "$__til_folder" add --all :/
     git -C "$__til_folder" commit -m "Removed $2"
     git -C "$__til_folder" push origin master
@@ -93,7 +101,7 @@ EndOfMessage
   fi
 
   if [[ "$1" == 'list' ]]; then
-    find "$__til_folder" -type f -exec basename {} \; -maxdepth 1
+    __til_list 'echo'
     return
   fi
 
