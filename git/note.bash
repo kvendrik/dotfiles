@@ -2,8 +2,28 @@
 
 __note_folder="$DOTFILES_DIRECTORY/.notes"
 
+# Simular to ls but strips the file extensions
+# Usage: __list_directory_as_items <path> <function_for_each_file_name>
+# Example: __list_directory_as_items ~/Desktop 'echo'
+function __list_directory_as_items() {
+  if [ ! -d "$1" ]; then
+    return
+  fi
+  find "$1" -name "*" -execdir sh -c 'printf "%s\n" "${0%.*}"' {} ';' -maxdepth 1 | while read -r file_name; do
+    if [ -z "$file_name" ]; then
+      continue
+    fi
+    $2 "$file_name"
+  done
+}
+
+function __add_to_compreply() {
+  COMPREPLY+=("$1")
+}
+
 function note() {
   local help_message cmd item_name storage_folder arguments
+  #shellcheck disable=SC2162
   read -d '' help_message << EOF
 Simple note taking system for quick note taking while working that saves notes to a Github Gist.
 
@@ -34,12 +54,10 @@ of you notes (run 'note path' to view the path).
 EOF
 
   arguments=()
-  cmd="${arguments[1]}"
-  item_name="${arguments[2]}"
   storage_folder="$__note_folder"
 
   for argument in "$@"; do
-    if [[ -n "$(echo "$argument" | grep -Eo '\-\-gist-folder')" ]]; then
+    if echo "$argument" | grep -Eoq '\-\-gist-folder'; then
       storage_folder="$(echo "$argument" | grep -Eo '\=.+' | tr -d '=')"
       if [ -z "$storage_folder" ]; then
         echo "--gist-folder argument '$storage_folder' is invalid."
@@ -50,6 +68,9 @@ EOF
 
     arguments+=("$argument")
   done
+
+  cmd="${arguments[1]}"
+  item_name="${arguments[2]}"
 
   if [[ "$cmd" == 'help' ]]; then
     echo "$help_message"
