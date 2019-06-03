@@ -156,7 +156,7 @@ EndOfMessage
   if [ -z "$2" ]; then
     vim "$__note_folder/$full_file_name"
   else
-    echo "$2" > "$__note_folder/$file_name.md"
+    echo "$2" > "$__note_folder/$full_file_name"
   fi
 
   git -C "$__note_folder" add "$full_file_name"
