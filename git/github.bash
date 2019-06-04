@@ -36,7 +36,7 @@ function opr() {
 
 # Open a list of your PRs on <remote_name> (origin by default)
 # Usage: ompr [<remote_name>]
-function ompr() {
+function mpr() {
   if ! git_is_repository; then
     echo 'Not a git repository.'
     return
@@ -54,7 +54,7 @@ function ompr() {
 
 # Open a list of your issues on <remote_name> (origin by default)
 # Usage: omi [<remote_name>]
-function omi() {
+function mi() {
   if ! git_is_repository; then
     echo 'Not a git repository.'
     return
