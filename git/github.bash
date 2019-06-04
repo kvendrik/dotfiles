@@ -9,7 +9,7 @@ function __get_http_status_code() {
 function or() {
   local remote_url repository_web_url
   remote_url=$(git_get_remote_url "$1")
-  repository_web_url=$(git_remote_url_to_web_url "$remote_url")
+  repository_web_url=$(git_ssh_to_web_url "$remote_url")
   open "$repository_web_url"
 }
 
@@ -30,7 +30,7 @@ function opr() {
     return
   fi
   local repository_web_url
-  repository_web_url=$(git_remote_url_to_web_url "$remote_url")
+  repository_web_url=$(git_ssh_to_web_url "$remote_url")
   open "$repository_web_url/compare/$base_branch_name...$pr_branch_name"
 }
 
@@ -48,7 +48,7 @@ function mpr() {
     return
   fi
   local repository_web_url
-  repository_web_url="$(git_remote_url_to_web_url "$remote_url")"
+  repository_web_url="$(git_ssh_to_web_url "$remote_url")"
   open "$repository_web_url/pulls/$GITHUB_USERNAME"
 }
 
@@ -66,7 +66,7 @@ function mi() {
     return
   fi
   local repository_web_url
-  repository_web_url="$(git_remote_url_to_web_url "$remote_url")"
+  repository_web_url="$(git_ssh_to_web_url "$remote_url")"
   open "$repository_web_url/issues/created_by/$GITHUB_USERNAME"
 }
 

@@ -3,7 +3,7 @@
 alias gp='git push -u origin $(git_current_branch)'
 alias gpl="git pull"
 alias gac="git add --all :/ && git commit"
-alias gacp="git add --all :/ && git commit && git push"
+alias gacp="git add --all :/ && git commit && gp"
 alias grao="git remote add origin"
 alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
@@ -36,9 +36,9 @@ function git_get_remote_url() {
   echo "$remote_url"
 }
 
-function git_remote_url_to_web_url() {
+function git_ssh_to_web_url() {
   local base
-  base=$(echo "$remote_url" | sed -e "s/.git$//" -e "s/^git\@//" -e "s/\(.*[:/].*\)/\1/" -e "s/https\:\/\///" -e "s/\:/\//")
+  base=$(echo "$1" | sed -e "s/.git$//" -e "s/^git\@//" -e "s/\(.*[:/].*\)/\1/" -e "s/https\:\/\///" -e "s/\:/\//")
   echo "https://$base"
 }
 
