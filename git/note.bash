@@ -161,8 +161,8 @@ EndOfMessage
       return
     fi
     echo "$item_value" >> "$storage_folder/$file_name.md"
-    git -C "$storage_folder" add "$full_file_name"
-    git -C "$storage_folder" commit -m "Added $full_file_name"
+    git -C "$storage_folder" add --all :/
+    git -C "$storage_folder" commit -m "Changed $full_file_name"
     git -C "$storage_folder" push origin master
     return
   fi
