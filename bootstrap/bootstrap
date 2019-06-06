@@ -1,0 +1,24 @@
+#!/bin/bash
+
+DIRECTORY=$(dirname "$0")
+
+# Install Oh My ZSH
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+fi
+
+# Install Custom Terminal Theme
+open "$DIRECTORY/CustomBasic.terminal"
+
+# Install Homebrew
+if ! which brew; then
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+# Install Yarn
+if ! which yarn; then
+  brew install yarn
+fi
+
+# Restore Home Backups
+$DIRECTORY/config-backups restore

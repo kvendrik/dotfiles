@@ -6,6 +6,10 @@ alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 # Source: https://github.com/mathiasbynens/dotfiles/blob/master/.functions#L8
 alias cdf='cd $(osascript -e "tell app \"Finder\" to POSIX path of (insertion location as alias)")'
 
+function co() {
+  code ${@:-.}
+}
+
 function o() {
   open -a Finder "$1"
 }

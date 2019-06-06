@@ -1,0 +1,11 @@
+[core]
+	excludesfile = ~/.gitignore
+	ignorecase = true
+[push]
+	default = simple
+[diff]
+	algorithm = patience
+[protocol]
+	version = 2
+[credential]
+	helper = osxkeychain
