@@ -1,0 +1,125 @@
+#!/bin/bash
+
+DIRECTORY="$(realpath "$(dirname "$0")")"
+BACKUPS_PATH="$DIRECTORY/~"
+CMD="$1"
+
+function check_if_path_starts_in_home() {
+  local file_path
+  file_path="$1"
+  [[ $file_path == $HOME* ]] || [[ $file_path == '~'* ]] && echo 'yes'
+}
+
+function escape_path() {
+  echo "$1" | sed 's/\//\\\//g'
+}
+
+function original_path_from_backup_path() {
+  echo "$1" | sed "s/$(escape_path "$DIRECTORY")\/~/$(escape_path "$HOME")/"
+}
+
+if [[ "$CMD" == 'backup' ]]; then
+  file_path="$2"
+
+  if [ -n "$file_path" ]; then
+    if [ ! -f "$file_path" ]; then
+      echo "$file_path does not exist."
+      exit 1
+    fi
+
+    if [ -z "$(check_if_path_starts_in_home "$file_path")" ]; then
+      echo "The path to your backup file needs to start in your home folder: $HOME."
+      exit 1
+    fi
+
+    backup_path="${file_path//"$HOME"/~}"
+    absolute_backup_path="$DIRECTORY/$backup_path"
+
+    echo "Backing up $file_path to $absolute_backup_path"
+
+    mkdir -p "$(dirname "$absolute_backup_path")"
+    rsync "$file_path" "$absolute_backup_path"
+
+    exit 0
+  fi
+
+  find "$BACKUPS_PATH" -type f | while read -r backup_path; do
+    original_path="$(original_path_from_backup_path "$backup_path")"
+    echo "Backing up $original_path to $backup_path."
+    rsync "$original_path" "$backup_path"
+  done
+
+  exit 0
+fi
+
+if [[ "$CMD" == 'restore' ]]; then
+  backup_path="$2"
+
+  if [ -n "$backup_path" ]; then
+    if [ ! -f "$backup_path" ]; then
+      echo "$backup_path does not exist."
+      exit 1
+    fi
+
+    absolute_backup_path="$(realpath "$backup_path")"
+
+    if [[ "$absolute_backup_path" != $BACKUPS_PATH* ]]; then
+      echo "$backup_path is not a backup."
+      exit 1
+    fi
+
+    original_path="$(original_path_from_backup_path "$absolute_backup_path")"
+
+    printf "This will restore %s by overwriting %s. Are you sure you would like to continue? [y/N] " "$absolute_backup_path" "$original_path"
+    read -r do_restore
+
+    if [[ "$do_restore" != 'y' ]]; then
+      echo 'Exiting.'
+      exit 0
+    fi
+
+    echo "Restoring $absolute_backup_path to $original_path."
+    rsync "$absolute_backup_path" "$original_path"
+    exit 0
+  fi
+
+  printf "This will restore all backups in %s back onto your system and will therefor overwrite files. Are you sure you would like to continue? [y/N] " "$BACKUPS_PATH"
+  read -r do_restore
+
+  if [[ "$do_restore" != 'y' ]]; then
+    echo 'Exiting.'
+    exit 0
+  fi
+
+  find "$BACKUPS_PATH" -type f | while read -r backup_path; do
+    original_path="$(original_path_from_backup_path "$backup_path")"
+    echo "Restoring $backup_path to $original_path."
+    rsync "$backup_path" "$original_path"
+  done
+
+  exit 0
+fi
+
+cat << EndOfMessage
+Config Backups
+Back up and restore files to a specific location on your machine.
+
+Usage: config-backups <backup|restore>
+
+Commands:
+  backup                    updates all backups in the ./~ folder based on their originals
+                            that exist on your system
+  backup <path_to_file>     adds the file at the given file path to the backup folder
+  restore                   restores all backups onto the machine
+
+What is this?
+I like keeping my dotfiles a clean collection of aliases and methods so that you don't have to think about files on my machine
+getting overwritten when using them. I therefor needed a different way of backing up files that require to be in a specific 
+location on my machine. Hence this utility which allows me to do exactly that.
+
+How does it work?
+1. You can back up any file using 'config-backups backup ~/path_to_file'. The path to the file should be relative to your home folder.
+2. Whenever you need to update the backups simply run 'config-backups backup' which will update all backups.
+3. If you would like to restore the backups run 'config-backups restore' to restore all backups or 'config-backups restore path_to_backup' to 
+   restore a single backed up file.
+EndOfMessage

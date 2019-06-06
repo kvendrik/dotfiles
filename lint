@@ -9,7 +9,7 @@ fi
 
 echo Checking files:
 find . -name '*.bash'
-echo ./index ./lint
+echo ./index ./lint ./config-backups/config-backups
 
 find . -name '*.bash' -exec shellcheck {} \;
-shellcheck ./index ./lint
+shellcheck ./index ./lint ./config-backups/config-backups
