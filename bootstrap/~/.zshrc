@@ -6,8 +6,7 @@ source $ZSH/oh-my-zsh.sh
 source "$HOME/.rc-setup"
 
 export REPOSITORIES_DIRECTORY="$HOME/Desktop/repos"
-
-source $HOME/dotfiles/index
+source "$HOME/dotfiles/index"
 
 if [ ! -d "$HOME/git_clone_find/git_clone_find" ]; then
   git clone git@github.com:kvendrik/git_clone_find.git "$HOME/git_clone_find"

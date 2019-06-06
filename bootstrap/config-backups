@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DIRECTORY="$(realpath "$(dirname "$0")")"
+
 BACKUPS_PATH="$DIRECTORY/~"
 CMD="$1"
 
@@ -114,12 +115,12 @@ Commands:
 
 What is this?
 I like keeping my dotfiles a clean collection of aliases and methods so that you don't have to think about files on my machine
-getting overwritten when using them. I therefor needed a different way of backing up files that require to be in a specific 
+getting overwritten when using them. I therefor needed a different way of backing up files that require to be in a specific
 location on my machine. Hence this utility which allows me to do exactly that.
 
 How does it work?
 1. You can back up any file using 'config-backups backup ~/path_to_file'. The path to the file should be relative to your home folder.
 2. Whenever you need to update the backups simply run 'config-backups backup' which will update all backups.
-3. If you would like to restore the backups run 'config-backups restore' to restore all backups or 'config-backups restore path_to_backup' to 
+3. If you would like to restore the backups run 'config-backups restore' to restore all backups or 'config-backups restore path_to_backup' to
    restore a single backed up file.
 EndOfMessage
