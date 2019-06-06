@@ -9,7 +9,7 @@ fi
 
 echo Checking files:
 find . -name '*.bash'
-echo ./index ./lint ./config-backups/config-backups
+find . -type f -not -path './.git/*' -not -path './.notes/*' ! -name '*.*'
 
 find . -name '*.bash' -exec shellcheck {} \;
-shellcheck ./index ./lint ./config-backups/config-backups
+find . -type f -not -path './.git/*' -not -path './.notes/*' ! -name '*.*' -exec shellcheck {} \;

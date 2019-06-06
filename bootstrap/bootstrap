@@ -11,14 +11,14 @@ fi
 open "$DIRECTORY/CustomBasic.terminal"
 
 # Install Homebrew
-if ! which brew; then
+if ! command -v brew; then
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
 # Install Yarn
-if ! which yarn; then
+if ! command -v yarn; then
   brew install yarn
 fi
 
 # Restore Home Backups
-$DIRECTORY/config-backups restore
+"$DIRECTORY/config-backups" restore
