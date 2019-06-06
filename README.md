@@ -24,6 +24,12 @@ By default these dotfiles are a clean collection of aliases and methods so that 
 
 These backups come packaged with a utility called `config-backups` that allows you to back up files from your machine into this directory and restore them as needed. Have a look at the [utility itself](https://github.com/kvendrik/dotfiles/tree/master/config-backups/config-backups) for more details.
 
+If you're interested in using these configurations you can do so by 'restoring' them onto your machine:
+
+```bash
+./config-backups/config-backups restore
+```
+
 ## Contibute
 1. Make your changes.
 2. Run `path_to_this_repo/lint` to lint changes you make.
