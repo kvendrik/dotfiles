@@ -57,16 +57,15 @@ if [[ "$CMD" == 'restore' ]]; then
   backup_path="$2"
 
   if [ -n "$backup_path" ]; then
-    if [ ! -f "$backup_path" ]; then
-      echo "$backup_path does not exist."
-      exit 1
-    fi
-
-    absolute_backup_path="$(realpath "$backup_path")"
-
-    if [[ "$absolute_backup_path" != $BACKUPS_PATH* ]]; then
-      echo "$backup_path is not a backup."
-      exit 1
+    if [ -f "$backup_path" ]; then
+      absolute_backup_path="$(realpath "$backup_path")"
+    else
+      if [[ -f "$BACKUPS_PATH/$backup_path" ]]; then
+        absolute_backup_path="$BACKUPS_PATH/$backup_path"
+      else
+        echo "$backup_path does not exist."
+        exit 1
+      fi
     fi
 
     original_path="$(original_path_from_backup_path "$absolute_backup_path")"
@@ -108,10 +107,11 @@ Back up and restore files to a specific location on your machine.
 Usage: config-backups <backup|restore>
 
 Commands:
-  backup                    updates all backups in the ./~ folder based on their originals
-                            that exist on your system
-  backup <path_to_file>     adds the file at the given file path to the backup folder
-  restore                   restores all backups onto the machine
+  backup                      updates all backups in the ./~ folder based on their originals
+                              that exist on your system
+  backup <path_to_file>       adds the file at the given file path to the backup folder
+  restore                     restores all backups onto the machine
+  restore <path_to_backup>    restores the specified backup back onto the machine
 
 What is this?
 I like keeping my dotfiles a clean collection of aliases and methods so that you don't have to think about files on my machine

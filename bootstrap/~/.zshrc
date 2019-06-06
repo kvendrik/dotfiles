@@ -3,12 +3,14 @@ ZSH_THEME="robbyrussell"
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
-source "$HOME/.rc-setup"
+if [ -f "$HOME/.rc-setup" ]; then
+  source "$HOME/.rc-setup"
+fi
 
 export REPOSITORIES_DIRECTORY="$HOME/Desktop/repos"
 source "$HOME/dotfiles/index"
 
-if [ ! -d "$HOME/git_clone_find/git_clone_find" ]; then
+if [ ! -d "$HOME/git_clone_find" ]; then
   git clone git@github.com:kvendrik/git_clone_find.git "$HOME/git_clone_find"
 fi
 
