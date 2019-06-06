@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ -z "$GITHUB_USERNAME" ]; then
+  echo "Warning: GITHUB_USERNAME environment variable not set. Some Github tools might not work as expected. (Thrown by $0)"
+fi
+
 function __get_http_status_code() {
   curl -I "$1" | grep -Eo "Status\: \d+" | grep -Eo "\d+"
 }
