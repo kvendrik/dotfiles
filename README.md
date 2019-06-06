@@ -30,7 +30,7 @@ If you're interested in using these configurations you can do so by 'restoring' 
 ./config-backups/config-backups restore
 ```
 
-If you're just curious about how this works and how to use it: you can print the help message by either checking it out in the [file](https://github.com/kvendrik/dotfiles/tree/master/config-backups/config-backups) or by running the utility without any arguments:
+If you're just curious about how this works and how to use it: you can check out the help message by either checking out the [file](https://github.com/kvendrik/dotfiles/tree/master/config-backups/config-backups) or by running the utility without any arguments:
 
 ```
 ./config-backups/config-backups
