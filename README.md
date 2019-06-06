@@ -42,7 +42,7 @@ You'll notice that the one file missing from these backups is my RC file (`.zshr
 - [ZSH Autosuggestions](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md)
 - [git_clone_find](https://github.com/kvendrik/git_clone_find)
 
-## Contibute
+## Contribute
 1. Make your changes.
 2. Run `path_to_this_repo/lint` to lint changes you make.
 3. Open a PR.
