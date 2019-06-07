@@ -10,7 +10,7 @@ alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %
 alias gco='git checkout'
 
 function git_is_repository() {
-  git rev-parse --is-inside-work-tree &> /dev/null
+  git -C "$1" rev-parse --is-inside-work-tree &> /dev/null
 }
 
 function git_current_branch() {
@@ -30,9 +30,14 @@ function git_branch_exists() {
 }
 
 function git_get_remote_url() {
-  local remote_name remote_url
+  local remote_name remote_url repository_path
   remote_name=$([ -n "$1" ] && echo "$1" || echo origin)
-  remote_url="$(git config --get remote."${remote_name}".url)"
+  repository_path="$2"
+  if [ -n "$repository_path" ]; then
+    remote_url="$(git -C "$repository_path" config --get remote."${remote_name}".url)"
+  else
+    remote_url="$(git config --get remote."${remote_name}".url)"
+  fi
   echo "$remote_url"
 }
 

@@ -12,5 +12,9 @@ function rps() {
   cd "$(rpse "$@")" || return
 }
 
-complete -W "$(ls "$REPOSITORIES_DIRECTORY")" rpse
-complete -W "$(ls "$REPOSITORIES_DIRECTORY")" rps
+function rps_autocomplete() {
+  complete -W "$(ls "$REPOSITORIES_DIRECTORY")" "$1"
+}
+
+rps_autocomplete rpse
+rps_autocomplete rps

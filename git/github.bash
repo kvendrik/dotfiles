@@ -8,14 +8,49 @@ function __get_http_status_code() {
   curl -I "$1" | grep -Eo "Status\: \d+" | grep -Eo "\d+"
 }
 
-# Open the remote repository
-# Usage: or [<remote_name>]
-function or() {
-  local remote_url repository_web_url
-  remote_url=$(git_get_remote_url "$1")
+# Get a repository's web URL
+# Usage: __get_repository_web_url [callback] [<repository_name>] [<remote_name>]
+function __get_repository_web_url() {
+  local remote_url repository_web_url repository_path
+  repository_path="$1"
+
+  if [ -n "$repository_path" ] && [ ! -d "$repository_path" ]; then
+    repository_path="$REPOSITORIES_DIRECTORY/$1"
+    if [ ! -d "$repository_path" ]; then
+      echo "$repository_path is not a repository."
+      return 1
+    fi
+  fi
+
+  if ! git_is_repository "$repository_path"; then
+    echo 'Not a git repository.'
+    return 1
+  fi
+
+  remote_url=$(git_get_remote_url "$3" "$repository_path")
+
+  if [ -z "$remote_url" ]; then
+    echo "Remote $2 does not exist."
+    return 1
+  fi
+
   repository_web_url=$(git_ssh_to_web_url "$remote_url")
-  open "$repository_web_url"
+
+  echo "$repository_web_url"
 }
+
+# Open the remote repository
+# Usage: or [<repository_name>] [<remote_name>]
+function or() {
+  local result
+  if ! result="$(__get_repository_web_url "$1" "$2")"; then
+    echo "$result"
+    return
+  fi
+  open "$result"
+}
+
+rps_autocomplete or
 
 # Open a PR against <base_branch> (master by default) for the current branch
 # on <remote_name> (origin by default)
@@ -39,25 +74,20 @@ function opr() {
 }
 
 # Open a list of your PRs on <remote_name> (origin by default)
-# Usage: ompr [<remote_name>]
-function mpr() {
-  if ! git_is_repository; then
-    echo 'Not a git repository.'
+# Usage: oprs [<remote_name>]
+function oprs() {
+  local result
+  if ! result="$(__get_repository_web_url "$1" "$2")"; then
+    echo "$result"
     return
   fi
-  local remote_url
-  remote_url=$(git_get_remote_url "$1")
-  if [ -z "$remote_url" ]; then
-    echo "Remote $1 does not exist."
-    return
-  fi
-  local repository_web_url
-  repository_web_url="$(git_ssh_to_web_url "$remote_url")"
-  open "$repository_web_url/pulls/$GITHUB_USERNAME"
+  open "$result/pulls/$GITHUB_USERNAME"
 }
 
+rps_autocomplete oprs
+
 # Open a list of your issues on <remote_name> (origin by default)
-# Usage: omi [<remote_name>]
+# Usage: mi [<repository_name>] [<remote_name>]
 function mi() {
   if ! git_is_repository; then
     echo 'Not a git repository.'
