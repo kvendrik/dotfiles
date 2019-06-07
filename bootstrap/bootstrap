@@ -2,23 +2,26 @@
 
 DIRECTORY=$(dirname "$0")
 
-# Install Oh My ZSH
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 fi
 
-# Install Custom Terminal Theme
+if [ ! -d "$HOME/.zsh/zsh-autosuggestions" ]; then
+  git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+fi
+
 open "$DIRECTORY/CustomBasic.terminal"
 
-# Install Homebrew
 if ! command -v brew; then
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
-# Install Yarn
 if ! command -v yarn; then
   brew install yarn
 fi
 
-# Restore Home Backups
+if [ ! -d "$HOME/git_clone_find" ]; then
+  git clone git@github.com:kvendrik/git_clone_find.git "$HOME/git_clone_find"
+fi
+
 "$DIRECTORY/config-backups" restore
