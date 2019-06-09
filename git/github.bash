@@ -8,9 +8,29 @@ function __get_http_status_code() {
   curl -I "$1" | grep -Eo "Status\: \d+" | grep -Eo "\d+"
 }
 
+# Usage: __strip_flags <all_arguments>
+function __strip_flags() {
+  arguments=()
+  for argument in "$@"; do
+    if echo "$argument" | grep -Eoq "^-"; then
+      continue
+    fi
+    arguments+=("$argument")
+  done
+  echo "${arguments[@]}"
+}
+
 # Usage: __extract_flag_value <all_arguments> <flag_name>
 function __extract_flag_value() {
   echo "$1" | grep -Eo "$2\=\w+" | grep -Eo '[^\s\=]+$'
+}
+
+# Usage: __check_contains_flag <all_arguments> <flag_long_name> <flag_shorthand>
+function __check_contains_flag() {
+  echo "$1" | grep -Eo "(\s|^)\-\-$2(\s|$)"
+  if [ -n "$3" ]; then
+    echo "$1" | grep -Eo "(\s|^)\-$3(\s|$)"
+  fi
 }
 
 # Get a repository's web URL
@@ -92,28 +112,33 @@ function oprs() {
 rps_autocomplete oprs
 
 # Open list of issues
-# Usage: oi [me|create] [--repo=repository_name]
+# Usage: oi [<repository_name>] [--me|-m] [--new|-n]
 function oi() {
-  local repo_url repository_path
-  repository_path="$(__extract_flag_value "$*" "repo")"
+  local result repository_path arguments
 
-  if ! repo_url="$(__get_repository_web_url "$repository_path")"; then
-    echo "$repo_url"
+  # shellcheck disable=SC2207
+  arguments=($(__strip_flags "$@"))
+  repository_path="${arguments[1]}"
+
+  if ! result="$(__get_repository_web_url "$repository_path")"; then
+    echo "$result"
     return
   fi
 
-  if [[ "$1" == 'me' ]]; then
-    open "$repo_url/issues/created_by/$GITHUB_USERNAME"
+  if [ -n "$(__check_contains_flag "$*" 'me' 'm')" ]; then
+    open "$result/issues/created_by/$GITHUB_USERNAME"
     return
   fi
 
-  if [[ "$1" == 'create' ]]; then
-    open "$repo_url/issues/new"
+  if [ -n "$(__check_contains_flag "$*" 'new' 'n')" ]; then
+    open "$result/issues/new"
     return
   fi
 
-  open "$repo_url/pulls/issues"
+  open "$result/pulls/issues"
 }
+
+rps_autocomplete oi
 
 function create-app() {
   if [[ -z "$1" ]] || [[ -z "$2" ]]; then
