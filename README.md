@@ -25,7 +25,7 @@ By default these dotfiles are a clean collection of aliases and methods so that 
 - `./bootstrap/bootstrap` is a script that can be used to bootstrap a new machine. I try to keep it pretty minimal so that it only installs the very essentials.
 - `./bootstrap/~` contains all backed up files relative to the home folder.
 - `./bootstrap/~/.zshrc` is my RC file. You'll notice that it doesn't contain any info that is specific to me. This info I keep in a seperate file called `~/.rc-setup` (only exists on my machine) and gets sourced by my RC.
-- `./bootstrap/config-backups` is a utility that helps me back up these files from my machine and to restore them as needed. Run `./bootstrap/config-backups` for more info on this this utility works.
+- `./bootstrap/config-backups` is a utility that helps me back up these files from my machine and to restore them as needed. Run `./bootstrap/config-backups` for more info on how this utility works.
 
 ## Contribute
 1. Make your changes.
