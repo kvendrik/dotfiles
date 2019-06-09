@@ -8,6 +8,11 @@ function __get_http_status_code() {
   curl -I "$1" | grep -Eo "Status\: \d+" | grep -Eo "\d+"
 }
 
+# Usage: __extract_flag_value <all_arguments> <flag_name>
+function __extract_flag_value() {
+  echo "$1" | grep -Eo "$2\=\w+" | grep -Eo '[^\s\=]+$'
+}
+
 # Get a repository's web URL
 # Usage: __get_repository_web_url [callback] [<repository_name>] [<remote_name>]
 function __get_repository_web_url() {
@@ -42,12 +47,12 @@ function __get_repository_web_url() {
 # Open the remote repository
 # Usage: or [<repository_name>] [<remote_name>]
 function or() {
-  local result
-  if ! result="$(__get_repository_web_url "$1" "$2")"; then
-    echo "$result"
+  local repo_url
+  if ! repo_url="$(__get_repository_web_url "$1" "$2")"; then
+    echo "$repo_url"
     return
   fi
-  open "$result"
+  open "$repo_url"
 }
 
 rps_autocomplete or
@@ -74,34 +79,40 @@ function opr() {
 }
 
 # Open a list of your PRs on <remote_name> (origin by default)
-# Usage: oprs [<remote_name>]
+# Usage: oprs [<repository_name>] [<remote_name>]
 function oprs() {
-  local result
-  if ! result="$(__get_repository_web_url "$1" "$2")"; then
-    echo "$result"
+  local repo_url
+  if ! repo_url="$(__get_repository_web_url "$1" "$2")"; then
+    echo "$repo_url"
     return
   fi
-  open "$result/pulls/$GITHUB_USERNAME"
+  open "$repo_url/pulls/$GITHUB_USERNAME"
 }
 
 rps_autocomplete oprs
 
-# Open a list of your issues on <remote_name> (origin by default)
-# Usage: mi [<repository_name>] [<remote_name>]
-function mi() {
-  if ! git_is_repository; then
-    echo 'Not a git repository.'
+# Open list of issues
+# Usage: oi [me|create] [--repo=repository_name]
+function oi() {
+  local repo_url repository_path
+  repository_path="$(__extract_flag_value "$*" "repo")"
+
+  if ! repo_url="$(__get_repository_web_url "$repository_path")"; then
+    echo "$repo_url"
     return
   fi
-  local remote_url
-  remote_url=$(git_get_remote_url "$1")
-  if [ -z "$remote_url" ]; then
-    echo "Remote $1 does not exist."
+
+  if [[ "$1" == 'me' ]]; then
+    open "$repo_url/issues/created_by/$GITHUB_USERNAME"
     return
   fi
-  local repository_web_url
-  repository_web_url="$(git_ssh_to_web_url "$remote_url")"
-  open "$repository_web_url/issues/created_by/$GITHUB_USERNAME"
+
+  if [[ "$1" == 'create' ]]; then
+    open "$repo_url/issues/new"
+    return
+  fi
+
+  open "$repo_url/pulls/issues"
 }
 
 function create-app() {
