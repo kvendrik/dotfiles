@@ -8,3 +8,7 @@ alias devr="dev down; dev up; dev server"
 alias reload='exec ${SHELL} -l'
 
 alias config-backups='$DOTFILES_DIRECTORY/bootstrap/config-backups'
+
+function record_screen() {
+  osascript -e 'tell application "QuickTime Player" to activate' -e 'tell application "QuickTime Player" to new screen recording'
+}
