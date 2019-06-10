@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function find_closest_npm_package {
+function __find_closest_npm_package {
   if [ -f 'package.json' ]; then
     echo 'package.json'
     return
@@ -13,11 +13,11 @@ function find_closest_npm_package {
     cd ../ || return
     current_relative_path="$current_relative_path../"
   done
-  echo "$($current_relative_path)package.json"
+  echo "$current_relative_path"package.json
 }
 
-function get_npm_package_scripts_autocomplete {
-  closest_package_path="$(find_closest_npm_package)"
+function __get_npm_package_scripts_autocomplete {
+  closest_package_path="$(__find_closest_npm_package)"
   if [ -z "$closest_package_path" ]; then
     return
   fi
@@ -26,7 +26,7 @@ function get_npm_package_scripts_autocomplete {
 }
 
 function yre {
-  closest_package_path="$(find_closest_npm_package)"
+  closest_package_path="$(__find_closest_npm_package)"
   if [ -z "$closest_package_path" ]; then
     echo 'package.json not found.'
     return
@@ -45,5 +45,5 @@ function yr {
 
 alias yt="yarn test"
 
-complete -F get_npm_package_scripts_autocomplete yre
-complete -F get_npm_package_scripts_autocomplete yr
+complete -F __get_npm_package_scripts_autocomplete yre
+complete -F __get_npm_package_scripts_autocomplete yr
