@@ -10,12 +10,12 @@ An easy way to store links related to a (Git) project.
 Why?
 As a developer, my homebase for a project is often its Git repository. Things that belong to the project however
 often go further than just its repository, think things like Trello boards and Invision projects. I wanted a quick
-way to access those within the context of the project, hence this CLI which lets you bookmark URLs that are relevant 
+way to access those within the context of the project, hence this CLI which lets you bookmark URLs that are relevant
 to the project and you need quick access to.
 
 Getting started
-Within your project set related links using 'gbm edit' (opens up a file you can edit. Use a name_of_bookmark: bookmark_url 
-format, every bookmark should be on a new line) and display them using 'gbm'. Use 'gbm name_of_bookmark' to directly open 
+Within your project set related links using 'gbm edit' (opens up a file you can edit. Use a name_of_bookmark: bookmark_url
+format, every bookmark should be on a new line) and display them using 'gbm'. Use 'gbm name_of_bookmark' to directly open
 one in your browser.
 
 Usage: gbm [edit|path|help|clean|nuke|<bookmark_name>]
@@ -23,11 +23,11 @@ EndOfMessage
 }
 
 function __gbm_repository_id() {
-  git_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+"
+  __git_get_remote_url | grep -oE "[^\/\:]+\/[^\.]+"
 }
 
 function __gbm_repository_file_path() {
-  if ! git_is_repository; then
+  if ! __git_is_repository; then
     return 1
   fi
 
@@ -39,7 +39,7 @@ function __gbm_repository_file_path() {
 }
 
 function __gbm_autocomplete() {
-  if ! git_is_repository; then
+  if ! __git_is_repository; then
     return 1
   fi
 
@@ -78,7 +78,7 @@ function gbm() {
     return
   fi
 
-  if ! git_is_repository; then
+  if ! __git_is_repository; then
     echo 'Not a git repository.'
     return 1
   fi

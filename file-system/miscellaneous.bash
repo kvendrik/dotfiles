@@ -32,7 +32,7 @@ function co() {
   code "$open_path" "${other_args[@]}"
 }
 
-rps_autocomplete co
+__rps_autocomplete co
 
 function o() {
   open -a Finder "$1"

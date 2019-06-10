@@ -47,19 +47,19 @@ function __get_repository_web_url() {
     fi
   fi
 
-  if ! git_is_repository "$repository_path"; then
+  if ! __git_is_repository "$repository_path"; then
     echo 'Not a git repository.'
     return 1
   fi
 
-  remote_url=$(git_get_remote_url "$3" "$repository_path")
+  remote_url=$(__git_get_remote_url "$3" "$repository_path")
 
   if [ -z "$remote_url" ]; then
     echo "Remote $2 does not exist."
     return 1
   fi
 
-  repository_web_url=$(git_ssh_to_web_url "$remote_url")
+  repository_web_url=$(__git_ssh_to_web_url "$remote_url")
 
   echo "$repository_web_url"
 }
@@ -75,26 +75,26 @@ function or() {
   open "$repo_url"
 }
 
-rps_autocomplete or
+__rps_autocomplete or
 
 # Open a PR against <base_branch> (master by default) for the current branch
 # on <remote_name> (origin by default)
 # Usage: opr [<base_branch>] [<remote_name>]
 function opr() {
-  if ! git_is_repository; then
+  if ! __git_is_repository; then
     echo 'Not a git repository.'
     return
   fi
   local base_branch_name pr_branch_name remote_url
   base_branch_name=$([ -n "$1" ] && echo "$1" || echo master)
   pr_branch_name="$(git symbolic-ref --short HEAD)"
-  remote_url=$(git_get_remote_url "$2")
+  remote_url=$(__git_get_remote_url "$2")
   if [ -z "$remote_url" ]; then
     echo "Remote $2 does not exist."
     return
   fi
   local repository_web_url
-  repository_web_url=$(git_ssh_to_web_url "$remote_url")
+  repository_web_url=$(__git_ssh_to_web_url "$remote_url")
   open "$repository_web_url/compare/$base_branch_name...$pr_branch_name"
 }
 
@@ -109,7 +109,7 @@ function oprs() {
   open "$repo_url/pulls/$GITHUB_USERNAME"
 }
 
-rps_autocomplete oprs
+__rps_autocomplete oprs
 
 # Open list of issues
 # Usage: oi [<repository_name>] [--me|-m] [--new|-n]
@@ -138,7 +138,7 @@ function oi() {
   open "$result/pulls/issues"
 }
 
-rps_autocomplete oi
+__rps_autocomplete oi
 
 function create-app() {
   if [[ -z "$1" ]] || [[ -z "$2" ]]; then
@@ -178,19 +178,19 @@ function polaris-tophat() {
   rps
   cd polaris-react || return
 
-  if [ "$(git_current_repo_name)" != "polaris-react" ]; then
+  if [ "$(__git_current_repo_name)" != "polaris-react" ]; then
     echo 'Could not switch to polaris-react folder'
     return
   fi
 
-  if [ "$(git_check_uncommited_changes)" != "" ]; then
+  if [ "$(__git_check_uncommited_changes)" != "" ]; then
     echo 'Uncommited changes found. Please commit/stash those first.'
     return
   fi
 
   nvm use 10.11.0
 
-  if [ "$(git_branch_exists "$1")" -eq "" ]; then
+  if [ "$(__git_branch_exists "$1")" -eq "" ]; then
     git fetch origin "$1"
   fi
 
