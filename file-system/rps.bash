@@ -16,5 +16,7 @@ function __rps_autocomplete() {
   complete -W "$(ls "$REPOSITORIES_DIRECTORY")" "$1"
 }
 
+alias r='rps'
+
 __rps_autocomplete rpse
 __rps_autocomplete rps

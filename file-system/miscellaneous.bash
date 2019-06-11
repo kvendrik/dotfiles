@@ -5,6 +5,7 @@ alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 # Change working directory to the top-most Finder window location
 # Source: https://github.com/mathiasbynens/dotfiles/blob/master/.functions#L8
 alias cdf='cd $(osascript -e "tell app \"Finder\" to POSIX path of (insertion location as alias)")'
+alias dt="cd ~/Desktop"
 
 function co() {
   local open_path other_args
