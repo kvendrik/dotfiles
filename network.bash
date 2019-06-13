@@ -14,6 +14,9 @@ EndOfMessage
   fi
 	local mime_type base64
   mime_type=$(file -b --mime-type "$1")
+  if [[ "$mime_type" == 'image/svg' ]]; then
+    mime_type='image/svg+xml'
+  fi
   base64=$(base64 "$1")
 	echo "data:$mime_type;base64,$base64";
 }

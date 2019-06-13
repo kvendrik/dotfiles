@@ -8,6 +8,15 @@ alias grao="git remote add origin"
 alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
 alias gco='git checkout'
+alias gcom='git checkout master'
+
+function gcop() {
+  if [ -z "$1" ]; then
+    echo 'Usage: gcop <new_branch_name>'
+    return 1
+  fi
+  gco -b $1 && gacp
+}
 
 function __git_is_repository() {
   git -C "$1" rev-parse --is-inside-work-tree &> /dev/null
