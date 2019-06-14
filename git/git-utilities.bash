@@ -1,23 +1,5 @@
 #!/bin/bash
 
-alias gp='git push -u origin $(__git_current_branch)'
-alias gpl="git pull"
-alias gac="git add --all :/ && git commit"
-alias gacp="git add --all :/ && git commit && gp"
-alias grao="git remote add origin"
-alias gs="git status"
-alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
-alias gco='git checkout'
-alias gcom='git checkout master'
-
-function gcop() {
-  if [ -z "$1" ]; then
-    echo 'Usage: gcop <new_branch_name>'
-    return 1
-  fi
-  gco -b $1 && gacp
-}
-
 function __git_is_repository() {
   git -C "$1" rev-parse --is-inside-work-tree &> /dev/null
 }
@@ -54,6 +36,26 @@ function __git_ssh_to_web_url() {
   local base
   base=$(echo "$1" | sed -e "s/.git$//" -e "s/^git\@//" -e "s/\(.*[:/].*\)/\1/" -e "s/https\:\/\///" -e "s/\:/\//")
   echo "https://$base"
+}
+
+alias gp='git push -u origin $(__git_current_branch)'
+alias gpl="git pull"
+alias gac="git add --all :/ && git commit"
+alias gacp="git add --all :/ && git commit && gp"
+alias grao="git remote add origin"
+alias gs="git status"
+alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
+alias gcom='git checkout master'
+alias gco='git checkout'
+
+function gcop() {
+  [ -z "$1" ] && echo 'Usage: gcop <new_branch_name>' && return
+  gco -b "$1" && gacp
+}
+
+function gcopl() {
+  [ -z "$1" ] && echo 'Usage: gcopl <branch_name>' && return
+  git fetch origin "$1" && git checkout "$1" && git merge "origin/$1"
 }
 
 function ub() {

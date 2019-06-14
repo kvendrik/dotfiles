@@ -143,36 +143,3 @@ function create-app() {
   rm README.md
   yarn install
 }
-
-function polaris-tophat() {
-  if [[ -z "$1" ]]; then
-    echo 'Usage: polaris-tophat <branch_name>'
-    return
-  fi
-
-  rps
-  cd polaris-react || return
-
-  if [ "$(__git_current_repo_name)" != "polaris-react" ]; then
-    echo 'Could not switch to polaris-react folder'
-    return
-  fi
-
-  if [ "$(__git_check_uncommited_changes)" != "" ]; then
-    echo 'Uncommited changes found. Please commit/stash those first.'
-    return
-  fi
-
-  nvm use 10.11.0
-
-  if [ "$(__git_branch_exists "$1")" -eq "" ]; then
-    git fetch origin "$1"
-  fi
-
-  gco "$1"
-  git pull
-
-  code playground/Playground.tsx
-  yarn
-  yarn dev
-}

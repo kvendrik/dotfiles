@@ -7,3 +7,9 @@ alias c=clear
 alias reload='exec ${SHELL} -l'
 
 alias config-backups='$DOTFILES_DIRECTORY/bootstrap/config-backups'
+
+function show() {
+  [ -z "$1" ] && echo 'Show definition for an alias or method. Usage: show <alias_or_method_name>' && return
+  alias "$1"
+  declare -f "$1"
+}
