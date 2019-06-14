@@ -9,7 +9,10 @@ function rpse() {
 }
 
 function rps() {
-  cd "$(rpse "$@")" || return
+  cd "$(rpse "$1")" || return
+  if [ -n "$2" ]; then
+    git checkout "$2"
+  fi
 }
 
 function __rps_autocomplete() {

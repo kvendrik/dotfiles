@@ -1,7 +1,10 @@
 #!/bin/bash
 
 function server() {
-  python -m SimpleHTTPServer "${1:-3000}"
+  local port
+  port="${1:-3000}"
+  open "http://localhost:$port"
+  python -m SimpleHTTPServer "$port"
 }
 
 function data_url() {
