@@ -59,18 +59,17 @@ function gcopl() {
 }
 
 function ub() {
-  # Merges the latest given branch (origin/master by default) into the current branch
-  # Usage: ub [<remote_name>] [<branch_name>]
-  local remote_name='origin'
+  # Updates base_branch and merges it into your current branch
+  # Usage: ub [<base_branch>]
   local base_branch='master'
+  local original_branch="$(__git_current_branch)"
   if [ "$1" != "" ]; then
-    remote_name="$1"
+    base_branch="$1"
   fi
-  if [ "$2" != "" ]; then
-    base_branch="$2"
-  fi
-  git fetch "$remote_name" "$base_branch"
-  git merge "$remote_name/$base_branch"
+  git checkout "$base_branch"
+  git pull
+  git checkout "$original_branch"
+  git merge "$base_branch"
 }
 
 function reset-branch() {

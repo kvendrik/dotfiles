@@ -9,7 +9,7 @@ function __get_http_status_code() {
 }
 
 # Get a repository's web URL
-# Usage: __get_repository_web_url [callback] [<repository_name>] [<remote_name>]
+# Usage: __get_repository_web_url [<repository_path_or_name>] [<remote_name>]
 function __get_repository_web_url() {
   local remote_url repository_web_url repository_path
   repository_path="$1"
@@ -27,7 +27,7 @@ function __get_repository_web_url() {
     return 1
   fi
 
-  remote_url=$(__git_get_remote_url "$3" "$repository_path")
+  remote_url=$(__git_get_remote_url "$2" "$repository_path")
 
   if [ -z "$remote_url" ]; then
     echo "Remote $2 does not exist."
@@ -52,25 +52,18 @@ function or() {
 
 __rps_autocomplete or
 
-# Open a PR against <base_branch> (master by default) for the current branch
-# on <remote_name> (origin by default)
+# Open a PR against <base_branch> (master by default) for the current branch on <remote_name> (origin by default)
 # Usage: opr [<base_branch>] [<remote_name>]
 function opr() {
-  if ! __git_is_repository; then
-    echo 'Not a git repository.'
+  local base_branch_name pr_branch_name
+  local repo_url
+  if ! repo_url="$(__get_repository_web_url "$(pwd)" "$2")"; then
+    echo "$repo_url"
     return
   fi
-  local base_branch_name pr_branch_name remote_url
   base_branch_name=$([ -n "$1" ] && echo "$1" || echo master)
   pr_branch_name="$(git symbolic-ref --short HEAD)"
-  remote_url=$(__git_get_remote_url "$2")
-  if [ -z "$remote_url" ]; then
-    echo "Remote $2 does not exist."
-    return
-  fi
-  local repository_web_url
-  repository_web_url=$(__git_ssh_to_web_url "$remote_url")
-  open "$repository_web_url/compare/$base_branch_name...$pr_branch_name"
+  open "$repo_url/compare/$base_branch_name...$pr_branch_name"
 }
 
 # Open a list of your PRs on <remote_name> (origin by default)
