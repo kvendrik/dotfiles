@@ -16,13 +16,21 @@ function __find_closest_npm_package {
   echo "$current_relative_path"package.json
 }
 
-function __get_npm_package_scripts_autocomplete {
+function __package_lookup {
   closest_package_path="$(__find_closest_npm_package)"
   if [ -z "$closest_package_path" ]; then
     return
   fi
   # shellcheck disable=SC2207
-  COMPREPLY=($(jq '.scripts | keys | join(" ")' "$closest_package_path" | tr -d '"'))
+  COMPREPLY=($(jq "$1 | keys | join(\" \")" "$closest_package_path" | tr -d '"'))
+}
+
+function __get_npm_package_scripts_autocomplete {
+  __package_lookup '.scripts'
+}
+
+function __get_package_dependencies {
+  __package_lookup '.dependencies, .devDependencies'
 }
 
 function yre {
@@ -38,12 +46,26 @@ function yre {
   fi
 }
 
+complete -F __get_npm_package_scripts_autocomplete yre
+
 function yr {
   # shellcheck disable=SC2068
   yarn run $@
 }
 
-alias yt="yarn test"
-
-complete -F __get_npm_package_scripts_autocomplete yre
 complete -F __get_npm_package_scripts_autocomplete yr
+
+function yu {
+  yarn remove $@
+}
+
+complete -F __get_package_dependencies yu
+
+function yua {
+  yarn remove $1 && yarn add $1
+}
+
+complete -F __get_package_dependencies yua
+
+alias yt="yarn test"
+alias ya="yarn add"
