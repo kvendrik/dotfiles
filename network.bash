@@ -51,7 +51,7 @@ function kill_port() {
 
   printf "Found the following matches:\n%s\n" "$match"
 
-  echo -n "Are you sure you would like to kill pid id $pid? [y/N] "
+  echo -n "Are you sure you would like to kill pid $pid? [y/N] "
 
   local do_kill_pid
   read -r do_kill_pid
