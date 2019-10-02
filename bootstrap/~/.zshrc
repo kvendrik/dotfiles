@@ -3,7 +3,7 @@ ZSH_THEME="robbyrussell"
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
-source "$HOME/.rc-setup"
+source "$HOME/.rc-config"
 
 export REPOSITORIES_DIRECTORY="$HOME/repos"
 source "$HOME/dotfiles/index"
@@ -13,3 +13,5 @@ unalias gcf
 alias gcf='git_clone_find'
 
 source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+source "$HOME/.rc-extra"
