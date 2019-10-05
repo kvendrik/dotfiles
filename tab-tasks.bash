@@ -26,10 +26,12 @@ EOF
 
   while IFS= read -r line; do
     commands+=("$line")
-  done < <(echo "$@" | grep -Eo '\:\s?[^\,]+' | grep -Eo '[^\:]+$')
+  done < <(echo "$@" | grep -Eo '\:\s?[^\,]+' | grep -Eo '[^\:]+$' | sed 's/^ //g')
+
+  echo '\e[34mOpening tabs\e[0m'
 
   for folder_name in $folder_names; do
-    echo "\`${commands[$current_index]}\` in $(rpse)/$folder_name"
+    echo "\`${commands[$current_index]}\` \e[90min\e[0m $(rpse)/$folder_name"
     ttab "cd $(rpse)/$folder_name && ${commands[$current_index]}"
     current_index=$(($current_index+1))
   done
