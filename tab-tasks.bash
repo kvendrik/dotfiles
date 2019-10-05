@@ -20,7 +20,7 @@ EOF
   fi
 
   local folder_names commands current_index
-  folder_names=($(echo "$@" | grep -Eo '([^ \:]+)\:' | tr -d ':'))
+  folder_names=($(echo "$@" | grep -Eo '([^ \:\,]+)\:' | sed 's/\:$//g'))
   current_index=1
   commands=()
 
