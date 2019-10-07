@@ -1,4 +1,5 @@
 function t() {
+  local help_message
   read -d '' help_message << EOF
 Tab Tasks
 Opens Terminal tabs and executes shell commands in them.

@@ -41,13 +41,25 @@ function __safe_exec() {
   $@
 }
 
-# Usage: __capture_regex <string> <pattern> <...for_each_exec>
-# {} in the command is replaced with the current value
-# Example: __capture_regex "repo1: echo hi, repo2: echo hello" '\: ([^\,]+)' echo {}
 function __capture_regex() {
   setopt local_options BASH_REMATCH
+  local results command_string help_message
 
-  local results command_string
+  read -d '' help_message << EOF
+Usage: __capture_regex <string> <pattern> <...for_each_exec>
+
+Arguments
+string: a string to capture in
+pattern: a regex pattern, passed as a string
+for_each_exec: a command. {} in the command is replaced with the current value
+
+Example: __capture_regex "repo1: echo hi, repo2: echo hello" '\: ([^\,]+)' echo {}
+EOF
+
+  if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+    echo $help_message
+    return
+  fi
 
   if [[ "$1" =~ $2 ]]; then
     for result in $BASH_REMATCH; do
