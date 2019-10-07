@@ -26,18 +26,18 @@ EOF
     return
   fi
 
-  local args folder_names commands current_index message all_in_new_tab current_command verbose
+  local folder_names commands current_index message all_in_new_tab current_command verbose
 
-  args="$(__strip_flags $@)"
+  __strip_flags $@
   all_in_new_tab="$(__check_contains_flag "$*" 'all' 'a')"
   verbose="$(__check_contains_flag "$*" 'verbose' 'v')"
-  folder_names=($(echo "$args" | grep -Eo '([^ \:\,]+)\:' | sed 's/\:$//g'))
+  folder_names=($(echo "$CURRENT_CLEAN_ARGUMENTS" | grep -Eo '([^ \:\,]+)\:' | sed 's/\:$//g'))
   current_index=1
   commands=()
 
   while IFS= read -r line; do
     commands+=("$line")
-  done < <(echo "$args" | grep -Eo '\:\s?[^\,]+' | grep -Eo '[^\:]+$' | sed 's/^ //g')
+  done < <(echo "$CURRENT_CLEAN_ARGUMENTS" | grep -Eo '\:\s?[^\,]+' | grep -Eo '[^\:]+$' | sed 's/^ //g')
 
   if [ -z "$folder_names" ] || [ -z "$commands" ]; then
     echo $help_message

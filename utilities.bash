@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# Usage: __strip_flags <all_arguments>
+# Usage: __strip_flags <...all_arguments>
+# echo $CURRENT_CLEAN_ARGUMENTS
+CURRENT_CLEAN_ARGUMENTS=()
 function __strip_flags() {
-  arguments=()
+  CURRENT_CLEAN_ARGUMENTS=()
   for argument in "$@"; do
-    if echo "$argument" | grep -Eoq "^-"; then
+    if [[ "$argument" =~ ^- ]]; then
       continue
     fi
-    arguments+=("$argument")
+    CURRENT_CLEAN_ARGUMENTS+=("$argument")
   done
-  echo "${arguments[@]}"
 }
 
 # Usage: __extract_flag_value <all_arguments> <flag_name>
@@ -19,9 +20,8 @@ function __extract_flag_value() {
 
 # Usage: __check_contains_flag <all_arguments> <flag_long_name> <flag_shorthand>
 function __check_contains_flag() {
-  echo "$1" | grep -Eo "(\s|^)\-\-$2(\s|$)"
-  if [ -n "$3" ]; then
-    echo "$1" | grep -Eo "(\s|^)\-$3(\s|$)"
+  if [[ "$1" =~ --$2 ]] || [[ "$1" =~ -$3 ]]; then
+    echo 'true'
   fi
 }
 
@@ -56,23 +56,28 @@ for_each_exec: a command string. {} in the command is replaced with the current 
 Example: __capture_regex "repo1: echo hi, repo2: echo hello" '\: ([^\,]+)' echo {}
 EOF
 
-  if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+  __strip_flags $*
+  capture_string="${CURRENT_CLEAN_ARGUMENTS[1]}"
+  pattern="${CURRENT_CLEAN_ARGUMENTS[2]}"
+  command_string="${CURRENT_CLEAN_ARGUMENTS[@]:2}"
+
+  if [ -z "$capture_string" ] || [ -z "$pattern" ] || [ -z "$command_string" ]; then
     echo $help_message
     return
   fi
 
-  if [[ "$1" == '-g' ]] || [[ "$1" == '--global' ]]; then
+  if [ -n "$(__check_contains_flag "$*" 'global' 'g')" ]; then
     while IFS= read -r line; do
-      full_command_string="$(echo ${@:4} | sed "s/{}/$line/g")"
+      full_command_string="$(echo $command_string | sed "s/{}/$line/g")"
       eval $full_command_string
-    done < <(echo "$2" | grep -Eo "$3")
+    done < <(echo "$capture_string" | grep -Eo "$pattern")
     return
   fi
 
-  if [[ "$1" =~ $2 ]]; then
+  if [[ "$capture_string" =~ $pattern ]]; then
     for result in ${BASH_REMATCH[@]:1}; do
-      command_string="$(echo ${@:3} | sed "s/{}/$result/g")"
-      eval $command_string
+      full_command_string="$(echo $command_string | sed "s/{}/$result/g")"
+      eval $full_command_string
     done
   fi
 }

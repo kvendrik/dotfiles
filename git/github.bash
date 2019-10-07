@@ -84,9 +84,10 @@ __rps_autocomplete oprs
 function oi() {
   local result repository_path arguments
 
+  __strip_flags $*
+
   # shellcheck disable=SC2207
-  arguments=($(__strip_flags "$@"))
-  repository_path="${arguments[1]}"
+  repository_path="${CURRENT_CLEAN_ARGUMENTS[1]}"
 
   if ! result="$(__get_repository_web_url "$repository_path")"; then
     echo "$result"
