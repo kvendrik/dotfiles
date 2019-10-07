@@ -43,15 +43,15 @@ function __safe_exec() {
 
 function __capture_regex() {
   setopt local_options BASH_REMATCH
-  local results command_string help_message
+  local results command_string full_command_string help_message capture_string pattern
 
   read -d '' help_message << EOF
-Usage: __capture_regex <string> <pattern> <...for_each_exec>
+Usage: __capture_regex [-g|--global] <string> <pattern> <for_each_exec>
 
 Arguments
 string: a string to capture in
 pattern: a regex pattern, passed as a string
-for_each_exec: a command. {} in the command is replaced with the current value
+for_each_exec: a command string. {} in the command is replaced with the current value
 
 Example: __capture_regex "repo1: echo hi, repo2: echo hello" '\: ([^\,]+)' echo {}
 EOF
@@ -61,8 +61,16 @@ EOF
     return
   fi
 
+  if [[ "$1" == '-g' ]] || [[ "$1" == '--global' ]]; then
+    while IFS= read -r line; do
+      full_command_string="$(echo ${@:4} | sed "s/{}/$line/g")"
+      eval $full_command_string
+    done < <(echo "$2" | grep -Eo "$3")
+    return
+  fi
+
   if [[ "$1" =~ $2 ]]; then
-    for result in $BASH_REMATCH; do
+    for result in ${BASH_REMATCH[@]:1}; do
       command_string="$(echo ${@:3} | sed "s/{}/$result/g")"
       eval $command_string
     done
