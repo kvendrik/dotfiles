@@ -40,3 +40,19 @@ function __safe_exec() {
   # shellcheck disable=SC2068
   $@
 }
+
+# Usage: __capture_regex <string> <pattern> <...for_each_exec>
+# {} in the command is replaced with the current value
+# Example: __capture_regex "repo1: echo hi, repo2: echo hello" '\: ([^\,]+)' 'echo {}';
+function __capture_regex() {
+  setopt local_options BASH_REMATCH
+
+  local results command_string
+
+  if [[ "$1" =~ $2 ]]; then
+    for result in $BASH_REMATCH; do
+      command_string="$(echo ${@:3} | sed "s/{}/$result/g")"
+      eval $command_string
+    done
+  fi
+}
