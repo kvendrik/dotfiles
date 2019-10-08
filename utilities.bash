@@ -74,3 +74,10 @@ function __capture_regex() {
     done
   fi
 }
+
+# __capture_regex_global <string> <pattern>
+# Shorthand to globally capture a pattern
+# Example: __capture_regex_global "hello: 21, ok: 2" ': ([0-9])'
+function __capture_regex_global() {
+  __capture_regex -g "$1" "$2" "__capture_regex '{}' '$2' echo {}"
+}
