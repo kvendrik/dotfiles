@@ -42,10 +42,10 @@ function __safe_exec() {
   $@
 }
 
-# Usage: __capture_regex [-g|--global] <string> <pattern> <for_each_exec>
+# Usage: __capture_regex [-g|--global] [-r|--recursive] <string> <pattern> <for_each_exec>
 # {} in the command is replaced with the current value
-# Example: __capture_regex -g 'repo1: hi, repo2: hello' '([^\,]+)' echo {}
-# Example: __capture_regex -g 'repo1: hi, repo2: hello' '([^\,]+)' "__capture_regex '{}' '\: (.+)' echo {}"
+# Example: __capture_regex --global 'repo1: hi, repo2: hello' '([^\,]+)' echo {}
+# Example: __capture_regex --recursive "hello: 21, ok: 2" ': ([0-9])' echo {}
 function __capture_regex() {
   setopt local_options BASH_REMATCH
   local results command_string full_command_string help_message capture_string pattern
@@ -56,6 +56,11 @@ function __capture_regex() {
   command_string="${CURRENT_CLEAN_ARGUMENTS[@]:2}"
 
   if [ -z "$capture_string" ] || [ -z "$pattern" ] || [ -z "$command_string" ]; then
+    return
+  fi
+
+  if [ -n "$(__check_contains_flag "$*" 'recursive' 'r')" ]; then
+    __capture_regex -g "$capture_string" "$pattern" "__capture_regex '{}' '$pattern' '$command_string'"
     return
   fi
 
@@ -73,11 +78,4 @@ function __capture_regex() {
       eval $full_command_string
     done
   fi
-}
-
-# __capture_regex_global <string> <pattern>
-# Shorthand to globally capture a pattern
-# Example: __capture_regex_global "hello: 21, ok: 2" ': ([0-9])'
-function __capture_regex_global() {
-  __capture_regex -g "$1" "$2" "__capture_regex '{}' '$2' echo {}"
 }
