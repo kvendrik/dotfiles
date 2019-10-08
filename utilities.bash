@@ -19,6 +19,7 @@ function __extract_flag_value() {
 }
 
 # Usage: __check_contains_flag <all_arguments> <flag_long_name> <flag_shorthand>
+# Example: __check_contains_flag "$*" 'help' 'h'
 function __check_contains_flag() {
   if [[ "$1" =~ --$2 ]] || [[ "$1" =~ -$3 ]]; then
     echo 'true'
@@ -43,7 +44,7 @@ function __safe_exec() {
 
 # Usage: __capture_regex [-g|--global] <string> <pattern> <for_each_exec>
 # {} in the command is replaced with the current value
-# Example: __capture_regex "repo1: hi, repo2: hello" '([^\,]+)' echo {}
+# Example: __capture_regex -g 'repo1: hi, repo2: hello' '([^\,]+)' echo {}
 # Example: __capture_regex -g 'repo1: hi, repo2: hello' '([^\,]+)' "__capture_regex '{}' '\: (.+)' echo {}"
 function __capture_regex() {
   setopt local_options BASH_REMATCH
@@ -55,11 +56,10 @@ function __capture_regex() {
   command_string="${CURRENT_CLEAN_ARGUMENTS[@]:2}"
 
   if [ -z "$capture_string" ] || [ -z "$pattern" ] || [ -z "$command_string" ]; then
-    echo $help_message
     return
   fi
 
-  if [ -n "$(__check_contains_flag "$@" 'global' 'g')" ]; then
+  if [ -n "$(__check_contains_flag "$*" 'global' 'g')" ]; then
     while IFS= read -r line; do
       full_command_string="$(echo $command_string | sed "s/{}/$line/")"
       eval $full_command_string
