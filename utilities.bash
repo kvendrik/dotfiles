@@ -41,20 +41,13 @@ function __safe_exec() {
   $@
 }
 
+# Usage: __capture_regex [-g|--global] <string> <pattern> <for_each_exec>
+# {} in the command is replaced with the current value
+# Example: __capture_regex "repo1: hi, repo2: hello" '([^\,]+)' echo {}
+# Example: __capture_regex -g 'repo1: hi, repo2: hello' '([^\,]+)' "__capture_regex '{}' '\: (.+)' echo {}"
 function __capture_regex() {
   setopt local_options BASH_REMATCH
   local results command_string full_command_string help_message capture_string pattern
-
-  read -d '' help_message << EOF
-Usage: __capture_regex [-g|--global] <string> <pattern> <for_each_exec>
-
-Arguments
-string: a string to capture in
-pattern: a regex pattern, passed as a string
-for_each_exec: a command string. {} in the command is replaced with the current value
-
-Example: __capture_regex "repo1: echo hi, repo2: echo hello" '\: ([^\,]+)' echo {}
-EOF
 
   __strip_flags $*
   capture_string="${CURRENT_CLEAN_ARGUMENTS[1]}"
@@ -66,9 +59,9 @@ EOF
     return
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'global' 'g')" ]; then
+  if [ -n "$(__check_contains_flag "$@" 'global' 'g')" ]; then
     while IFS= read -r line; do
-      full_command_string="$(echo $command_string | sed "s/{}/$line/g")"
+      full_command_string="$(echo $command_string | sed "s/{}/$line/")"
       eval $full_command_string
     done < <(echo "$capture_string" | grep -Eo "$pattern")
     return
@@ -76,7 +69,7 @@ EOF
 
   if [[ "$capture_string" =~ $pattern ]]; then
     for result in ${BASH_REMATCH[@]:1}; do
-      full_command_string="$(echo $command_string | sed "s/{}/$result/g")"
+      full_command_string="$(echo $command_string | sed "s/{}/$result/")"
       eval $full_command_string
     done
   fi
