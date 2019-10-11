@@ -95,3 +95,36 @@ function reset-branch() {
   git fetch origin "$branch_name"
   git checkout "$branch_name"
 }
+
+function branch-diff() {
+  local commit_base branch_name base_branch help_message
+  read -d '' help_message << EOF
+Usage: branch-diff [<base_branch>] [<branch_name>] [--files|-f]
+
+Get the diff between a branch and some base branch.
+
+Arguments
+base_branch            name of the branch to compare to. master by default.
+branch_name            name of the branch to compare. HEAD by default.
+
+Flags
+--files|-f             only show file paths
+EOF
+
+  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
+    echo $help_message
+    return
+  fi
+
+  __strip_flags $*
+  base_branch="${CURRENT_CLEAN_ARGUMENTS[1]:-master}"
+  branch_name="${CURRENT_CLEAN_ARGUMENTS[2]:-HEAD}"
+  commit_base="$(git merge-base $base_branch $branch_name)"
+
+  if [ -n "$(__check_contains_flag "$*" 'files' 'f')" ]; then
+    git diff --name-only $commit_base $branch_name
+    return
+  fi
+
+  git diff $commit_base $branch_name
+}
