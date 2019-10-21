@@ -15,7 +15,7 @@ function __strip_flags() {
 
 # Usage: __extract_flag_value <all_arguments> <flag_name>
 function __extract_flag_value() {
-  echo "$1" | grep -Eo "$2\=\w+" | grep -Eo '[^\s\=]+$'
+  echo "$1" | grep -Eo "$2\=\w+" | grep -Eo '[^ \=]+$'
 }
 
 # Usage: __check_contains_flag <all_arguments> <flag_long_name> <flag_shorthand>

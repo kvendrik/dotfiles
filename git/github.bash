@@ -79,15 +79,17 @@ function oprs() {
 
 __rps_autocomplete oprs
 
-# Open list of issues
-# Usage: oi [<repository_name>] [--me|-m] [--new|-n]
 function oi() {
-  local result repository_path arguments
+  local result repository_path url_path
+
+  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
+    echo 'Open Github list of issues or pull requests.\nUsage: oi [--me|-m] [--new|-n] [--search|-s] [-p|--pulls] [--repo=<path>].'
+    return
+  fi
 
   __strip_flags $*
-
-  # shellcheck disable=SC2207
-  repository_path="${CURRENT_CLEAN_ARGUMENTS[1]}"
+  repository_path="$(__extract_flag_value "$*" 'repo')"
+  url_path="$([ -n "$(__check_contains_flag "$*" 'pulls' 'p')" ] && echo 'pulls' || echo 'issues')"
 
   if ! result="$(__get_repository_web_url "$repository_path")"; then
     echo "$result"
@@ -95,19 +97,22 @@ function oi() {
   fi
 
   if [ -n "$(__check_contains_flag "$*" 'me' 'm')" ]; then
-    open "$result/issues/created_by/$GITHUB_USERNAME"
+    open "$result/$url_path/created_by/$GITHUB_USERNAME"
     return
   fi
 
   if [ -n "$(__check_contains_flag "$*" 'new' 'n')" ]; then
-    open "$result/issues/new"
+    open "$result/$url_path/new?title=${CURRENT_CLEAN_ARGUMENTS}"
     return
   fi
 
-  open "$result/pulls/issues"
-}
+  if [ -n "$(__check_contains_flag "$*" 'search' 's')" ]; then
+    open "$result/$url_path?utf8=✓&q=${CURRENT_CLEAN_ARGUMENTS}"
+    return
+  fi
 
-__rps_autocomplete oi
+  open "$result/$url_path"
+}
 
 function create-app() {
   if [[ -z "$1" ]] || [[ -z "$2" ]]; then

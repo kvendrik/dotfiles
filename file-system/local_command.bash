@@ -5,13 +5,13 @@ if [ ! -f "$DOTFILES_DIRECTORY/.local_commands" ]; then
 fi
 
 function lc() {
-  local folder_name command_name help_message command_string storage_path found_command entry_path
+  local folder_name command_name help_message second_arg storage_path found_command entry_path
 
   __strip_flags $@
 
   folder_name="$(basename `pwd`)"
   command_name="${CURRENT_CLEAN_ARGUMENTS[1]}"
-  command_string=("${CURRENT_CLEAN_ARGUMENTS[@]:1}")
+  second_arg=("${CURRENT_CLEAN_ARGUMENTS[@]:1}")
   storage_path="$DOTFILES_DIRECTORY/.local_commands"
 
   if [[ "$command_name" =~ '.+/.+' ]]; then
@@ -23,7 +23,7 @@ function lc() {
   found_command="$(cat "$storage_path" | grep -Eo "$entry_path\: .+$" | grep -Eo "\: .+" | grep -Eo "[^:]+$")"
 
   read -d '' help_message << EOF
-Usage: lc <command> [<...shell_string>]
+Usage: lc <command> [<...shell_string>|<additional_arguments>]
 
 Looks up commands from $storage_path and executes them.
 
@@ -32,13 +32,15 @@ v8/build: tools/dev/gm.py x64.release
 v8/test: out/x64.release/d8
 
 Commands
-command             the command to execute
-shell_string        command to add with 'command' as it's alias
+command                  the command to execute
+shell_string             command to add with 'command' as it's alias
+additional_arguments     arguments to add to the command
 
 Flags
---path|-p           path to the storage file
---list|-l           list the commands
---remove|-r         remove the given command
+--path|-p                path to the storage file
+--list|-l                list the commands
+--remove|-r              remove the given command
+--add|-a                 add the given shell string under the given name
 EOF
 
   if [ -n "$(__check_contains_flag "$*" 'path' 'p')" ]; then
@@ -52,7 +54,7 @@ EOF
   fi
 
   if [ -z "$command_name" ]; then
-    echo $help_message;
+    echo $help_message
     return
   fi
 
@@ -67,12 +69,12 @@ EOF
     return
   fi
 
-  if [ -n "$command_string" ]; then
+  if [ -n "$second_arg" ] && [ -n "$(__check_contains_flag "$*" 'add' 'a')" ]; then
     if [ -n "$found_command" ]; then
       echo "$entry_path is already defined. Run 'lc --list' to learn more."
       return 1
     fi
-    echo "$entry_path: $command_string" >> $storage_path
+    echo "$entry_path: $second_arg" >> $storage_path
     return
   fi
 
@@ -81,7 +83,7 @@ EOF
     return 1
   fi
 
-  eval "$found_command"
+  eval "$found_command $second_arg"
 }
 
 function __get_lc_autocomplete {
