@@ -10,6 +10,10 @@ if [ ! -d "$HOME/.zsh/zsh-autosuggestions" ]; then
   git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
 fi
 
+if [ ! -d "$HOME/z" ]; then
+  git clone git@github.com:rupa/z.git ~/z
+fi
+
 open "$DIRECTORY/CustomBasic.terminal"
 
 if ! command -v brew; then

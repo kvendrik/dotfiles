@@ -13,5 +13,6 @@ unalias gcf
 alias gcf='git_clone_find'
 
 source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOME/z/z.sh
 
 source "$HOME/.rc-extra"

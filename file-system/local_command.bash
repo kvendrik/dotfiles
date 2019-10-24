@@ -23,6 +23,7 @@ function lc() {
   found_command="$(cat "$storage_path" | grep -Eo "$entry_path\: .+$" | grep -Eo "\: .+" | grep -Eo "[^:]+$")"
 
   read -d '' help_message << EOF
+Local Commands
 Usage: lc <command> [<...shell_string>|<additional_arguments>]
 
 Looks up commands from $storage_path and executes them.
