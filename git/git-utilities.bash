@@ -46,7 +46,6 @@ alias grao="git remote add origin"
 alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
 alias gcom='git checkout master'
-alias gco='git checkout'
 
 function gcop() {
   [ -z "$1" ] && echo 'Usage: gcop <new_branch_name>' && return
@@ -127,4 +126,10 @@ EOF
   fi
 
   git diff $commit_base $branch_name
+}
+
+# Git Checkout Recent
+# Shows list of recently used branches
+function gcor() {
+  git reflog | grep -Eo 'moving from [^ ]+' | grep -Eo '[^ ]+$' | awk '!a[$0]++' | head -n 20 | awk '{if(system("[ -z \"$(git branch --list "$0")\" ]")){print}}' | fzf | xargs git checkout
 }
