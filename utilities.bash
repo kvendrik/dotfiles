@@ -79,3 +79,7 @@ function __capture_regex() {
     done
   fi
 }
+
+function __escape_backslashes() {
+  echo "$1" | sed 's/\//\\\//g'
+}
