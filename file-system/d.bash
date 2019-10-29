@@ -37,7 +37,7 @@ we will check if your path regex matches a record in history. If multiple record
 we use how recently the move occured and how frequently it occured to rank the results
 and will pick the highest matching path as the one we move you into.
 
-Isn't this (almost) the same as 'z'?
+Isn't this a more basic version of 'z'?
 Yes, it was fun to write.
 EOF
 
