@@ -15,30 +15,33 @@ function d() {
   local path_regex verbose help_message
 
   read -d '' help_message << EOF
-Directory Switcher
-Usage: d <path_or_search_query>
+Usage: d <path> [--clean|-c] [--verbose|-v] [--help|-h]
 
-cd's into a directory that matches the given regex. Uses frecency to determine what
-to switch to based on how frequently and how recently you moved into the directory. This
-allows for a quicker workflow than 'cd' offers.
+Change directories using frecency
 
-Commands
-path_or_search_query  regex of the path you'd like to move to
+Arguments
+  path                           the path you'd like to move to. if it doesn't exist we'll
+                                 use this to search through your history and will determine
+                                 where to move to using frecency.
 
 Flags
---clean|-c            cleans your history file from outdated timestamps and entries
---verbose|-v          prints debug data
---help|-h             prints this help message
+  --clean|-c                     cleans your history from outdated timestamps and entries
+  --verbose|-v                   prints debug data
+  --help|-h                      prints this help message
 
-How it works
-When you run 'd some/path' we try to 'cd' you to the given path. If that works
-we same the timestamp at which the move occured. For any moves you do after that
-we will check if your path regex matches a record in history. If multiple records match
-we use how recently the move occured and how frequently it occured to rank the results
-and will pick the highest matching path as the one we move you into.
+Example
+  1. Build up your history by moving around
+     d ~/Desktop
+     d ~/your/projects
+     d client
 
-Isn't this a more basic version of 'z'?
-Yes, it was fun to write.
+  2. Now when you navigate to a path that doesn't exist we'll search through your history
+     using frecency to determine where to move to. E.g. 'd pro' would move you to '~/your/projects'.
+
+  Interested in learning more about how this works? Try running the above with the --verbose flag.
+
+Isn't this a more basic version of github.com/rupa/z?
+  Yes, it was fun to write.
 EOF
 
   __strip_flags $*
@@ -209,5 +212,3 @@ function __d_get_frecency_points() {
     echo "\npoints: $points\n---\n"
   fi
 }
-
-
