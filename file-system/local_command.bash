@@ -57,14 +57,16 @@ Flags
   fi
 
   if [ -n "$(__check_contains_flag "$*" 'remove' 'r')" ]; then
-    local entry entries
+    local entry entries new_entries
     entries="$(cat "$storage_path")"
     entry="$(echo "$entries" | grep -Eo "$entry_path\:(.+)")"
     if [ -z "$entry" ]; then
       echo "No entry found that matches $entry_path. Run 'lc --list' to learn more."
       return 1
     fi
-    echo "${"$entries"//"$entry"/''}" | grep . > "$storage_path"
+    new_entries="$(echo "${entries//entry/""}" | grep .)"
+    # TODO: fix removal
+    echo "$new_entries" > "$storage_path"
     return
   fi
 

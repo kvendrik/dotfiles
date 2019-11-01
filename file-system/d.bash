@@ -90,7 +90,7 @@ Isn’t this a more basic version of github.com/rupa/z?
 
       if [ "$__D_CURRENT_POINTS" -eq 0 ]; then
         if [ -n "$__D_VERBOSE" ]; then
-          printf "\n$entry_path outdated, removing..."
+          printf "\n%s outdated, removing..." "$entry_path"
         fi
         entries="$(__d_remove_from_history "$entries" "$entry_path")"
       else
