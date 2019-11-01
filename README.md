@@ -16,11 +16,28 @@ In your `~/.zshrc` (if you use ZSH like I do):
 export GITHUB_USERNAME='kvendrik'
 export REPOSITORIES_DIRECTORY='path/to/all/your/cloned/repositories'
 
-source path_to_this_repo/index
+source ./dotfiles/index
+```
+
+> Note: It's possible that while using the dotfiles you'll run into errors because of dependencies that are not installed on your machine. If this happens feel free to install them using a package manager of your choosing.
+
+### Cherry-picking
+Like some things but not others? Feel free to cherry-pick the files that contain the methods or aliases that you like:
+
+```bash
+# Dependency: the utilities file contains scripting utilities
+source './dotfiles/utilities.bash'
+source './dotfiles/file/you/like.bash'
 ```
 
 ## `./bootstrap`
-By default these dotfiles are a clean collection of aliases and methods so that you don't have to fear any side effects when sourcing them. There are, however, backups and scripts in place that can be used to set up a new system with some of my own essential tools and preferences that I use on a dialy basis. This all lives in `./bootstrap` and this is what you should know about it:
+These dotfiles are a clean collection of aliases and methods so that you don't have to fear any side effects when sourcing them.
+
+There are two drawbacks to this:
+- There are utilities that I use on my machine that aren't referenced in these dotfiles but I would like to be installed on a new machine.
+- There wasn't a way for me to backup and restore config files that require a specific location on my machine.
+
+To address these two issues I created the `./bootstrap` folder:
 
 - `./bootstrap/bootstrap` is a script that can be used to bootstrap a new machine. I try to keep it pretty minimal so that it only installs the very essentials.
 - `./bootstrap/~` contains all backed up files relative to the home folder.
@@ -29,5 +46,5 @@ By default these dotfiles are a clean collection of aliases and methods so that 
 
 ## Contribute
 1. Make your changes.
-2. Run `path_to_this_repo/lint` to lint changes you make.
+2. Run `./lint` to lint changes you make.
 3. Open a PR.
