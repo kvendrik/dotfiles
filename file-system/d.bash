@@ -2,16 +2,16 @@
 
 __D_HISTORY_PATH="$DOTFILES_DIRECTORY/.d_history"
 
-if [ ! -f "$__D_HISTORY_PATH" ]; then
-  touch "$__D_HISTORY_PATH"
-fi
-
 __D_VERBOSE=''
 __D_CURRENT_POINTS=0
 __D_CURRENT_TIMESTAMPS=''
 
 unalias d
 function d() {
+  if [ ! -f "$__D_HISTORY_PATH" ]; then
+    touch "$__D_HISTORY_PATH"
+  fi
+
   local path_regex verbose help_message
 
   read -d '' help_message << EOF
