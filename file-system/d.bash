@@ -15,7 +15,7 @@ function d() {
   local path_regex verbose help_message
 
   read -d '' help_message << EOF
-Usage: d <path> [--clean|-c] [--verbose|-v] [--help|-h]
+Usage: d <path> [--verbose|-v] [--help|-h]
 
 Change directories using frecency
 
@@ -25,7 +25,6 @@ Arguments
                                  where to move to using frecency.
 
 Flags
-  --clean|-c                     cleans your history from outdated timestamps and entries
   --verbose|-v                   prints debug data
   --help|-h                      prints this help message
 
@@ -58,22 +57,18 @@ EOF
     __D_VERBOSE=''
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'clean' 'c')" ]; then
-    __d_clean_history
+  local entries
+  entries="$(cat $__D_HISTORY_PATH)"
+
+  if cd $path_regex &> /dev/null; then
+    __d_add_to_history "$entries" "$(pwd)" > "$__D_HISTORY_PATH"
     return
   fi
 
-  local entries entry_path timestamps points matches most_points_path most_points_timestamps most_points_count now_timestamp clean_entry_path
-
-  entries="$(cat $__D_HISTORY_PATH)"
+  local entry_path timestamps points matches most_points_path most_points_timestamps most_points_count now_timestamp
   matches=''
   most_points_count=0
   now_timestamp="$(date +%s)"
-
-  if cd $path_regex &> /dev/null; then
-    __d_add_to_history "$(pwd)"
-    return
-  fi
 
   while IFS= read -r entry; do
     entry_path="$(echo $entry | grep -Eo '^[^:]+')"
@@ -85,8 +80,29 @@ EOF
         echo "match $entry_path\n"
       fi
 
+      if [ ! -d "$entry_path" ]; then
+        if [ -n "$__D_VERBOSE" ]; then
+          echo "$entry_path doesn’t exist anymore, removing...\n---\n"
+        fi
+        entries="$(__d_remove_from_history "$entries" "$entry_path")"
+        continue
+      fi
+
       __d_get_frecency_points $timestamps "$now_timestamp"
       points=$__D_CURRENT_POINTS
+
+      if [ "$__D_CURRENT_POINTS" -eq 0 ]; then
+        if [ -n "$__D_VERBOSE" ]; then
+          echo "$entry_path outdated, removing..."
+        fi
+        entries="$(__d_remove_from_history "$entries" "$entry_path")"
+      else
+        entries="$(__d_replace_timestamps_for_entry "$entries" "$entry_path" "$__D_CURRENT_TIMESTAMPS")"
+      fi
+
+      if [ -n "$__D_VERBOSE" ]; then
+        echo "---\n"
+      fi
 
       if (( $points > $most_points_count )); then
         most_points_count=$points
@@ -96,67 +112,54 @@ EOF
     fi
   done < <(echo "$entries")
 
-  if [ -n "$__D_VERBOSE" ]; then
-    echo "winning path: '$most_points_path' (if empty it will add)\n"
-  fi
-
   if [ -n "$most_points_path" ]; then
+    if [ -n "$__D_VERBOSE" ]; then
+      echo "winning path: '$most_points_path'\n"
+    fi
+
     if cd $most_points_path; then
-      echo $entries | sed "s/$most_points_timestamps/$most_points_timestamps$now_timestamp,/" > "$__D_HISTORY_PATH"
+       __d_replace_timestamps_for_entry "$entries" "$most_points_path" "$most_points_timestamps$now_timestamp," > "$__D_HISTORY_PATH"
       return
     else
-      echo $entries | sed "s/$most_points_path:$most_points_timestamps//" > "$__D_HISTORY_PATH"
-      echo "'$path_regex' matched '$most_points_path' but path doesn't exist."
-      return 1
+      echo "'$path_regex' matched '$most_points_path' but could not cd to it. Unknown error (exit code $?)."
+      echo "$entries" > "$__D_HISTORY_PATH"
+      return $?
     fi
   fi
 
   echo "'cd $path_regex' failed and no history matches for '$path_regex'."
+  echo "$entries" > "$__D_HISTORY_PATH"
   return 1
+}
+
+function __d_replace_timestamps_for_entry() {
+  local entries clean_entry_path new_timestamps
+  entries="$1"
+  clean_entry_path="$(__escape_backslashes $2)"
+  new_timestamps="$3"
+  echo $entries | sed -E "s/($clean_entry_path:).+/\1$new_timestamps/"
 }
 
 function __d_add_to_history() {
   local entry_path clean_entry_path entries now_unix
 
-  entry_path="$1"
+  entries="$1"
+  entry_path="$2"
   clean_entry_path="$(__escape_backslashes $entry_path)"
   now_unix="$(date +%s)"
-  entries="$(cat $__D_HISTORY_PATH)"
 
   if [ -n "$(echo $entries | grep $entry_path)" ]; then
-    echo $entries | sed "s/$clean_entry_path:/$clean_entry_path:$now_unix,/" > "$__D_HISTORY_PATH"
+    echo $entries | sed "s/$clean_entry_path:/$clean_entry_path:$now_unix,/"
   else
-    echo "$entries\n$entry_path:$now_unix,\n" > "$__D_HISTORY_PATH"
+    echo "$entries\n$entry_path:$now_unix,\n"
   fi
 }
 
-function __d_clean_history() {
-  local entries entry_path timestamps escaped_path escaped_entry now_timestamp
-  entries="$(cat $__D_HISTORY_PATH)"
-  now_timestamp="$(date +%s)"
-
-  while IFS= read -r entry; do
-    if [ -z "$entry" ]; then
-      continue
-    fi
-
-    entry_path="$(echo $entry | grep -Eo '^[^:]+')"
-    timestamps="$(echo $entry | grep -Eo '[^:]+$')"
-    escaped_path="$(__escape_backslashes "$entry_path")"
-    escaped_entry="$escaped_path:$timestamps"
-
-    __d_get_frecency_points $timestamps "$now_timestamp"
-
-    if [ "$__D_CURRENT_POINTS" -eq 0 ]; then
-      # Entry completely outdated, clean up all
-      entries="$(echo $entries | sed "s/$escaped_entry//")"
-    else
-      # Clean up outdated timestamps
-      entries="$(echo $entries | sed "s/$escaped_entry/$escaped_path:$__D_CURRENT_TIMESTAMPS/")"
-    fi
-  done < <(echo "$entries")
-
-  echo $entries | grep -Eo '.+' > "$__D_HISTORY_PATH"
+function __d_remove_from_history() {
+  local entries clean_entry_path
+  entries="$1"
+  clean_entry_path="$(__escape_backslashes $2)"
+  echo $entries | sed -E "s/$clean_entry_path:.+//" | grep -Eo '.+'
 }
 
 # Usage: __d_get_frecency_points <comma_seperated_timestamps_string> <now_unix_timestamp>
@@ -209,6 +212,6 @@ function __d_get_frecency_points() {
   __D_CURRENT_POINTS=$points
 
   if [ -n "$__D_VERBOSE" ]; then
-    echo "\npoints: $points\n---\n"
+    echo "\npoints: $points"
   fi
 }
