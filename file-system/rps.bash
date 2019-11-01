@@ -15,8 +15,12 @@ function rps() {
   fi
 }
 
+function __rps_autocomplete_insert() {
+  ls "$REPOSITORIES_DIRECTORY"
+}
+
 function __rps_autocomplete() {
-  complete -W "$(ls "$REPOSITORIES_DIRECTORY")" "$1"
+  complete -F __rps_autocomplete_insert "$1"
 }
 
 alias r='rps'
