@@ -74,7 +74,7 @@ Isn’t this a more basic version of github.com/rupa/z?
       timestamps="$(echo "$entry" | grep -Eo '[^:]+$')"
 
       if [ -n "$__D_VERBOSE" ]; then
-        printf "match %s\n" "$entry_path"
+        printf "match %s\n\n" "$entry_path"
       fi
 
       if [ ! -d "$entry_path" ]; then
@@ -90,7 +90,7 @@ Isn’t this a more basic version of github.com/rupa/z?
 
       if [ "$__D_CURRENT_POINTS" -eq 0 ]; then
         if [ -n "$__D_VERBOSE" ]; then
-          echo "$entry_path outdated, removing..."
+          printf "\n$entry_path outdated, removing..."
         fi
         entries="$(__d_remove_from_history "$entries" "$entry_path")"
       else
@@ -98,7 +98,7 @@ Isn’t this a more basic version of github.com/rupa/z?
       fi
 
       if [ -n "$__D_VERBOSE" ]; then
-        printf "---\n"
+        printf "\n---\n\n"
       fi
 
       if ((points > most_points_count)); then
@@ -124,7 +124,12 @@ Isn’t this a more basic version of github.com/rupa/z?
     fi
   fi
 
-  echo "'cd $path_regex' failed and no history matches for '$path_regex'."
+  echo "Could not find '$path_regex'."
+
+  if [ -n "$__D_VERBOSE" ]; then
+    echo "'cd $path_regex' failed and no history matches for '$path_regex'."
+  fi
+
   echo "$entries" > "$__D_HISTORY_PATH"
   return 1
 }
@@ -138,15 +143,14 @@ function __d_replace_timestamps_for_entry() {
 }
 
 function __d_add_to_history() {
-  local entry_path clean_entry_path entries now_unix
+  local entry_path entries now_unix
 
   entries="$1"
   entry_path="$2"
-  clean_entry_path="$(__escape_backslashes "$entry_path")"
   now_unix="$(date +%s)"
 
   if echo "$entries" | grep -q "$entry_path"; then
-    echo "${entries//"$clean_entry_path:"/"$clean_entry_path:$now_unix,"}"
+    echo "${entries//"$entry_path:"/"$entry_path:$now_unix,"}"
   else
     printf "%s\n%s:%s,\n" "$entries" "$entry_path" "$now_unix"
   fi
@@ -173,7 +177,7 @@ function __d_get_frecency_points() {
   timestamp_entries="$(echo "$timestamps" | grep -Eo '[^,]+')"
 
   if [ -n "$__D_VERBOSE" ]; then
-    printf "now: %s\ntimestamps: %s\n" "$now_unix" "$timestamps"
+    printf "now: %s\ntimestamps: %s\n\n" "$now_unix" "$timestamps"
   fi
 
   while IFS= read -r timestamp; do
