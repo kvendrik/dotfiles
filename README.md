@@ -22,11 +22,12 @@ source ./dotfiles/index
 > Note: It's possible that while using the dotfiles you'll run into errors because of dependencies that are not installed on your machine. If this happens feel free to install them using a package manager of your choosing.
 
 ### Cherry-picking
-Like some things but not others? Feel free to cherry-pick the files that contain the methods or aliases that you like:
+Like some things but not others? Feel free to cherry-pick the files that contain the methods and/or aliases that you like:
 
 ```bash
-# Dependency: the utilities file contains scripting utilities
-source './dotfiles/utilities.bash'
+# import the foundation (contains basic settings and utilities)
+source './dotfiles/foundation/index.bash'
+# import files you like
 source './dotfiles/file/you/like.bash'
 ```
 

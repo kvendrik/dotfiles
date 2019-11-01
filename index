@@ -1,12 +1,9 @@
 #!/bin/bash
 # shellcheck source=./index
 
-autoload bashcompinit
-bashcompinit
-
 DOTFILES_DIRECTORY=$(dirname "$0")
 
-source "$DOTFILES_DIRECTORY/utilities.bash"
+source "$DOTFILES_DIRECTORY/foundation/index.bash"
 source "$DOTFILES_DIRECTORY/file-system/index.bash"
 source "$DOTFILES_DIRECTORY/git/index.bash"
 source "$DOTFILES_DIRECTORY/images.bash"
