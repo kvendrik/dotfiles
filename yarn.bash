@@ -46,8 +46,6 @@ function yre {
   fi
 }
 
-complete -F __get_npm_package_scripts_autocomplete yre
-
 function yr {
   # shellcheck disable=SC2068
   yarn run $@

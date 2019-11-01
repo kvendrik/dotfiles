@@ -8,16 +8,8 @@ function __git_current_branch() {
   git branch | grep '\*' | cut -d ' ' -f2
 }
 
-function __git_current_repo_name() {
-  echo -e "$(basename "$(git rev-parse --show-toplevel)")"
-}
-
 function __git_check_uncommited_changes() {
   git diff-index --quiet HEAD -- || echo "uncommited changes found"
-}
-
-function __git_branch_exists() {
-  git branch | grep "$1"
 }
 
 function __git_get_remote_url() {
@@ -46,16 +38,6 @@ alias grao="git remote add origin"
 alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
 alias gcom='git checkout master'
-
-function gcop() {
-  [ -z "$1" ] && echo 'Usage: gcop <new_branch_name>' && return
-  gco -b "$1" && gacp
-}
-
-function gcopl() {
-  [ -z "$1" ] && echo 'Usage: gcopl <branch_name>' && return
-  git fetch origin "$1" && git checkout "$1" && git merge "origin/$1"
-}
 
 function ub() {
   # Updates base_branch and merges it into your current branch

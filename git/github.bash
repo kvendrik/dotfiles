@@ -4,10 +4,6 @@ if [ -z "$GITHUB_USERNAME" ]; then
   echo "Warning: GITHUB_USERNAME environment variable not set. Some Github tools might not work as expected. (Thrown by $0)"
 fi
 
-function __get_http_status_code() {
-  curl -I "$1" | grep -Eo "Status\: \d+" | grep -Eo "\d+"
-}
-
 # Get a repository's web URL
 # Usage: __get_repository_web_url [<repository_path_or_name>] [<remote_name>]
 function __get_repository_web_url() {
@@ -66,19 +62,6 @@ function opr() {
   open "$repo_url/compare/$base_branch_name...$pr_branch_name"
 }
 
-# Open a list of your PRs on <remote_name> (origin by default)
-# Usage: oprs [<repository_name>] [<remote_name>]
-function oprs() {
-  local repo_url
-  if ! repo_url="$(__get_repository_web_url "$1" "$2")"; then
-    echo "$repo_url"
-    return
-  fi
-  open "$repo_url/pulls/$GITHUB_USERNAME"
-}
-
-__rps_autocomplete oprs
-
 function oi() {
   local result repository_path url_path
 
@@ -115,21 +98,8 @@ function oi() {
 }
 
 function create-app() {
-  if [[ -z "$1" ]] || [[ -z "$2" ]]; then
+  if [ -z "$1" ] || [ -z "$2" ]; then
     echo 'Usage: create-app <template_name> <app_name>'
-    return
-  fi
-
-  local status_code
-  status_code="$(__get_http_status_code "https://github.com/$GITHUB_USERNAME/project-template-$1")"
-
-  if [ "$status_code" -eq "404" ]; then
-    echo "Project template '$1' does not exist"
-    return
-  fi
-
-  if [ "$status_code" != "200" ]; then
-    echo "Something went wrong. Make sure you have an internet connection."
     return
   fi
 
