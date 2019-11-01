@@ -66,10 +66,11 @@ function oi() {
   local result repository_path url_path
 
   if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
-    echo 'Open Github list of issues or pull requests.\nUsage: oi [--me|-m] [--new|-n] [--search|-s] [-p|--pulls] [--repo=<path>].'
+    printf 'Open Github list of issues or pull requests.\nUsage: oi [--me|-m] [--new|-n] [--search|-s] [-p|--pulls] [--repo=<path>].'
     return
   fi
 
+  # shellcheck disable=SC2086,SC2048
   __strip_flags $*
   repository_path="$(__extract_flag_value "$*" 'repo')"
   url_path="$([ -n "$(__check_contains_flag "$*" 'pulls' 'p')" ] && echo 'pulls' || echo 'issues')"

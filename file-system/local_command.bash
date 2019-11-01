@@ -5,25 +5,36 @@ if [ ! -f "$DOTFILES_DIRECTORY/.local_commands" ]; then
 fi
 
 function lc() {
-  local folder_name command_name help_message second_arg storage_path found_command entry_path
+  local folder_name command_name second_arg storage_path found_command entry_path
 
-  __strip_flags $@
+  # shellcheck disable=SC2086,SC2048
+  __strip_flags $*
 
-  folder_name="$(basename `pwd`)"
+  folder_name="$(basename "$(pwd)")"
   command_name="${CURRENT_CLEAN_ARGUMENTS[1]}"
   second_arg=("${CURRENT_CLEAN_ARGUMENTS[@]:1}")
   storage_path="$DOTFILES_DIRECTORY/.local_commands"
 
-  if [[ "$command_name" =~ '.+/.+' ]]; then
+  if [[ "$command_name" =~ .+\/.+ ]]; then
     entry_path="$command_name"
   else
     entry_path="$folder_name/$command_name"
   fi
 
-  found_command="$(cat "$storage_path" | grep -Eo "$entry_path\: .+$" | grep -Eo "\: .+" | grep -Eo "[^:]+$")"
+  found_command="$(grep -Eo "$entry_path\: .+$" "$storage_path" | grep -Eo "\: .+" | grep -Eo "[^:]+$")"
 
-  read -d '' help_message << EOF
-Local Commands
+  if [ -n "$(__check_contains_flag "$*" 'path' 'p')" ]; then
+    echo "$storage_path"
+    return
+  fi
+
+  if [ -n "$(__check_contains_flag "$*" 'list' 'l')" ]; then
+    cat "$storage_path"
+    return
+  fi
+
+  if [ -z "$command_name" ]; then
+    echo "Local Commands
 Usage: lc <command> [<...shell_string>|<additional_arguments>]
 
 Looks up commands from $storage_path and executes them.
@@ -41,41 +52,28 @@ Flags
 --path|-p                path to the storage file
 --list|-l                list the commands
 --remove|-r              remove the given command
---add|-a                 add the given shell string under the given name
-EOF
-
-  if [ -n "$(__check_contains_flag "$*" 'path' 'p')" ]; then
-    echo $storage_path
-    return
-  fi
-
-  if [ -n "$(__check_contains_flag "$*" 'list' 'l')" ]; then
-    cat $storage_path
-    return
-  fi
-
-  if [ -z "$command_name" ]; then
-    echo $help_message
+--add|-a                 add the given shell string under the given name"
     return
   fi
 
   if [ -n "$(__check_contains_flag "$*" 'remove' 'r')" ]; then
-    local entry
-    entry="$(cat "$storage_path" | grep -Eo "$entry_path\:(.+)")"
+    local entry entries
+    entries="$(cat "$storage_path")"
+    entry="$(echo "$entries" | grep -Eo "$entry_path\:(.+)")"
     if [ -z "$entry" ]; then
       echo "No entry found that matches $entry_path. Run 'lc --list' to learn more."
       return 1
     fi
-    echo "${"$(cat $storage_path)"/"$entry"/}" | grep . > "$storage_path"
+    echo "${"$entries"//"$entry"/''}" | grep . > "$storage_path"
     return
   fi
 
-  if [ -n "$second_arg" ] && [ -n "$(__check_contains_flag "$*" 'add' 'a')" ]; then
+  if [ -n "${second_arg[*]}" ] && [ -n "$(__check_contains_flag "$*" 'add' 'a')" ]; then
     if [ -n "$found_command" ]; then
       echo "$entry_path is already defined. Run 'lc --list' to learn more."
       return 1
     fi
-    echo "$entry_path: $second_arg" >> $storage_path
+    echo "$entry_path: ${second_arg[*]}" >> "$storage_path"
     return
   fi
 
@@ -84,15 +82,15 @@ EOF
     return 1
   fi
 
-  eval "$found_command $second_arg"
+  eval "$found_command ${second_arg[*]}"
 }
 
 function __get_lc_autocomplete {
-  local storage_path all_commands folder_commands folder_name
-  folder_name="$(basename `pwd`)"
+  local storage_path folder_name
+  folder_name="$(basename "$(pwd)")"
   storage_path="$DOTFILES_DIRECTORY/.local_commands"
-  cat "$storage_path" | grep -Eo '[^\:]+\:' | grep -Eo '^[^\:]+'
-  cat "$storage_path" | grep -Eo "$folder_name/[^\:]+\:" | grep -Eo '^[^\:]+' | sed s/"$folder_name\/"//g
+  grep -Eo '[^\:]+\:' | grep -Eo '^[^\:]+' < "$storage_path"
+  grep -Eo "$folder_name/[^\:]+\:" | grep -Eo '^[^\:]+' | sed s/"$folder_name\/"//g < "$storage_path"
 }
 
 complete -F __get_lc_autocomplete lc

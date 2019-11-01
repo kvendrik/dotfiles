@@ -54,13 +54,14 @@ function yr {
 complete -F __get_npm_package_scripts_autocomplete yr
 
 function yu {
+  # shellcheck disable=SC2068
   yarn remove $@
 }
 
 complete -F __get_package_dependencies yu
 
 function yua {
-  yarn remove $1 && yarn add $1
+  yarn remove "$1" && yarn add "$1"
 }
 
 complete -F __get_package_dependencies yua

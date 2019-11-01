@@ -42,8 +42,9 @@ alias gcom='git checkout master'
 function ub() {
   # Updates base_branch and merges it into your current branch
   # Usage: ub [<base_branch>]
-  local base_branch='master'
-  local original_branch="$(__git_current_branch)"
+  local base_branch original_branch
+  base_branch='master'
+  original_branch="$(__git_current_branch)"
   if [ "$1" != "" ]; then
     base_branch="$1"
   fi
@@ -78,9 +79,10 @@ function reset-branch() {
 }
 
 function branch-diff() {
-  local commit_base branch_name base_branch help_message
-  read -d '' help_message << EOF
-Usage: branch-diff [<base_branch>] [<branch_name>] [--files|-f]
+  local commit_base branch_name base_branch
+
+  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
+    echo 'Usage: branch-diff [<base_branch>] [<branch_name>] [--files|-f]
 
 Get the diff between a branch and some base branch.
 
@@ -89,25 +91,22 @@ base_branch            name of the branch to compare to. master by default.
 branch_name            name of the branch to compare. HEAD by default.
 
 Flags
---files|-f             only show file paths
-EOF
-
-  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
-    echo $help_message
+--files|-f             only show file paths'
     return
   fi
 
+  # shellcheck disable=SC2086,SC2048
   __strip_flags $*
   base_branch="${CURRENT_CLEAN_ARGUMENTS[1]:-master}"
   branch_name="${CURRENT_CLEAN_ARGUMENTS[2]:-HEAD}"
-  commit_base="$(git merge-base $base_branch $branch_name)"
+  commit_base="$(git merge-base "$base_branch" "$branch_name")"
 
   if [ -n "$(__check_contains_flag "$*" 'files' 'f')" ]; then
-    git diff --name-only $commit_base $branch_name
+    git diff --name-only "$commit_base" "$branch_name"
     return
   fi
 
-  git diff $commit_base $branch_name
+  git diff "$commit_base" "$branch_name"
 }
 
 # Git Checkout Recent
