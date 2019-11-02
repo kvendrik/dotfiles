@@ -4,6 +4,28 @@ if [ -z "$GITHUB_USERNAME" ]; then
   echo "Warning: GITHUB_USERNAME environment variable not set. Some Github tools might not work as expected. (Thrown by $0)"
 fi
 
+function __git_is_repository() {
+  git -C "$1" rev-parse --is-inside-work-tree &> /dev/null
+}
+
+function __git_get_remote_url() {
+  local remote_name remote_url repository_path
+  remote_name=$([ -n "$1" ] && echo "$1" || echo origin)
+  repository_path="$2"
+  if [ -n "$repository_path" ]; then
+    remote_url="$(git -C "$repository_path" config --get remote."${remote_name}".url)"
+  else
+    remote_url="$(git config --get remote."${remote_name}".url)"
+  fi
+  echo "$remote_url"
+}
+
+function __git_ssh_to_web_url() {
+  local base
+  base=$(echo "$1" | sed -e "s/.git$//" -e "s/^git\@//" -e "s/\(.*[:/].*\)/\1/" -e "s/https\:\/\///" -e "s/\:/\//")
+  echo "https://$base"
+}
+
 # Get a repository's web URL
 # Usage: __get_repository_web_url [<repository_path_or_name>] [<remote_name>]
 function __get_repository_web_url() {

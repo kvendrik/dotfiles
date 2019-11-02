@@ -3,7 +3,6 @@
 
 FILE_SYSTEM_DIR=$(dirname "$0")
 
-source "$FILE_SYSTEM_DIR/rps.bash"
 source "$FILE_SYSTEM_DIR/miscellaneous.bash"
 source "$FILE_SYSTEM_DIR/local_command.bash"
 source "$FILE_SYSTEM_DIR/d.bash"
