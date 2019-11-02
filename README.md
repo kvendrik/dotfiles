@@ -50,6 +50,6 @@ To address these two issues I created the `./bootstrap` folder:
 2. Changes should:
     - Contain no big side-effects<br>_Don't: automatically install dependencies. Do: Check if env required variable is set._
     - Prefix utility methods with a double underscore<br>_For example: `__some-utility`_
-    - Keep utility methods local to the file they're used in as much as possible<br>_If they're used across the codebase add them to `./foundation`. The idea here is to only require consumers to have to import `./foundation` and to then be able to source any other file (cherry-picking)._
+    - Keep utility methods local to the file they're used in as much as possible<br>_If they're used across the codebase add them to `./foundation`. The idea here is to only require consumers to have to import `./foundation` and to then be able to source any other file ([cherry-picking](#cherry-picking))._
 3. Run `./lint` to lint changes you make.
 4. Open a PR.
