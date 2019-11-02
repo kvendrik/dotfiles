@@ -45,7 +45,7 @@ To address these two issues I created the `./bootstrap` folder:
 - `./bootstrap/~/.zshrc` is my RC file. You'll notice that it doesn't contain any info that is specific to me. This info I keep in a seperate file called `~/.rc-config` (only exists on my machine) and gets sourced by my RC. The RC file also imports an `~/.rc-extra` file (only exists on my machine) that contains setup logic that is very specific to my own workflow.
 - `./bootstrap/config-backups` is a utility that helps me back up these files from my machine and to restore them as needed. Run `./bootstrap/config-backups` for more info on how this utility works.
 
-## Contribute
+## 🏗️ Contribute
 1. Make your changes.
 2. Changes should:
     - Contain no big side-effects<br>_Don't: automatically install dependencies. Do: Check if env required variable is set._
