@@ -3,7 +3,7 @@
 These dotfiles..
 - **Are a collection of utilities to speed up your workflow**<br>_Optimized for a front-end web development workflow._
 - **Contain no side-effects**<br>_They don't make any changes to your machine without explicit request._
-- **Are configurable where needed**<br>_Disclaimer: these dotfiles are primarely maintained for personal use so I can't guarantee everything will work out of the box._
+- **Are configurable where needed**<br>_As much as possible. These dotfiles are primarely maintained for personal use so I can't guarantee everything will work out of the box._
 
 Wait, there's more...
 - [Option for installation of other utilities, configurations, and/or visual optimizations](#bootstrap)
