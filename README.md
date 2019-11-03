@@ -11,7 +11,7 @@ Wait, there's more...
 - [Cherry-picking option available](#cherry-picking)
 
 ## What's in it?
-Most of the aliases and methods should be pretty self-explanatory. Everything is grouped by category and either has self-explanatory code, a usage message, or a comment that that explains what it does and why. If you see anything that is unclear feel free to clear it up by e.g. adding an extra comment and opening up a pull request.
+Most of the aliases and methods should be pretty self-explanatory. Everything is grouped by category and either has self-explanatory code, a usage message, or a comment that explains what it does and why. If you see anything that is unclear feel free to clear it up by e.g. adding an extra comment and opening up a pull request. If you like some things but not others you can also [cherry-pick](#cherry-picking) the parts you like or fork the repository, make changes, and [open up a PR](#️-contribute).
 
 ## Setup
 1. Clone the dotfiles to your home folder (`~`).
