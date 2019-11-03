@@ -3,12 +3,14 @@
 These dotfiles...
 - **Are a collection of utilities to speed up your workflow**<br>_Optimized for a front-end web development workflow._
 - **Contain no side-effects**<br>_They don't make any changes to your machine without explicit request._
-- **Are configurable where needed**<br>_As much as possible. These dotfiles are primarely maintained for personal use so I can't guarantee everything will work out of the box._
+- **Are configurable where needed**<br>_They don't contain info that's specific to myself and are configurable using env variables._
 - **Work best with [Oh My ZSH](https://github.com/robbyrussell/oh-my-zsh)**<br>_As that's what I use myself._
 
 Wait, there's more...
 - [Option for bootstrapping a new machine and backing up/restoring location dependent config files](#bootstrap)
 - [Cherry-picking option available](#cherry-picking)
+
+> Disclaimer: These dotfiles are primarely maintained for personal use so I can't guarantee everything will work out of the box. It's possible you'll run into errors because you use a different shell, have missing dependencies, or because of other reasons. Feel free to resolve the errors in whatever way is most convenient and optionally [contribute](#️-contribute) them back to here.
 
 ## What's in it?
 Most of the aliases and methods should be pretty self-explanatory. Everything is grouped by category and either has self-explanatory code, a usage message, or a comment that explains what it does and why. If you see anything that is unclear feel free to clear it up by e.g. adding an extra comment and opening up a pull request. If you like some things but not others you can also [cherry-pick](#cherry-picking) the parts you like or fork the repository, make changes, and [open up a PR](#️-contribute).
@@ -17,15 +19,13 @@ Most of the aliases and methods should be pretty self-explanatory. Everything is
 1. Clone the dotfiles to your home folder (`~`).
 2. Configure the files using environment variables and source the `index` file:
 
-In your `~/.zshrc` (if you use ZSH like I do):
+In your RC file: (`~/.zshrc` if you use ZSH):
 ```bash
 export GITHUB_USERNAME='kvendrik'
 export REPOSITORIES_DIRECTORY='path/to/all/your/cloned/repositories'
 
 source ./dotfiles/index
 ```
-
-> Note: It's possible that while using the dotfiles you'll run into errors because of dependencies that are not installed on your machine. If this happens feel free to install them using a package manager of your choosing.
 
 ### Cherry-picking
 Like some things but not others? Feel free to cherry-pick the files that contain the methods and/or aliases that you like:
