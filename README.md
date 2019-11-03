@@ -1,11 +1,16 @@
 [![CircleCI](https://circleci.com/gh/kvendrik/dotfiles.svg?style=svg)](https://circleci.com/gh/kvendrik/dotfiles)
 
-## Good to know
-I try to keep my dotfiles a clean collection of aliases and methods that speed up my workflow without any side-effects (no configuration or settings changes without implicit request). They don't make any changes to how your command line works or looks as I leave most of those things to [Oh My ZSH](https://ohmyz.sh) and some other utilities and config files that won't be installed by default (see [`./bootstrap`](#bootstrap) for more info).
+These dotfiles..
+- **Are a collection of utilities to speed up your workflow**<br>_Optimized for a front-end web development workflow._
+- **Contain no side-effects**<br>_They don't make any changes to your machine without explicit request._
+- **Are configurable where needed**<br>_Disclaimer: these dotfiles are primarely maintained for personal use so I can't guarantee everything will work out of the box._
 
-Most of the aliases and methods should be pretty self-explanatory: everything is grouped by category and either has self-explanatory code, a usage message, or a comment that that explains what it does and why. If you see anything that is unclear feel free to clear it up by e.g. adding an extra comment and opening up a pull request.
+Wait, there's more...
+- [Option for installation of other utilities, configurations, and/or visual optimizations](#bootstrap)
+- [Cherry-picking option available](#cherry-picking)
 
-Everything is reusable as I keep things like usernames etc configurable, but as everything in here is primarely built and maintained for personal use I can't guarantee that everything will be relevant to you or will work out of the box. Feel free to make changes as needed and optionally contribute them back to here, to cherry-pick some methods or aliases that you like and add them to your own setup or to just use this for inspiration.
+## What's in it?
+Most of the aliases and methods should be pretty self-explanatory. Everything is grouped by category and either has self-explanatory code, a usage message, or a comment that that explains what it does and why. If you see anything that is unclear feel free to clear it up by e.g. adding an extra comment and opening up a pull request.
 
 ## Setup
 1. Clone the dotfiles to your home folder (`~`).
