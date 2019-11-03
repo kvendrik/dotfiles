@@ -47,7 +47,7 @@ To address these two issues I created the `./bootstrap` folder:
 - `./bootstrap/bootstrap` is a script that can be used to bootstrap a new machine. I try to keep it pretty minimal so that it only installs the very essentials.
 - `./bootstrap/~` contains all backed up files relative to the home folder.
 - `./bootstrap/~/.zshrc` is my RC file. You'll notice that it doesn't contain any info that is specific to me. This info I keep in a seperate file called `~/.rc-config` (only exists on my machine) and gets sourced by my RC. The RC file also imports an `~/.rc-extra` file (only exists on my machine) that contains setup logic that is very specific to my own workflow.
-- `./bootstrap/config-backups` is a utility that helps me back up these files from my machine and to restore them as needed. Run `./bootstrap/config-backups` for more info on how this utility works.
+- `./bootstrap/config-backups` is a utility that helps me back-up these files from my machine and to restore them as needed. Run `./bootstrap/config-backups` for more info on how this utility works.
 
 ## 🏗️ Contribute
 1. Make your changes.
