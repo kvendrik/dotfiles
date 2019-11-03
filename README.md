@@ -4,9 +4,10 @@ These dotfiles..
 - **Are a collection of utilities to speed up your workflow**<br>_Optimized for a front-end web development workflow._
 - **Contain no side-effects**<br>_They don't make any changes to your machine without explicit request._
 - **Are configurable where needed**<br>_As much as possible. These dotfiles are primarely maintained for personal use so I can't guarantee everything will work out of the box._
+- **Work best with [Oh My ZSH](https://github.com/robbyrussell/oh-my-zsh)**<br>_As that's what I use myself._
 
 Wait, there's more...
-- [Option for installation of other utilities, configurations, and/or visual optimizations](#bootstrap)
+- [Option for bootstrapping a new machine and backing up/restoring location dependent config files](#bootstrap)
 - [Cherry-picking option available](#cherry-picking)
 
 ## What's in it?
@@ -37,9 +38,7 @@ source './dotfiles/file/you/like.bash'
 ```
 
 ## `./bootstrap`
-These dotfiles are a clean collection of aliases and methods so that you don't have to fear any side effects when sourcing them.
-
-There are two drawbacks to this:
+These dotfiles are a clean collection of aliases and methods so that you don't have to fear any side effects when sourcing them. There are two drawbacks to this:
 - There are utilities that I use on my machine that aren't referenced in these dotfiles but I would like to be installed on a new machine.
 - There wasn't a way for me to backup and restore config files that require a specific location on my machine.
 
