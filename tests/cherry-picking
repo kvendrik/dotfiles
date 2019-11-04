@@ -5,15 +5,16 @@ directory_path=$(dirname "$0")
 source "$directory_path/_utilities.bash";
 
 all_scripts="$(get_all_scripts)"
+error=''
 
 for script_path in $all_scripts; do
-  if echo "$script_path" | grep -q 'foundation'; then
+  if echo "$script_path" | grep -Eq '(foundation|tests)'; then
     continue
   fi
 
-  private_methods="$(grep -Eo 'function \_\_[^ (]+' "$script_path" | grep -Eo '[^ ]+$')"
+  method_names="$(grep -Eo 'function [^ \(]+' "$script_path" | grep -Eo '[^ ]+$')"
 
-  for method_name in $private_methods; do
+  for method_name in $method_names; do
     if [ -z "$method_name" ]; then
       continue
     fi
@@ -22,17 +23,18 @@ for script_path in $all_scripts; do
       if echo "$script_path_to_check" | grep -Eq "(foundation|$(basename "$script_path"))"; then
         continue
       fi
-      if grep -q "$method_name" "$script_path_to_check"; then
-        echo "
-$method_name called in $script_path_to_check. Defined in $script_path.
-
-Private methods should only be used in the script they're defined in or they should be defined within the ./foundation folder.
-
-This is to ensure the dotfiles stay cherry-pickable. A consumer should only have to source ./foundation/index.bash and then be able to
-source any other script.
-"
-        exit 1
+      if grep -Eq "[ \`\(]+?$method_name($|;|&| &|\`|\))" "$script_path_to_check"; then
+        error="$error\n'$method_name' called in $script_path_to_check. Defined in $script_path."
       fi
     done
   done
 done
+
+if [ -n "$error" ]; then
+  echo -e "$error
+
+Why am I seeing this?
+Private methods should only be used in the script they're defined in or they should be defined within the ./foundation folder. This is to ensure the dotfiles stay cherry-pickable. A consumer should only have to source ./foundation/index.bash and then be able to
+source any other script. See the 'Cherry-picking' section in $dotfiles_root/README.md for more info."
+exit 1
+fi
