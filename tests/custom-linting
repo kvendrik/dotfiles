@@ -1,0 +1,49 @@
+#!/bin/bash
+# shellcheck source=./tests/custom-linting
+
+directory_path=$(dirname "$0")
+source "$directory_path/_utilities.bash";
+
+all_scripts="$(get_all_scripts)"
+error=''
+
+function add_error {
+  local script_path linting_rule error_content
+  script_path="$1"
+  linting_rule="$2"
+  error_content="$3"
+  error="$error$linting_rule violation in $script_path\n\t$error_content\n\n"
+}
+
+function rule_functions_use_function_keyword {
+  local current_script script_path violators list
+  current_script="$1"
+  script_path="$2"
+  violators="$(echo "$current_script" | grep -Eo "^.+\(\)\s?\{" | grep -v 'function' | grep -Eo '^[^\(]+')"
+  if [ -n "$violators" ]; then
+    list="$(echo "$violators" | awk '{print $0", "}')"
+    add_error "$script_path" "functions_use_function_keyword" "Contains functions that don't use the 'function' keyword: $list"
+  fi
+}
+
+function rule_private_functions_use_double_underscore {
+  local current_script script_path violators list
+  current_script="$1"
+  script_path="$2"
+  violators="$(echo "$current_script" | grep -Eo 'function \_[^\(\_]+')"
+  if [ -n "$violators" ]; then
+    list="$(echo "$violators" | grep -Eo '[^ ]+$' | awk '{print $0", "}')"
+    add_error "$script_path" "private_functions_use_double_underscore" "Contains functions that use a single underscore. Please use a double underscore to define private functions: $list"
+  fi
+}
+
+while IFS= read -r script_path; do
+  current_script="$(cat "$script_path")"
+  rule_functions_use_function_keyword "$current_script" "$script_path"
+  rule_private_functions_use_double_underscore "$current_script" "$script_path"
+done < <(echo "$all_scripts")
+
+if [ -n "$error" ]; then
+  echo -e "$error"
+  exit 1
+fi

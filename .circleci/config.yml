@@ -1,16 +1,22 @@
 version: 2
 jobs:
-  lint:
+  test:
     docker:
       - image: koalaman/shellcheck-alpine:stable
     steps:
       - checkout
       - run:
           name: Linting
-          command: ./lint
+          command: ./tests/lint
+      - run:
+          name: Custom Linting
+          command: ./tests/custom-linting
+      - run:
+          name: Cherry-picking
+          command: ./tests/cherry-picking
 
 workflows:
   version: 2
   workflow:
     jobs:
-      - lint
+      - test

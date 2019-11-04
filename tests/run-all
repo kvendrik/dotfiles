@@ -1,0 +1,7 @@
+#!/bin/bash
+
+directory_path=$(dirname "$0")
+
+"$directory_path/lint"
+"$directory_path/cherry-picking"
+"$directory_path/custom-linting"

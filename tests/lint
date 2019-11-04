@@ -1,0 +1,19 @@
+#!/bin/bash
+# shellcheck source=./tests/lint
+
+if [ -z "$(command -v shellcheck)" ]; then
+  if ! brew install shellcheck; then
+    echo 'ShellCheck not found and failed to install through brew. Check shellcheck.net for instructions on how to install ShellCheck.'
+    exit 1
+  fi
+fi
+
+directory_path=$(dirname "$0")
+source "$directory_path/_utilities.bash";
+
+if [ -n "$VERBOSE" ]; then
+  echo Checking files:
+  get_all_scripts
+fi
+
+get_all_scripts 'shellcheck {}'
