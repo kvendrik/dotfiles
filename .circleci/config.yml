@@ -2,8 +2,11 @@ version: 2
 jobs:
   test:
     docker:
-      - image: koalaman/shellcheck-alpine:stable
+      - image: homebrew/brew
     steps:
+      - run:
+          name: Install Dependencies
+          command: brew install shellcheck
       - checkout
       - run:
           name: Linting
