@@ -5,16 +5,15 @@ jobs:
       - image: koalaman/shellcheck-alpine:stable
     steps:
       - checkout
-      - run: pwd && ls && ls tests && tests/lint
       - run:
           name: Linting
-          command: tests/lint
+          command: ./tests/lint
       - run:
           name: Custom Linting
-          command: tests/custom-linting
+          command: ./tests/custom-linting
       - run:
           name: Cherry-picking
-          command: tests/cherry-picking
+          command: ./tests/cherry-picking
 
 workflows:
   version: 2
