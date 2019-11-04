@@ -5,6 +5,7 @@ jobs:
       - image: koalaman/shellcheck-alpine:stable
     steps:
       - checkout
+      - run: pwd && ls
       - run:
           name: Linting
           command: ./tests/lint
