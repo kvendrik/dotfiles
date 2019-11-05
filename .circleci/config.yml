@@ -10,6 +10,7 @@ jobs:
             wget -qO- "https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz" | tar -xJv
             cp "shellcheck-stable/shellcheck" /usr/bin/
             shellcheck --version
+            rm -rf shellcheck-stable
       - checkout
       - run:
           name: Linting
