@@ -6,7 +6,7 @@ jobs:
     steps:
       - run:
           name: Install Shellcheck
-          command: -|
+          command: |
             wget -qO- "https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz" | tar -xJv
             cp "shellcheck-stable/shellcheck" /usr/bin/
             shellcheck --version
