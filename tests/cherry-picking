@@ -23,7 +23,7 @@ for script_path in $all_scripts; do
       if echo "$script_path_to_check" | grep -Eq "(foundation|$(basename "$script_path"))"; then
         continue
       fi
-      if grep -Eq "[ \`\(]+?$method_name($|;|&| &|\`|\))" "$script_path_to_check"; then
+      if grep -Eq "(^|[ \`\(]+)$method_name($|;|&| &|\`|\))" "$script_path_to_check"; then
         error="$error\n'$method_name' called in $script_path_to_check. Defined in $script_path."
       fi
     done

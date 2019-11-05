@@ -2,21 +2,24 @@ version: 2
 jobs:
   test:
     docker:
-      - image: homebrew/brew
+      - image: bash:3.2
     steps:
       - run:
-          name: Install Dependencies
-          command: brew install shellcheck
+          name: Install Shellcheck
+          command: -|
+            wget -qO- "https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz" | tar -xJv
+            cp "shellcheck-stable/shellcheck" /usr/bin/
+            shellcheck --version
       - checkout
       - run:
           name: Linting
-          command: ./tests/lint
+          command: bash ./tests/lint
       - run:
           name: Custom Linting
-          command: ./tests/custom-linting
+          command: bash ./tests/custom-linting
       - run:
           name: Cherry-picking
-          command: ./tests/cherry-picking
+          command: bash ./tests/cherry-picking
 
 workflows:
   version: 2
