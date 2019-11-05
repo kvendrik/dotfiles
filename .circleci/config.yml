@@ -2,25 +2,25 @@ version: 2
 jobs:
   test:
     docker:
-      - image: bash:3.2
+      - image: circleci/buildpack-deps:latest
     steps:
       - run:
           name: Install Shellcheck
           command: |
             wget -qO- "https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz" | tar -xJv
-            cp "shellcheck-stable/shellcheck" /usr/bin/
+            sudo mv shellcheck-stable/shellcheck /usr/bin/shellcheck
             shellcheck --version
             rm -rf shellcheck-stable
       - checkout
       - run:
           name: Linting
-          command: bash ./tests/lint
+          command: ./tests/lint
       - run:
           name: Custom Linting
-          command: bash ./tests/custom-linting
+          command: ./tests/custom-linting
       - run:
           name: Cherry-picking
-          command: bash ./tests/cherry-picking
+          command: ./tests/cherry-picking
 
 workflows:
   version: 2
