@@ -4,7 +4,7 @@ These dotfiles...
 - **Are a collection of utilities to speed up your workflow**<br>_Optimized for a front-end web development workflow._
 - **Contain no side-effects**<br>_They don't make any changes to your machine without explicit request._
 - **Are configurable where needed**<br>_They don't contain info that's specific to myself and are configurable using env variables._
-- **Work best with [Oh My ZSH](https://github.com/robbyrussell/oh-my-zsh)**<br>_As that's what I use myself._
+- **Work best with [Oh My ZSH](https://github.com/robbyrussell/oh-my-zsh) on OS X**<br>_As that's what I use myself._
 
 Wait, there's more...
 - [Option for bootstrapping a new machine and backing up/restoring location dependent config files](#bootstrap)
