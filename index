@@ -1,9 +1,7 @@
 #!/bin/bash
 # shellcheck source=./index
 
-DOTFILES_DIRECTORY=$(dirname "$0")
-
-source "$DOTFILES_DIRECTORY/foundation/index.bash"
+source "$(dirname "$0")/foundation/index.bash"
 source "$DOTFILES_DIRECTORY/file-system/index.bash"
 source "$DOTFILES_DIRECTORY/git/index.bash"
 source "$DOTFILES_DIRECTORY/network.bash"
