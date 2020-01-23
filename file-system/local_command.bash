@@ -64,8 +64,7 @@ Flags
       echo "No entry found that matches $entry_path. Run 'lc --list' to learn more."
       return 1
     fi
-    new_entries="$(echo "${entries//entry/""}" | grep .)"
-    # TODO: fix removal
+    new_entries="$(echo "${entries//$entry/""}" | grep .)"
     echo "$new_entries" > "$storage_path"
     return
   fi
