@@ -35,26 +35,32 @@ function lc() {
 
   if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
     echo "Local Commands
-Usage: lc <command> [<...shell_string>|<additional_arguments>]
+Usage: lc [flag] <command> [<command>]
 
-Looks up commands from $storage_path and executes them.
+Allows you to store and execute folder specific commands.
 
-Entries in $storage_path have a basename/command_name format. Example file:
-v8/build: tools/dev/gm.py x64.release
-v8/test: out/x64.release/d8
+Example
+cd my_project
+lc --add start 'yarn start'
+lc start # executes 'yarn start'
+cd ../other_project
+lc start # command not found
 
 Commands
-command                  the command to execute
-shell_string             command to add with 'command' as it's alias
-additional_arguments     arguments to add to the command
+alias                    alias for the command
+command                  command to execute when the alias get called
 
 Flags
 --help|-h                print this help message
 --path|-p                path to the storage file
 --list|-l                list the commands
 --remove|-r              remove the given command
---set|-s                 set the given name to a new shell string
---add|-a                 add the given shell string under the given name"
+--set|-s                 set the given alias to a new command
+--add|-a                 add the given command under the given alias
+
+Commands are stored in $storage_path. Entries have a folder_name/alias format. Example file:
+v8/build: tools/dev/gm.py x64.release
+v8/test: out/x64.release/d8"
     return
   fi
 
