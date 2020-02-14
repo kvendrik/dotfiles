@@ -21,7 +21,7 @@ function lc() {
     entry_path="$folder_name/$command_name"
   fi
 
-  found_command="$(grep -Eo "$entry_path\: .+$" "$storage_path" | grep -Eo "\: .+" | grep -Eo "[^:]+$")"
+  found_command="$( grep -Eo "$entry_path\: .+$" "$storage_path" | grep -Eo "\: .+" | grep -Eo "\s.+$" | sed 's/ //')"
 
   if [ -n "$(__check_contains_flag "$*" 'path' 'p')" ]; then
     echo "$storage_path"
@@ -33,7 +33,7 @@ function lc() {
     return
   fi
 
-  if [ -z "$command_name" ]; then
+  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
     echo "Local Commands
 Usage: lc <command> [<...shell_string>|<additional_arguments>]
 
@@ -49,6 +49,7 @@ shell_string             command to add with 'command' as it's alias
 additional_arguments     arguments to add to the command
 
 Flags
+--help|-h                print this help message
 --path|-p                path to the storage file
 --list|-l                list the commands
 --remove|-r              remove the given command
@@ -78,6 +79,17 @@ Flags
     return
   fi
 
+  if [ -z "$command_name" ]; then
+    local results
+    results="$(cat "$storage_path" | grep "$folder_name/")"
+    if [ -z "$results" ]; then
+      echo "No commands for \`$folder_name\`. Run \`lc --help\` for help."
+    else
+      echo "${results//$folder_name\//""}"
+    fi
+    return
+  fi
+
   if [ -z "$found_command" ]; then
     echo "Command $entry_path not found."
     return 1
@@ -90,8 +102,7 @@ function __get_lc_autocomplete {
   local storage_path folder_name
   folder_name="$(basename "$(pwd)")"
   storage_path="$DOTFILES_DIRECTORY/.local_commands"
-  grep -Eo '[^\:]+\:' | grep -Eo '^[^\:]+' < "$storage_path"
-  grep -Eo "$folder_name/[^\:]+\:" | grep -Eo '^[^\:]+' | sed s/"$folder_name\/"//g < "$storage_path"
+  cat "$storage_path" | grep -Eo '^[^\:]+' | sed s/"$folder_name\/"//g
 }
 
 complete -F __get_lc_autocomplete lc
