@@ -53,6 +53,7 @@ Flags
 --path|-p                path to the storage file
 --list|-l                list the commands
 --remove|-r              remove the given command
+--set|-s                 set the given name to a new shell string
 --add|-a                 add the given shell string under the given name"
     return
   fi
@@ -76,6 +77,14 @@ Flags
       return 1
     fi
     echo "$entry_path: ${second_arg[*]}" >> "$storage_path"
+    return
+  fi
+
+  if [ -n "${second_arg[*]}" ] && [ -n "$(__check_contains_flag "$*" 'set' 's')" ]; then
+    if [ -n "$found_command" ]; then
+      lc --remove "$entry_path"
+    fi
+    lc --add "$entry_path" "${second_arg[*]}"
     return
   fi
 
