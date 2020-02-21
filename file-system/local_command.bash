@@ -100,7 +100,7 @@ v8/test: out/x64.release/d8"
     if [ -z "$results" ]; then
       echo "No commands for \`$folder_name\`. Run \`lc --help\` for help."
     else
-      echo "${results//$folder_name\//""}"
+      echo "$(echo "$results" | grep -Eo '[^\/]+\:.+')"
     fi
     return
   fi
@@ -117,7 +117,7 @@ function __get_lc_autocomplete {
   local storage_path folder_name
   folder_name="$(basename "$(pwd)")"
   storage_path="$DOTFILES_DIRECTORY/.local_commands"
-  cat "$storage_path" | grep -Eo '^[^\:]+' | sed s/"$folder_name\/"//g
+  cat "$storage_path" | grep -Eo "^$folder_name\/[^\:]+" | sed s/"$folder_name\/"//g
 }
 
 complete -F __get_lc_autocomplete lc
