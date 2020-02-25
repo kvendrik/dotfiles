@@ -35,7 +35,7 @@ function lc() {
 
   if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
     echo "Local Commands
-Usage: lc [flag] <command> [<command>]
+Usage: lc [flag] <alias> [<command>]
 
 Allows you to store and execute folder specific commands.
 
