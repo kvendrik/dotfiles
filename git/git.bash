@@ -8,6 +8,10 @@ function __git_check_uncommited_changes() {
   git diff-index --quiet HEAD -- || echo "uncommited changes found"
 }
 
+function __folder_name_from_git_uri() {
+  basename "$1" .git
+}
+
 alias gp='git push -u origin $(__git_current_branch)'
 alias gpl="git pull"
 alias gac="git add --all :/ && git commit"
@@ -91,4 +95,27 @@ Flags
 # Shows list of recently used branches
 function gcor() {
   git reflog | grep -Eo 'moving from [^ ]+' | grep -Eo '[^ ]+$' | awk '!a[$0]++' | head -n 20 | awk '{if(system("[ -z \"$(git branch --list "$0")\" ]")){print}}' | fzf | xargs git checkout
+}
+
+function gccd() {
+  if [ -z "$1" ]; then
+    echo 'Usage: gccd <clone_url>'
+    return
+  fi
+  if [ -z "$2" ]; then
+    git clone "$1" && cd "$(__folder_name_from_git_uri "$1")"
+    return
+  fi
+  git clone "$1" "$2" && cd "$2"
+}
+
+function cl() {
+  local dir_name clone_path
+  dir_name="$([ -z "$2" ] && __folder_name_from_git_uri "$1" || echo "$2")"
+  clone_path="$(rpse)/$dir_name"
+  if [ -d "$clone_path" ]; then
+    echo "$clone_path already exists."
+    return
+  fi
+  gccd "$1" "$(rpse)/$dir_name"
 }
