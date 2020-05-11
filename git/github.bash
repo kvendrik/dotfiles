@@ -135,3 +135,24 @@ function create-app() {
   rm README.md
   yarn install
 }
+
+function ghf() {
+  if [ -z "$1" ]; then
+    echo 'Usage: ghf <search_query>. ghf @ <search_query> to only search your own accounts and organizations.'
+    return
+  fi
+
+  local repo_path raw_query url_query
+
+  raw_query="$@"
+  if [ -n "$(echo "$@ "| grep "@ ")" ]; then
+    raw_query="$GITHUB_SEARCH_USERNAMES $(echo "$@" | tr -d '@ ')"
+  fi
+
+  url_query="$(echo "$raw_query" | tr ' ' '+')"
+  repo_path="$(curl -s -u $GITHUB_USERNAME:$GITHUB_SEARCH_TOKEN https://api.github.com/search/repositories\?q\=$url_query\&order\=desc | jq ".items[].full_name" | fzf | tr -d '\"')"
+
+  if [ -n "$repo_path" ]; then
+    open "https://github.com/$repo_path"
+  fi
+}
