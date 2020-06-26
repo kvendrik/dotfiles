@@ -44,13 +44,36 @@ function mcd() {
 }
 
 function new() {
-  local project_name
-  project_name="$@"
+  local project_name template_name project_path
+
+  __strip_flags $*
+
+  template_name="$(__extract_flag_value "$*" 't')"
+  project_name="${CURRENT_CLEAN_ARGUMENTS[1]}"
 
   if [ -z "$project_name" ]; then
-    echo "Usage: new <project_name>"
+    echo """
+Usage: new <project_name> [-t=<template>]
+
+Template options
+react    https://create-react-app.dev/docs/adding-typescript/
+node     https://github.com/kvendrik/project-template-node-ts
+    """
     return 1
   fi
 
-  mcd "$(rpse)/$project_name"
+  project_path="$(rpse)/$project_name"
+
+  if [ -n "$template_name" ]; then
+    if [[ "$template_name" == "react" ]]; then
+      nvm use 14.4.0 && npx create-react-app "$project_path" --template typescript && cd "$project_path"
+      return
+    elif [[ "$template_name" == "node" ]]; then
+      create-app "node-ts" "$(rpse)/$project_name"
+      return
+    fi
+  else
+    mcd "$project_path"
+    return
+  fi
 }
