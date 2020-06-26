@@ -42,3 +42,15 @@ function o() {
 function mcd() {
   mkdir "$1" && cd "$_" || return
 }
+
+function new() {
+  local project_name
+  project_name="$@"
+
+  if [ -z "$project_name" ]; then
+    echo "Usage: new <project_name>"
+    return 1
+  fi
+
+  mcd "$(rpse)/$project_name"
+}
