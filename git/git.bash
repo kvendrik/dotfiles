@@ -12,10 +12,34 @@ function __folder_name_from_git_uri() {
   basename "$1" .git
 }
 
+function __git_commit() {
+  __strip_flags $*
+  local message push_cmd commit_cmd
+
+  message="${CURRENT_CLEAN_ARGUMENTS[1]}"
+
+  if [ -n "$(__check_contains_flag "$*" 'push' 'p')" ]; then
+    if [ -n "$(__check_contains_flag "$*" 'force' 'f')" ]; then
+      push_cmd="&& gpf"
+    else
+      push_cmd="&& gp"
+    fi
+  fi
+
+  if [ -n "$message" ]; then
+    commit_cmd="git commit -m \"$message\""
+  else
+    commit_cmd="git commit"
+  fi
+
+  eval "git add --all && $commit_cmd $push_cmd"
+}
+
 alias gp='git push -u origin $(__git_current_branch)'
+alias gpf='git push --force origin +$(__git_current_branch)'
 alias gpl="git pull"
-alias gac="git add --all :/ && git commit"
-alias gacp="git add --all :/ && git commit && gp"
+alias gac="__git_commit"
+alias gacp="__git_commit --push"
 alias grao="git remote add origin"
 alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
