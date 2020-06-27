@@ -9,7 +9,25 @@ function rpse() {
 }
 
 function rps() {
-  cd "$(rpse "$1")" || return
+  local folder_path repository_name
+  repo_name="$1"
+  folder_path="$(rpse "$repo_name")"
+
+  if ! cd "$folder_path"; then
+    if which cl &> /dev/null; then;
+      echo -n "\n'$repo_name' not found. Would you like to clone it? [Y/n] "
+
+      local do_clone
+      read -r do_clone
+
+      if [[ "$do_clone" != "n" ]]; then
+        cl "$repo_name"
+        return
+      fi
+    fi
+    return 1
+  fi
+
   if [ -n "$2" ]; then
     git checkout "$2"
   fi
