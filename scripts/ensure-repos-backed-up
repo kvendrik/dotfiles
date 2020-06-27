@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if [ -z "$REPOSITORIES_DIRECTORY" ]; then
+  echo "\$REPOSITORIES_DIRECTORY env variable command not found. See ./foundation/rps.bash"
+  exit 1
+fi
+
+repos_path="$REPOSITORIES_DIRECTORY"
+folder_path=""
+error_found=0
+
+for folder_name in `ls $repos_path`; do
+  folder_path="$repos_path/$folder_name"
+
+  cd $folder_path
+  echo -n "Checking $folder_path..."
+
+  if ! git rev-parse --is-inside-work-tree; then
+    echo "is not a Git repository."
+    error_found=1
+    continue
+  fi
+
+  if [ -n "$(git status -s)" ]; then
+    echo "could not check because of uncommited changes."
+    error_found=1
+    continue
+  fi
+
+  if [[ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]]; then
+    echo "could not check because project is not on master branch."
+    error_found=1
+    continue
+  fi
+
+  if [[ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]]; then
+    echo "could not check because project is not on master branch."
+    error_found=1
+    continue
+  fi
+
+  git remote update
+
+  if [ -n "$(git log HEAD..origin/master --oneline)" ]; then
+    echo "is out of date."
+    error_found=1
+    continue
+  fi
+done
+
+if [ $error_found -eq 1 ]; then
+  exit 1
+fi

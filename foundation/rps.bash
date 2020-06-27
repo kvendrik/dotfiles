@@ -14,7 +14,7 @@ function rps() {
   folder_path="$(rpse "$repo_name")"
 
   if ! cd "$folder_path"; then
-    if which cl &> /dev/null; then;
+    if which cl &> /dev/null; then
       echo -n "\n'$repo_name' not found. Would you like to clone it? [Y/n] "
 
       local do_clone
