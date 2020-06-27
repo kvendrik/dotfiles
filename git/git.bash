@@ -134,12 +134,70 @@ function gccd() {
 }
 
 function cl() {
-  local dir_name clone_path
-  dir_name="$([ -z "$2" ] && __folder_name_from_git_uri "$1" || echo "$2")"
-  clone_path="$(rpse)/$dir_name"
-  if [ -d "$clone_path" ]; then
-    echo "$clone_path already exists."
+  local dir_name clone_path clone_argument is_clone_uri is_github_id final_clone_uri github_id do_search_fallback folder_argument
+
+  __strip_flags "$*"
+  clone_argument="${CURRENT_CLEAN_ARGUMENTS[1]}"
+  folder_argument="${CURRENT_CLEAN_ARGUMENTS[2]}"
+
+  if [ -z "$clone_argument" ] || [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
+    echo """
+Usage: cl <clone_argument> [<folder_name>]
+
+Finds a repository and clones it to $(rpse)
+
+Arguments
+clone_argument     Can be a clone URI, Github ID (e.g. kvendrik/dotfiles), or a search query.
+                   Note: A Github ID will perform a Github search when it can not be cloned.
+folder_name        Will default to the repository name. If the used folder name already exists
+                   then the shell will be moved into the folder.
+"""
     return
   fi
-  gccd "$1" "$(rpse)/$dir_name"
+
+  is_clone_uri="$(echo "$clone_argument" | grep -Eo "^git\@|^https?")"
+  do_search_fallback=0
+
+  if [ -n "$is_clone_uri" ]; then
+    final_clone_uri="$1"
+  else
+    is_github_id="$(echo "$clone_argument" | grep -o "/")"
+
+    if [ -n "$is_github_id" ]; then
+      final_clone_uri="git@github.com:$clone_argument.git"
+      do_search_fallback=1
+    else
+      github_id="$(ghf @ "$clone_argument" -n)"
+      if [ -z "$github_id" ]; then
+        return
+      fi
+      final_clone_uri="git@github.com:$github_id.git"
+    fi
+  fi
+
+  dir_name="$([ -z "$folder_argument" ] && __folder_name_from_git_uri "$final_clone_uri" || echo "$folder_argument")"
+  clone_path="$(rpse)/$dir_name"
+
+  if [ -d "$clone_path" ]; then
+    echo "\n$clone_path already exists. Moving into folder..."
+    cd "$clone_path"
+    return
+  fi
+
+  if ! gccd "$final_clone_uri" "$clone_path" && [ $do_search_fallback -eq 1 ]; then
+    echo -n "\nCloning failed. Would you like to search for $clone_argument? [Y/n] "
+
+    local do_search
+    read -r do_search
+
+    if [[ "$do_search" == "n" ]]; then
+      return
+    fi
+
+    github_id="$(ghf @ "$clone_argument" -n)"
+    if [ -z "$github_id" ]; then
+      return
+    fi
+    cl "git@github.com:$github_id.git" "$folder_argument"
+  fi
 }

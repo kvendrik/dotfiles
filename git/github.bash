@@ -138,21 +138,31 @@ function create-app() {
 
 function ghf() {
   if [ -z "$1" ]; then
-    echo 'Usage: ghf <search_query>. ghf @ <search_query> to only search your own accounts and organizations.'
+    echo """
+Usage: ghf <search_query>. ghf @ <search_query> to only search your own accounts and organizations.
+
+Flags
+--no-open|-n    Do not open the URL when a result is selected
+"""
     return
   fi
 
+  __strip_flags $*
   local repo_path raw_query url_query
 
-  raw_query="$@"
-  if [ -n "$(echo "$@ "| grep "@ ")" ]; then
-    raw_query="$GITHUB_SEARCH_USERNAMES $(echo "$@" | tr -d '@ ')"
+  raw_query="${CURRENT_CLEAN_ARGUMENTS[@]}"
+  if [ -n "$(echo "$raw_query "| grep "@ ")" ]; then
+    raw_query="$GITHUB_SEARCH_USERNAMES $(echo "$raw_query" | tr -d '@ ')"
   fi
 
   url_query="$(echo "$raw_query" | tr ' ' '+')"
   repo_path="$(curl -s -u $GITHUB_USERNAME:$GITHUB_SEARCH_TOKEN https://api.github.com/search/repositories\?q\=$url_query\&order\=desc | jq ".items[].full_name" | fzf | tr -d '\"')"
 
   if [ -n "$repo_path" ]; then
-    open "https://github.com/$repo_path"
+    if [ -n "$(__check_contains_flag "$*" 'no-open' 'n')" ]; then
+      echo "$repo_path"
+    else
+      open "https://github.com/$repo_path"
+    fi
   fi
 }
