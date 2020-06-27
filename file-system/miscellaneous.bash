@@ -1,7 +1,5 @@
 #!/bin/bash
 
-alias subl="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
-
 # Change working directory to the top-most Finder window location
 # Source: https://github.com/mathiasbynens/dotfiles/blob/master/.functions#L8
 alias cdf='cd $(osascript -e "tell app \"Finder\" to POSIX path of (insertion location as alias)")'
@@ -44,32 +42,35 @@ function mcd() {
 }
 
 function new() {
-  local project_name template_name project_path
+  local project_name template_name_or_url project_path
 
-  __strip_flags $*
-
-  template_name="$(__extract_flag_value "$*" 't')"
-  project_name="${CURRENT_CLEAN_ARGUMENTS[1]}"
+  project_name="$1"
+  template_name_or_url="$2"
 
   if [ -z "$project_name" ]; then
     echo """
-Usage: new <project_name> [-t=<template>]
+Usage: new <project_name> <template_name_or_git_clone_uri>
 
-Template options
+Template options:
 react    https://create-react-app.dev/docs/adding-typescript/
 node     https://github.com/kvendrik/project-template-node-ts
+
+Will fall back to trying to clone the given value.
     """
     return 1
   fi
 
   project_path="$(rpse)/$project_name"
 
-  if [ -n "$template_name" ]; then
-    if [[ "$template_name" == "react" ]]; then
+  if [ -n "$template_name_or_url" ]; then
+    if [[ "$template_name_or_url" == "react" ]]; then
       nvm use 14.4.0 && npx create-react-app "$project_path" --template typescript && cd "$project_path"
       return
-    elif [[ "$template_name" == "node" ]]; then
+    elif [[ "$template_name_or_url" == "node" ]]; then
       create-app "node-ts" "$(rpse)/$project_name"
+      return
+    else
+      cl "$template_name_or_url" "$project_name"
       return
     fi
   else
