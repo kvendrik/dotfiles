@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Usage: __strip_flags <...all_arguments>
-# echo $CURRENT_CLEAN_ARGUMENTS
+# Results are stored in CURRENT_CLEAN_ARGUMENTS
+# Example: __strip_flags -g hello there --open && echo $CURRENT_CLEAN_ARGUMENTS
 CURRENT_CLEAN_ARGUMENTS=()
 function __strip_flags() {
   CURRENT_CLEAN_ARGUMENTS=()

@@ -136,13 +136,13 @@ function gccd() {
 function cl() {
   local dir_name clone_path clone_argument is_clone_uri is_github_id final_clone_uri github_id do_search_fallback folder_argument
 
-  __strip_flags "$*"
+  __strip_flags $*
   clone_argument="${CURRENT_CLEAN_ARGUMENTS[1]}"
   folder_argument="${CURRENT_CLEAN_ARGUMENTS[2]}"
 
   if [ -z "$clone_argument" ] || [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
     echo """
-Usage: cl <clone_argument> [<folder_name>]
+Usage: cl [--global|-g] <clone_argument> [<folder_name>]
 
 Finds a repository and clones it to $(rpse)
 
@@ -151,6 +151,12 @@ clone_argument     Can be a clone URI, Github ID (e.g. kvendrik/dotfiles), or a 
                    Note: A Github ID will perform a Github search when it can not be cloned.
 folder_name        Will default to the repository name. If the used folder name already exists
                    then the shell will be moved into the folder.
+
+Flags
+--global|-g        Will force a global search. The command performs a Github search using 'ghf'
+                   if the repository can not be found using a clone. This will make the search global
+                   instead of only searching through your own repositories.
+--help|-h          Print this help message
 """
     return
   fi
@@ -167,7 +173,11 @@ folder_name        Will default to the repository name. If the used folder name 
       final_clone_uri="git@github.com:$clone_argument.git"
       do_search_fallback=1
     else
-      github_id="$(ghf @ "$clone_argument" -n)"
+      if [ -n "$(__check_contains_flag "$*" 'global' 'g')" ]; then
+        github_id="$(ghf "$clone_argument" -n)"
+      else
+        github_id="$(ghf @ "$clone_argument" -n)"
+      fi
       if [ -z "$github_id" ]; then
         return
       fi
@@ -194,10 +204,19 @@ folder_name        Will default to the repository name. If the used folder name 
       return
     fi
 
-    github_id="$(ghf @ "$clone_argument" -n)"
+    if [ -n "$is_github_id" ] || [ -n "$(__check_contains_flag "$*" 'global' 'g')" ]; then
+      # if the argument was a GH ID
+      # then search globally as even with a global search
+      # its likely you'll find what you're looking for with a GH ID
+      github_id="$(ghf "$clone_argument" --no-open)"
+    else
+      github_id="$(ghf @ "$clone_argument" --no-open)"
+    fi
+
     if [ -z "$github_id" ]; then
       return
     fi
+
     cl "git@github.com:$github_id.git" "$folder_argument"
   fi
 }
