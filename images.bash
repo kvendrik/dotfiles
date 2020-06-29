@@ -34,3 +34,33 @@ function latest_heic_downloads_to_jpg() {
 
   open -R "$output_path"
 }
+
+function gifify() {
+  local video_path output_path
+  if [ -z "$1" ]; then
+    echo "Usage: gifify <video_path> [<output_path>]"
+    return
+  fi
+  video_path="$1"
+  output_path="${2:-"$video_path.gif"}"
+  echo "\n$video_path -> $output_path\n"
+  ffmpeg -i "$video_path" -b 2048k "$output_path"
+}
+
+function latest_capture_to_gif() {
+  local latest_capture capture_save_path output_path
+
+  capture_save_path="$HOME/Desktop"
+  latest_capture="$(ls -1t $capture_save_path/*.mov | head -1)"
+
+  if [ -z "$latest_capture" ]; then
+    echo "No capture files found in $capture_save_path"
+    return
+  fi
+
+  output_path="$latest_capture.gif"
+
+  if gifify "$latest_capture" "$output_path"; then
+    open -R "$output_path"
+  fi
+}
