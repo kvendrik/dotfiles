@@ -78,3 +78,27 @@ Will fall back to trying to clone the given value.
     return
   fi
 }
+
+chpwd_functions=(chpwd_check_node)
+
+function __parseVersion() {
+  # https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
+  printf "%03d%03d%03d%03d" $(echo "$1" | tr '.' ' ');
+}
+
+function chpwd_check_node() {
+  local node_version
+  local required_node_version
+
+  if [ -f "package.json" ]; then
+    required_node_version="$(cat package.json | jq '.engines.node' | grep -Eo '\d+')"
+
+    if [ -n "$required_node_version" ]; then
+      node_version="$(node -v | grep -Eo '[0-9\.]+')"
+
+      if [ $(__parseVersion $node_version) -lt $(__parseVersion $required_node_version) ]; then
+        nvm use 14.4.0
+      fi
+    fi
+  fi
+}
