@@ -6,7 +6,8 @@ __D_VERBOSE=''
 __D_CURRENT_POINTS=0
 __D_CURRENT_TIMESTAMPS=''
 
-unalias d
+which d &> /dev/null && unset d
+
 function d() {
   if [ ! -f "$__D_HISTORY_PATH" ]; then
     touch "$__D_HISTORY_PATH"
