@@ -1,6 +1,13 @@
 #!/bin/bash
 
-DIRECTORY="$(realpath "$(dirname "$0")")"
+# If realpath is not a command
+# we probably can just use dirname 
+# as we're on a newer version of osx
+if [ -n "$(command -v realpath)" ]; then
+  DIRECTORY="$(realpath "$(dirname "$0")")"
+else
+  DIRECTORY="$(dirname $0)"
+fi
 
 BACKUPS_PATH="$DIRECTORY/~"
 CMD="$1"

@@ -37,6 +37,18 @@ function o() {
   open -a Finder "$1"
 }
 
+function rc() {
+  local option
+  option="$(echo "dotfiles\n.zshrc\n.rc-extra\n.rc-config" | fzf)"
+
+  if [ -n "$(echo ".zshrc .rc-config .rc-extra" | grep "$option")" ]; then
+    code "$HOME/$option"
+    return
+  fi
+
+  cd "$HOME/$option"
+}
+
 function mcd() {
   mkdir "$1" && cd "$_" || return
 }
