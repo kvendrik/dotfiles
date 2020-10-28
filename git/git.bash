@@ -46,6 +46,10 @@ alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %
 alias gcom='git checkout master'
 alias gr="git rebase"
 
+function grc() {
+  __git_commit "$@" && git rebase --continue
+}
+
 function ub() {
   if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
     echo "Usage: ub [--merge|-m] [<base_branch>]. Updates base_branch and rebases it on top of your current branch."
