@@ -16,7 +16,7 @@ function __git_commit() {
   __strip_flags $*
   local message push_cmd commit_cmd
 
-  message="${CURRENT_CLEAN_ARGUMENTS[1]}"
+  message="${CURRENT_CLEAN_ARGUMENTS[@]}"
 
   if [ -n "$(__check_contains_flag "$*" 'push' 'p')" ]; then
     if [ -n "$(__check_contains_flag "$*" 'force' 'f')" ]; then
