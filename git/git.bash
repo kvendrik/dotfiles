@@ -44,21 +44,26 @@ alias grao="git remote add origin"
 alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
 alias gcom='git checkout master'
-alias gr="git rebase -i"
+alias gr="git rebase"
 
 function ub() {
-  # Updates base_branch and merges it into your current branch
-  # Usage: ub [<base_branch>]
-  local base_branch original_branch
-  base_branch='master'
-  original_branch="$(__git_current_branch)"
-  if [ "$1" != "" ]; then
-    base_branch="$1"
+  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
+    echo "Usage: ub [--merge|-m] [<base_branch>]. Updates base_branch and rebases it on top of your current branch."
+    return
   fi
-  git checkout "$base_branch"
-  git pull
-  git checkout "$original_branch"
-  git merge "$base_branch"
+
+  # shellcheck disable=SC2086,SC2048
+  __strip_flags $*
+
+  local base_branch
+  base_branch="${CURRENT_CLEAN_ARGUMENTS[1]:-master}"
+
+  if [ -n "$(__check_contains_flag "$*" 'merge' 'm')"]; then
+    git fetch origin "$base_branch" && git merge "$base_branch"
+    return
+  fi
+
+  git fetch origin "$base_branch" && git rebase -i "$base_branch"
 }
 
 function reset-branch() {
