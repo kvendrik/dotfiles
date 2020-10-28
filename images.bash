@@ -44,7 +44,7 @@ function gifify() {
   video_path="$1"
   output_path="${2:-"$video_path.gif"}"
   echo "\n$video_path -> $output_path\n"
-  ffmpeg -i "$video_path" -b 2048k "$output_path"
+  ffmpeg -i "$video_path" -b 2048k -vf "fps=10,scale=1920:-1" "$output_path"
 }
 
 function latest_capture_to_gif() {
