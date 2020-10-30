@@ -84,6 +84,16 @@ function opr() {
   open "$repo_url/compare/$base_branch_name...$pr_branch_name"
 }
 
+# Open last commit
+function olc() {
+  local repo_url
+  if ! repo_url="$(__get_repository_web_url "$(pwd)" "$2")"; then
+    echo "$repo_url"
+    return
+  fi
+  open "$repo_url/commit/$(git rev-parse HEAD)"
+}
+
 function oi() {
   local result repository_path url_path
 
