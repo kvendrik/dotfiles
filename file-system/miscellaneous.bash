@@ -53,6 +53,21 @@ function mcd() {
   mkdir "$1" && cd "$_" || return
 }
 
+function rn() {
+  local new_name
+  new_name="$1"
+
+  if [ -z "$new_name" ]; then
+    echo 'Rename the current directory.\nUsage: rn <new_name>'
+    return
+  fi
+
+  local old_name
+  old_name="$(basename $(pwd))"
+
+  cd ../ && mv "$old_name" "$new_name" && cd "$new_name"
+}
+
 function new() {
   local project_name template_name_or_url project_path
 
