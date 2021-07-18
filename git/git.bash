@@ -46,8 +46,8 @@ alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %
 alias gcom='git checkout master'
 alias gr="git rebase"
 
-function grc() {
-  __git_commit "$@" && git rebase --continue
+function amend() {
+  __git_commit "amend" && git fetch origin master && git rebase -i origin/master
 }
 
 function ub() {
