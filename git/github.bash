@@ -60,11 +60,20 @@ function __get_repository_web_url() {
 # Open the remote repository
 # Usage: or [<repository_name>] [<remote_name>]
 function or() {
-  local repo_url
+  local current_branch_name repo_url
+
   if ! repo_url="$(__get_repository_web_url "$1" "$2")"; then
     echo "$repo_url"
     return
   fi
+
+  current_branch_name="$(git symbolic-ref --short HEAD)"
+
+  if [ "$current_branch_name" != 'master' ]; then
+    open "$repo_url/tree/$current_branch_name"
+    return
+  fi
+
   open "$repo_url"
 }
 
