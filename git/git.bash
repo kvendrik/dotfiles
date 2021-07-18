@@ -127,6 +127,9 @@ Flags
 
 # Git Checkout Recent
 # Shows list of recently used branches
+
+which gcor &> /dev/null && unalias gcor
+
 function gcor() {
   git reflog | grep -Eo 'moving from [^ ]+' | grep -Eo '[^ ]+$' | awk '!a[$0]++' | head -n 20 | awk '{if(system("[ -z \"$(git branch --list "$0")\" ]")){print}}' | fzf | xargs git checkout
 }
