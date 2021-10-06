@@ -43,8 +43,19 @@ alias gacp="__git_commit --push"
 alias grao="git remote add origin"
 alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
-alias gcom='git checkout master'
 alias gr="git rebase"
+
+function gcom() {
+  local master_refs
+  master_refs="$(git show-ref master)"
+
+  if [ -n "$master_refs" ]; then
+    git checkout master
+    return
+  fi
+
+  git checkout main
+}
 
 function amend() {
   __git_commit "amend" && git fetch origin master && git rebase -i origin/master
