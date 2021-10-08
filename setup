@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $SPIN ]; then
+  echo 'initializing kvendrik/dotfiles'
+
+  export GITHUB_USERNAME='kvendrik'
+  export REPOSITORIES_DIRECTORY='/src/github.com/shopify'
+
+  source ~/dotfiles/index
+fi
