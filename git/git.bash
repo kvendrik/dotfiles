@@ -73,7 +73,7 @@ function ub() {
   local base_branch
   base_branch="${CURRENT_CLEAN_ARGUMENTS[1]:-master}"
 
-  if [ -n "$(__check_contains_flag "$*" 'merge' 'm')"]; then
+  if [ -n "$(__check_contains_flag "$*" 'merge' 'm')" ]; then
     git fetch origin "$base_branch" && git merge "$base_branch"
     return
   fi

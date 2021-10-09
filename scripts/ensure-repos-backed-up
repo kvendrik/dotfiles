@@ -9,7 +9,7 @@ repos_path="$REPOSITORIES_DIRECTORY"
 folder_path=""
 error_found=0
 
-for folder_name in `ls $repos_path`; do
+for folder_name in "$repos_path"/*; do
   folder_path="$repos_path/$folder_name"
 
   if [ ! -d "$folder_path" ]; then
@@ -17,7 +17,7 @@ for folder_name in `ls $repos_path`; do
   fi
 
   echo "Checking $folder_name"
-  cd $folder_path
+  cd "$folder_path" || return
 
   if ! git rev-parse --is-inside-work-tree &> /dev/null; then
     echo "$folder_path: is not a Git repository."

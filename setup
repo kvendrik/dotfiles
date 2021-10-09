@@ -5,8 +5,8 @@ function __symlink_homefiles() {
   dotfiles="$(ls -a ./bootstrap/home | grep -E '\.[a-z]+')"
 
   if [[ "$1" != "-f" ]]; then
-    echo "Would you like to symlink the following files to $HOME?\n$dotfiles\n[y/N] \c"
-    read do_symlink
+    printf "%s" "Would you like to symlink the following files to $HOME?\n$dotfiles\n[y/N] \c"
+    read -r do_symlink
 
     if [[ "$do_symlink" != "y" ]]; then
       exit 0
@@ -37,7 +37,8 @@ if [ -n "$SPIN" ]; then
 
   __symlink_homefiles -f
 
-  source ~/dotfiles/index
+  # shellcheck disable=SC1091
+  source "$HOME/dotfiles/index"
 fi
 
 __symlink_homefiles
