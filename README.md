@@ -20,7 +20,7 @@ Most of the aliases and methods should be pretty self-explanatory. Everything is
 1. Run `./setup` to set up the `./home/` files. You'll be asked if you'd like to proceed before the script makes any changes outside this folder.
 1. Configure the utilities using environment variables and source the `index` file:
 
-> If you decide to symlink the provided `./home/.zshrc` file in the `./setup` step you can create a `./.rc-config` file to export these variables from.
+> If you decide to symlink the provided `./home/.zshrc` file in the `./setup` step: you can create a `./.rc-config` file to export these variables from.
 
 In your RC file: (`~/.zshrc` if you use ZSH):
 ```bash
