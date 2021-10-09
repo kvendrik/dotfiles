@@ -16,8 +16,8 @@ Wait, there's more...
 Most of the aliases and methods should be pretty self-explanatory. Everything is grouped by category and either has self-explanatory code, a usage message, or a comment that explains what it does and why. If you see anything that is unclear feel free to clear it up by e.g. adding an extra comment and [opening up a pull request](#️-contribute). If you like some things but not others you can also [cherry-pick](#cherry-picking) the parts you like.
 
 ## Setup
-1. Clone the dotfiles to your home folder (`~`).
-1. Run `./setup` to set up the `home` files. You'll be asked if you'd like to proceed before the script makes any changes outside this folder.
+1. Clone the dotfiles to your home folder.
+1. Run `./setup` to set up the `./home/` files. You'll be asked if you'd like to proceed before the script makes any changes outside this folder.
 1. Configure the utilities using environment variables and source the `index` file:
 
 In your RC file: (`~/.zshrc` if you use ZSH):
