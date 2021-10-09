@@ -5,7 +5,7 @@
 alias cdf='cd $(osascript -e "tell app \"Finder\" to POSIX path of (insertion location as alias)")'
 alias dt="cd ~/Desktop"
 
-function co() {
+co() {
   local open_path other_args
   open_path="$1"
   other_args=("${@:2}")
@@ -33,11 +33,11 @@ function co() {
 
 __rps_autocomplete co
 
-function o() {
+o() {
   open -a Finder "$1"
 }
 
-function rc() {
+rc() {
   local option
   option="$(echo "dotfiles\n.zshrc\n.rc-extra\n.rc-config" | fzf)"
 
@@ -49,11 +49,11 @@ function rc() {
   cd "$HOME/$option"
 }
 
-function mcd() {
+mcd() {
   mkdir "$1" && cd "$_" || return
 }
 
-function rn() {
+rn() {
   local new_name
   new_name="$1"
 
@@ -68,7 +68,7 @@ function rn() {
   cd ../ && mv "$old_name" "$new_name" && cd "$new_name"
 }
 
-function new() {
+new() {
   local project_name template_name_or_url project_path
 
   project_name="$1"

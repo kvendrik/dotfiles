@@ -4,7 +4,7 @@ if [ ! -f "$DOTFILES_DIRECTORY/.local_commands" ]; then
   touch "$DOTFILES_DIRECTORY/.local_commands"
 fi
 
-function lc() {
+lc() {
   local folder_name command_name second_arg storage_path found_command entry_path
 
   # shellcheck disable=SC2086,SC2048
@@ -113,7 +113,7 @@ v8/test: out/x64.release/d8"
   eval "$found_command ${second_arg[*]}"
 }
 
-function __get_lc_autocomplete {
+__get_lc_autocomplete() {
   local storage_path folder_name
   folder_name="$(basename "$(pwd)")"
   storage_path="$DOTFILES_DIRECTORY/.local_commands"

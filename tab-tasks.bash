@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function t() {
+t() {
   local help_message
 
   # shellcheck disable=SC2016
@@ -64,7 +64,7 @@ Flags:
   done
 }
 
-function __get_t_autocomplete() {
+__get_t_autocomplete() {
   find "$(rpse)" -type d -maxdepth 1 -execdir echo "{}:" \;
 }
 

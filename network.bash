@@ -1,13 +1,13 @@
 #!/bin/bash
 
-function server() {
+server() {
   local port
   port="${1:-3000}"
   open "http://localhost:$port"
   python -m SimpleHTTPServer "$port"
 }
 
-function data_url() {
+data_url() {
   if [ -z "$1" ]; then
     cat << EndOfMessage
 Create a data URL that can be directly used in HTML.
@@ -24,7 +24,7 @@ EndOfMessage
 	echo "data:$mime_type;base64,$base64";
 }
 
-function ntp() {
+ntp() {
   if [ "$1" != "" ]; then
     netstat -vanp tcp | grep "$1"
   else
@@ -32,7 +32,7 @@ function ntp() {
   fi
 }
 
-function kill_port() {
+kill_port() {
   if [[ -z "$1" ]]; then
     echo 'Usage: kill_port <port>'
     return

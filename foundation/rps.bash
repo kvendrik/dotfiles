@@ -5,11 +5,11 @@ if [ -z "$REPOSITORIES_DIRECTORY" ]; then
   REPOSITORIES_DIRECTORY="$HOME"
 fi
 
-function rpse() {
+rpse() {
   [ -z "$1" ] && echo "$REPOSITORIES_DIRECTORY" || echo "$REPOSITORIES_DIRECTORY/$1"
 }
 
-function rps() {
+rps() {
   local folder_path repository_name
   repo_name="$1"
   folder_path="$(rpse "$repo_name")"
@@ -34,11 +34,11 @@ function rps() {
   fi
 }
 
-function __rps_autocomplete_insert() {
+__rps_autocomplete_insert() {
   ls "$REPOSITORIES_DIRECTORY"
 }
 
-function __rps_autocomplete() {
+__rps_autocomplete() {
   complete -F __rps_autocomplete_insert "$1"
 }
 

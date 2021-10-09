@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function latest_heic_downloads_to_jpg() {
+latest_heic_downloads_to_jpg() {
   local latest_number latest_download output_path find_command_output downloads_path
   latest_number=("${1:-1}")
   downloads_path="$HOME/Downloads"
@@ -35,7 +35,7 @@ function latest_heic_downloads_to_jpg() {
   open -R "$output_path"
 }
 
-function gifify() {
+gifify() {
   local video_path output_path
   if [ -z "$1" ]; then
     echo "Usage: gifify <video_path> [<output_path>]"
@@ -47,7 +47,7 @@ function gifify() {
   ffmpeg -i "$video_path" -b 2048k -vf "fps=10,scale=1920:-1" "$output_path"
 }
 
-function latest_capture_to_gif() {
+latest_capture_to_gif() {
   local latest_capture capture_save_path output_path
 
   capture_save_path="$HOME/Desktop"

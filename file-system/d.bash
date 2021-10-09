@@ -8,7 +8,7 @@ __D_CURRENT_TIMESTAMPS=''
 
 which d &> /dev/null && unset d
 
-function d() {
+d() {
   if [ ! -f "$__D_HISTORY_PATH" ]; then
     touch "$__D_HISTORY_PATH"
   fi
@@ -135,7 +135,7 @@ Isn’t this a more basic version of github.com/rupa/z?
   return 1
 }
 
-function __d_replace_timestamps_for_entry() {
+__d_replace_timestamps_for_entry() {
   local entries clean_entry_path new_timestamps
   entries="$1"
   clean_entry_path="$(__escape_backslashes "$2")"
@@ -143,7 +143,7 @@ function __d_replace_timestamps_for_entry() {
   echo "$entries" | sed -E "s/($clean_entry_path:).+/\1$new_timestamps/"
 }
 
-function __d_add_to_history() {
+__d_add_to_history() {
   local entry_path entries now_unix
 
   entries="$1"
@@ -157,7 +157,7 @@ function __d_add_to_history() {
   fi
 }
 
-function __d_remove_from_history() {
+__d_remove_from_history() {
   local entries clean_entry_path
   entries="$1"
   clean_entry_path="$(__escape_backslashes "$2")"
@@ -165,7 +165,7 @@ function __d_remove_from_history() {
 }
 
 # Usage: __d_get_frecency_points <comma_seperated_timestamps_string> <now_unix_timestamp>
-function __d_get_frecency_points() {
+__d_get_frecency_points() {
   local timestamps min_ms hour_ms now_unix points new_timestamps timestamp_entries
 
   min_ms=60

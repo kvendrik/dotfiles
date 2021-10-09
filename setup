@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function __symlink_homefiles() {
+__symlink_homefiles() {
   local dotfiles do_symlink do_force
   dotfiles="$(ls -a ./bootstrap/home | grep -E '\.[a-z]+')"
 

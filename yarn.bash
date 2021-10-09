@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function __find_closest_npm_package {
+__find_closest_npm_package() {
   if [ -f 'package.json' ]; then
     echo 'package.json'
     return
@@ -16,7 +16,7 @@ function __find_closest_npm_package {
   echo "$current_relative_path"package.json
 }
 
-function __package_lookup {
+__package_lookup() {
   closest_package_path="$(__find_closest_npm_package)"
   if [ -z "$closest_package_path" ]; then
     return
@@ -25,15 +25,15 @@ function __package_lookup {
   COMPREPLY=($(jq "$1 | keys | join(\" \")" "$closest_package_path" | tr -d '"'))
 }
 
-function __get_npm_package_scripts_autocomplete {
+__get_npm_package_scripts_autocomplete() {
   __package_lookup '.scripts'
 }
 
-function __get_package_dependencies {
+__get_package_dependencies() {
   __package_lookup '.dependencies, .devDependencies'
 }
 
-function yre {
+yre() {
   closest_package_path="$(__find_closest_npm_package)"
   if [ -z "$closest_package_path" ]; then
     echo 'package.json not found.'
@@ -46,21 +46,21 @@ function yre {
   fi
 }
 
-function yr {
+yr() {
   # shellcheck disable=SC2068
   yarn run $@
 }
 
 complete -F __get_npm_package_scripts_autocomplete yr
 
-function yu {
+yu() {
   # shellcheck disable=SC2068
   yarn remove $@
 }
 
 complete -F __get_package_dependencies yu
 
-function yua {
+yua() {
   yarn remove "$1" && yarn add "$1"
 }
 

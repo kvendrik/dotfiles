@@ -3,7 +3,7 @@
 
 dotfiles_root=$(cd "$(dirname "$(dirname "$0")")" && pwd)
 
-function get_all_scripts() {
+get_all_scripts() {
   local exec_string
   exec_string="$1"
   if [ -n "$exec_string" ]; then

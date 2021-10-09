@@ -1,10 +1,10 @@
 #!/bin/bash
 
-function __git_is_repository() {
+__git_is_repository() {
   git -C "$1" rev-parse --is-inside-work-tree &> /dev/null
 }
 
-function __git_get_remote_url() {
+__git_get_remote_url() {
   local remote_name remote_url repository_path
   remote_name=$([ -n "$1" ] && echo "$1" || echo origin)
   repository_path="$2"
@@ -16,7 +16,7 @@ function __git_get_remote_url() {
   echo "$remote_url"
 }
 
-function __git_ssh_to_web_url() {
+__git_ssh_to_web_url() {
   local base
   base=$(echo "$1" | sed -e "s/.git$//" -e "s/^git\@//" -e "s/\(.*[:/].*\)/\1/" -e "s/https\:\/\///" -e "s/\:/\//")
   echo "https://$base"
@@ -24,7 +24,7 @@ function __git_ssh_to_web_url() {
 
 # Get a repository's web URL
 # Usage: __get_repository_web_url [<repository_path_or_name>] [<remote_name>]
-function __get_repository_web_url() {
+__get_repository_web_url() {
   local remote_url repository_web_url repository_path
   repository_path="$1"
 
@@ -55,7 +55,7 @@ function __get_repository_web_url() {
 
 # Open the remote repository
 # Usage: or [<repository_name>] [<remote_name>]
-function or() {
+or() {
   local current_branch_name repo_url
 
   if ! repo_url="$(__get_repository_web_url "$1" "$2")"; then
@@ -77,7 +77,7 @@ __rps_autocomplete or
 
 # Open a PR against <base_branch> (master by default) for the current branch on <remote_name> (origin by default)
 # Usage: opr [<base_branch>] [<remote_name>]
-function opr() {
+opr() {
   local base_branch_name pr_branch_name
   local repo_url
   if ! repo_url="$(__get_repository_web_url "$(pwd)" "$2")"; then
@@ -90,7 +90,7 @@ function opr() {
 }
 
 # Open last commit
-function olc() {
+olc() {
   local repo_url
   if ! repo_url="$(__get_repository_web_url "$(pwd)" "$2")"; then
     echo "$repo_url"
@@ -99,7 +99,7 @@ function olc() {
   open "$repo_url/commit/$(git rev-parse HEAD)"
 }
 
-function oi() {
+oi() {
   local result repository_path url_path
 
   if [ -z "$GITHUB_USERNAME" ]; then

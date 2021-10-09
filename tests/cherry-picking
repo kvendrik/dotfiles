@@ -12,7 +12,7 @@ for script_path in $all_scripts; do
     continue
   fi
 
-  method_names="$(grep -Eo 'function [^ \(]+' "$script_path" | grep -Eo '[^ ]+$')"
+  method_names="$(grep -Eo '^[a-zA-Z_]+\(\)' "$script_path")"
 
   for method_name in $method_names; do
     if [ -z "$method_name" ]; then

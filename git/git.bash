@@ -1,18 +1,18 @@
 #!/bin/bash
 
-function __git_current_branch() {
+__git_current_branch() {
   git branch | grep '\*' | cut -d ' ' -f2
 }
 
-function __git_check_uncommited_changes() {
+__git_check_uncommited_changes() {
   git diff-index --quiet HEAD -- || echo "uncommited changes found"
 }
 
-function __folder_name_from_git_uri() {
+__folder_name_from_git_uri() {
   basename "$1" .git
 }
 
-function __git_commit() {
+__git_commit() {
   __strip_flags $*
   local message push_cmd commit_cmd
 
@@ -45,7 +45,7 @@ alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
 alias gr="git rebase"
 
-function gcom() {
+gcom() {
   local master_refs
   master_refs="$(git show-ref master)"
 
@@ -57,11 +57,11 @@ function gcom() {
   git checkout main
 }
 
-function amend() {
+amend() {
   __git_commit "amend" && git fetch origin master && git rebase -i origin/master
 }
 
-function ub() {
+ub() {
   if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
     echo "Usage: ub [--merge|-m] [<base_branch>]. Updates base_branch and rebases it on top of your current branch."
     return
@@ -81,7 +81,7 @@ function ub() {
   git fetch origin "$base_branch" && git rebase -i "$base_branch"
 }
 
-function reset-branch() {
+reset-branch() {
   local branch_name
   branch_name="$(__git_current_branch)"
 
@@ -105,7 +105,7 @@ function reset-branch() {
   git checkout "$branch_name"
 }
 
-function branch-diff() {
+branch-diff() {
   local commit_base branch_name base_branch
 
   if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
@@ -141,11 +141,11 @@ Flags
 
 which gcor &> /dev/null && unalias gcor
 
-function gcor() {
+gcor() {
   git reflog | grep -Eo 'moving from [^ ]+' | grep -Eo '[^ ]+$' | awk '!a[$0]++' | head -n 20 | awk '{if(system("[ -z \"$(git branch --list "$0")\" ]")){print}}' | fzf | xargs git checkout
 }
 
-function gccd() {
+gccd() {
   if [ -z "$1" ]; then
     echo 'Usage: gccd <clone_url>'
     return
@@ -157,7 +157,7 @@ function gccd() {
   git clone "$1" "$2" && cd "$2"
 }
 
-function cl() {
+cl() {
   local dir_name clone_path clone_argument is_clone_uri is_github_id final_clone_uri github_id do_search_fallback folder_argument
 
   __strip_flags $*
