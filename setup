@@ -32,13 +32,15 @@ __symlink_homefiles() {
 if [ -n "$SPIN" ]; then
   echo 'initializing kvendrik/dotfiles'
 
+  __symlink_homefiles -f
+
   export GITHUB_USERNAME='kvendrik'
   export REPOSITORIES_DIRECTORY='/src/github.com/shopify'
 
-  __symlink_homefiles -f
-
   # shellcheck disable=SC1091
   source "$HOME/dotfiles/index"
+
+  exit 0
 fi
 
 __symlink_homefiles
