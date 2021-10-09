@@ -1,9 +1,5 @@
 #!/bin/bash
 
-if [ -z "$GITHUB_USERNAME" ]; then
-  echo "Warning: GITHUB_USERNAME environment variable not set. Some Github tools might not work as expected. (Thrown by $0)"
-fi
-
 function __git_is_repository() {
   git -C "$1" rev-parse --is-inside-work-tree &> /dev/null
 }
@@ -105,6 +101,11 @@ function olc() {
 
 function oi() {
   local result repository_path url_path
+
+  if [ -z "$GITHUB_USERNAME" ]; then
+    echo "GITHUB_USERNAME environment variable not set. (Thrown by $0)"
+    return 1
+  fi
 
   if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
     printf 'Open Github list of issues or pull requests.\nUsage: oi [--me|-m] [--new|-n] [--search|-s] [-p|--pulls] [--repo=<path>].'
