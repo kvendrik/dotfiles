@@ -1,13 +1,14 @@
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
-plugins=(git)
-source $ZSH/oh-my-zsh.sh
+if [ -d "$HOME/.oh-my-zsh" ]; then
+  export ZSH="$HOME/.oh-my-zsh"
+  ZSH_THEME="robbyrussell"
+  plugins=(git)
+  source $ZSH/oh-my-zsh.sh
+fi
 
-source "$HOME/.rc-config"
+[ -f "$HOME/.rc-config" ] && source "$HOME/.rc-config"
 
-export REPOSITORIES_DIRECTORY="$HOME/repos"
 source "$HOME/dotfiles/index"
 
-source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+[ -d "$HOME/.zsh/zsh-autosuggestions" ] && source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-source "$HOME/.rc-extra"
+[ -f "$HOME/.rc-extra" ] && source "$HOME/.rc-extra"
