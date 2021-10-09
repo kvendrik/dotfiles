@@ -1,10 +1,45 @@
 #!/bin/bash
 
-if [ $SPIN ]; then
+function __symlink_homefiles() {
+  local dotfiles do_symlink do_force
+  dotfiles="$(ls -a ./bootstrap/home | grep -E '\.[a-z]+')"
+
+  if [[ "$1" != "-f" ]]; then
+    echo "Would you like to symlink the following files to $HOME?\n$dotfiles\n[y/N] \c"
+    read do_symlink
+
+    if [[ "$do_symlink" != "y" ]]; then
+      exit 0
+    fi
+  fi
+
+  for file in $dotfiles
+  do
+    if [[ "$file" == "." ]] || [[ "$file" == ".." ]]; then
+      continue
+    fi
+
+    echo "    symlinking $file to $HOME/$file"
+
+    if [[ "$1" == "-f" ]]; then
+      ln -sf "$DIRECTORY/home/$file" "$HOME/$file"
+    else
+      ln -s "$DIRECTORY/home/$file" "$HOME/$file"
+    fi
+  done
+}
+
+if [ -n "$SPIN" ]; then
   echo 'initializing kvendrik/dotfiles'
 
   export GITHUB_USERNAME='kvendrik'
   export REPOSITORIES_DIRECTORY='/src/github.com/shopify'
 
+  __symlink_homefiles -f
+
   source ~/dotfiles/index
 fi
+
+__symlink_homefiles
+
+echo "Done. Check out the README.md for further instructions."

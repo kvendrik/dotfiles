@@ -1,4 +1,4 @@
-#!/bin/bash
+# #!/bin/bash
 
 DIRECTORY=$(dirname "$0")
 
@@ -24,4 +24,4 @@ if ! command -v jq; then
   brew install jq
 fi
 
-"$DIRECTORY/config-backups" restore
+./setup
