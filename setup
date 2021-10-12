@@ -59,7 +59,7 @@ else
   read -r custom_zsh_theme_install
 
   if [[ "$custom_zsh_theme_install" == 'y' ]]; then
-    ln -sf "$HOME/dotfiles/zsh_themes/robbyrussell_with_host.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/robbyrussell_with_host.zsh-theme"
+    ln -sf "$HOME/dotfiles/zsh-themes/robbyrussell_with_host.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/robbyrussell_with_host.zsh-theme"
   fi
 fi
 
