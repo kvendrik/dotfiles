@@ -37,7 +37,14 @@ install_zsh_autosuggestions() {
 
 install_homebrew() {
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 }
+
+echo """
+Setting up kvendrik/dotfiles. If this script crashes
+at any point you can run it again to continue where you left off.
+"""
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   if [ -n "$SPIN" ]; then
