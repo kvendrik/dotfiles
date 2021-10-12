@@ -108,8 +108,6 @@ export REPOSITORIES_DIRECTORY='/src/github.com/shopify'
   echo """
 eval \`dircolors ~/.dircolors\`
   """ > "$HOME/.rc-extra"
-
-  exit 0
 else
   printf '%s' "5/7. Manually import the Terminal theme found in $HOME/dotfiles/CustomBasic.terminal into your Terminal preferences. Done? [y/n] "
   read -r done_manually_importing_theme
