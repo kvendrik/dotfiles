@@ -94,7 +94,7 @@ else
 fi
 
 if [ -n "$SPIN" ]; then
-  echo "5/5. Adding Spin configuration to $HOME/.rc-config"
+  echo "5/5. Adding Spin configuration to $HOME/.rc-config and $HOME/.rc-extra"
 
   echo """
 export GITHUB_USERNAME='kvendrik'
