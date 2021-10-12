@@ -25,10 +25,7 @@ symlink_homefiles() {
 }
 
 install_oh_my_zsh() {
-  if ! sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"; then
-    echo 'Oh My ZSH install failed. Aborting.'
-    exit 1
-  fi
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 }
 
 install_zsh_autosuggestions() {
