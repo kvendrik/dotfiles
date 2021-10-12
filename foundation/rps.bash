@@ -46,3 +46,9 @@ alias r='rps'
 
 __rps_autocomplete rpse
 __rps_autocomplete rps
+
+for repo_directory in `ls "$REPOSITORIES_DIRECTORY"`; do
+  __add_custom_zsh_autosuggestion "r $repo_directory"
+done
+
+unset repo_directory
