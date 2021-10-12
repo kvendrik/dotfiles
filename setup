@@ -95,10 +95,15 @@ fi
 
 if [ -n "$SPIN" ]; then
   echo "5/5. Adding Spin configuration to $HOME/.rc-config"
+
   echo """
 export GITHUB_USERNAME='kvendrik'
 export REPOSITORIES_DIRECTORY='/src/github.com/shopify'
   """ > "$HOME/.rc-config"
+
+  echo """
+eval \`dircolors ~/.dircolors\`
+  """ > "$HOME/.rc-extra"
 
   exit 0
 fi
