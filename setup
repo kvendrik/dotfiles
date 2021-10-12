@@ -1,19 +1,14 @@
 #!/bin/bash
 
-__symlink_homefiles() {
-  local dotfiles do_symlink do_force
-  dotfiles="$(ls -a ./bootstrap/home | grep -E '\.[a-z]+')"
+if [ ! -d "$HOME/dotfiles/home" ]; then
+  echo "Place the dotfiles in your home folder."
+  exit 1
+fi
 
-  if [[ "$1" != "-f" ]]; then
-    printf "%s" "Would you like to symlink the following files to $HOME?\n$dotfiles\n[y/N] \c"
-    read -r do_symlink
+HOME_FILES="$(ls -a "$HOME/dotfiles/home" | grep -E '\.[a-z]+')"
 
-    if [[ "$do_symlink" != "y" ]]; then
-      exit 0
-    fi
-  fi
-
-  for file in $dotfiles
+symlink_homefiles() {
+  for file in $HOME_FILES
   do
     if [[ "$file" == "." ]] || [[ "$file" == ".." ]]; then
       continue
@@ -22,27 +17,137 @@ __symlink_homefiles() {
     echo "    symlinking $file to $HOME/$file"
 
     if [[ "$1" == "-f" ]]; then
-      ln -sf "$DIRECTORY/home/$file" "$HOME/$file"
+      ln -sf "$HOME/dotfiles/home/$file" "$HOME/$file"
     else
-      ln -s "$DIRECTORY/home/$file" "$HOME/$file"
+      ln -s "$HOME/dotfiles/home/$file" "$HOME/$file"
     fi
   done
 }
 
-if [ -n "$SPIN" ]; then
-  echo 'initializing kvendrik/dotfiles'
+install_oh_my_zsh() {
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+}
 
-  __symlink_homefiles -f
+install_zsh_autosuggestions() {
+  if ! git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.zsh/zsh-autosuggestions"; then
+    echo 'Git clone failed. Aborting.'
+    exit 1
+  fi
+}
 
-  export GITHUB_USERNAME='kvendrik'
-  export REPOSITORIES_DIRECTORY='/src/github.com/shopify'
+install_homebrew() {
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+}
 
-  # shellcheck disable=SC1091
-  source "$HOME/dotfiles/index"
+echo """
+Setting up kvendrik/dotfiles. If this script crashes
+at any point you can run it again to continue where you left off.
+"""
 
-  exit 0
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  if [ -n "$SPIN" ]; then
+    echo '1/7. Installing Oh My ZSH'
+    install_oh_my_zsh
+  else
+    printf "%s" "1/7. Install Oh My ZSH? [y/N] "
+    read -r do_install_oh_my_zsh
+
+    if [[ "$do_install_oh_my_zsh" == 'y' ]]; then
+      install_oh_my_zsh
+    fi
+  fi
+else
+  echo '1/7. Installing Oh My ZSH. (already installed)'
 fi
 
-__symlink_homefiles
+if [ -n "$SPIN" ]; then
+  echo '2/7. Symlinking the custom Oh My ZSH theme'
+  echo "    symlinking $HOME/dotfiles/zsh-themes/robbyrussell_with_host.zsh-theme to $HOME/.oh-my-zsh/custom/themes/robbyrussell_with_host.zsh-theme"
+  ln -sf "$HOME/dotfiles/zsh-themes/robbyrussell_with_host.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/robbyrussell_with_host.zsh-theme"
+else
+  printf "%s" "2/7. Would you like to symlink the custom Oh My ZSH theme? [y/N] "
+  read -r custom_zsh_theme_install
 
-echo "Done. Check out the README.md for further instructions."
+  if [[ "$custom_zsh_theme_install" == 'y' ]]; then
+    echo "    symlinking $HOME/dotfiles/zsh-themes/robbyrussell_with_host.zsh-theme to $HOME/.oh-my-zsh/custom/themes/robbyrussell_with_host.zsh-theme"
+    ln -sf "$HOME/dotfiles/zsh-themes/robbyrussell_with_host.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/robbyrussell_with_host.zsh-theme"
+  fi
+fi
+
+if [ ! -d "$HOME/.zsh/zsh-autosuggestions" ]; then
+  if [ -n "$SPIN" ]; then
+    echo '3/7. Installing ZSH Autosuggestions'
+    install_zsh_autosuggestions
+  else
+    printf '%s' '3/7. Install ZSH Autosuggestions? [y/N] '
+    read -r do_install_zsh_autosuggestions
+
+    if [[ "$do_install_zsh_autosuggestions" == 'y' ]]; then
+      install_zsh_autosuggestions
+    fi
+  fi
+else
+  echo '3/7. Installing ZSH Autosuggestions. (already installed)'
+fi
+
+if [ -n "$SPIN" ]; then
+  echo '4/7. Symlinking home files'
+  symlink_homefiles -f
+else
+  printf "%s\n%s\n%s" "4/7. Would you like to symlink the following files to $HOME?" "$HOME_FILES" "[y/N] "
+  read -r do_symlink
+
+  if [[ "$do_symlink" == "y" ]]; then
+    symlink_homefiles
+  fi
+fi
+
+if [ -n "$SPIN" ]; then
+  echo "5/7. Adding Spin configuration to $HOME/.rc-config and $HOME/.rc-extra"
+
+  echo """
+export GITHUB_USERNAME='kvendrik'
+export REPOSITORIES_DIRECTORY='/src/github.com/shopify'
+  """ > "$HOME/.rc-config"
+
+  echo """
+eval \`dircolors ~/.dircolors\`
+  """ > "$HOME/.rc-extra"
+else
+  printf '%s' "5/7. Manually import the Terminal theme found in $HOME/dotfiles/CustomBasic.terminal into your Terminal preferences. Done? [y/n] "
+  read -r done_manually_importing_theme
+fi
+
+do_install_homebrew_deps="y"
+
+if [ ! -x "$(command -v brew)" ]; then
+  if [ -n "$SPIN" ]; then
+    echo '6/7. Installing Homebrew'
+    install_homebrew
+  else
+    printf '%s' '6/7. Install Homebrew and Homebrew dependencies? [y/N] '
+    read -r do_install_homebrew
+    if [[ "$do_install_homebrew" == 'y' ]]; then
+      install_homebrew
+    else
+      do_install_homebrew_deps="n"
+    fi
+  fi
+else
+  echo '6/7. Installing Homebrew. (already installed)'
+fi
+
+if [ ! -x "$(command -v fzf)" ]; then
+  if [[ "$do_install_homebrew_deps" == 'y' ]]; then
+    echo '7/7. Installing fzf'
+    brew install fzf
+  else
+    echo '7/7. Installing fzf. (skipping)'
+  fi
+else
+  echo '7/7. Installing fzf. (already installed)'
+fi
+
+printf '\n%s' "[✓] Done. Check out the README.md for further instructions."

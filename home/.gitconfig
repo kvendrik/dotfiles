@@ -1,11 +1,10 @@
 [core]
+	commitGraph = true
 	excludesfile = ~/.gitignore
-	ignorecase = true
-[push]
-	default = simple
 [diff]
 	algorithm = patience
-[protocol]
-	version = 2
-[credential]
-	helper = osxkeychain
+[gc]
+	writeCommitGraph = true
+[pull]
+	rebase = false
+	ff = only
