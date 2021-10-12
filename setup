@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! -d "$HOME/dotfiles/home" ]; then
+  echo "Place the dotfiles in your home folder."
+  exit 1
+fi
+
 HOME_FILES="$(ls -a "$HOME/dotfiles/home" | grep -E '\.[a-z]+')"
 
 symlink_homefiles() {
