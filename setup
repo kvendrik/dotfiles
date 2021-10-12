@@ -17,9 +17,9 @@ symlink_homefiles() {
     echo "    symlinking $file to $HOME/$file"
 
     if [[ "$1" == "-f" ]]; then
-      ln -sf "$DIRECTORY/home/$file" "$HOME/$file"
+      ln -sf "$HOME/dotfiles/home/$file" "$HOME/$file"
     else
-      ln -s "$DIRECTORY/home/$file" "$HOME/$file"
+      ln -s "$HOME/dotfiles/home/$file" "$HOME/$file"
     fi
   done
 }
