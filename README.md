@@ -7,7 +7,7 @@ These dotfiles...
 - **Work best with [Oh My ZSH](https://github.com/robbyrussell/oh-my-zsh) on OS X**<br>_As that's what I use myself._
 
 Wait, there's more...
-- [Option for quickly bootstrapping a new machine](#bootstrap)
+- [Option for quickly bootstrapping a new machine](#setup)
 - [Cherry-picking option available](#cherry-picking)
 
 > Disclaimer: These dotfiles are primarely maintained for personal use so I can't guarantee everything will work out of the box. It's possible you'll run into errors because you use a different shell, have missing dependencies, or because of other reasons. Feel free to resolve the errors in whatever way is most convenient and optionally [contribute](#️-contribute) them back to here.
@@ -17,7 +17,7 @@ Most of the aliases and methods should be pretty self-explanatory. Everything is
 
 ## Setup
 1. Clone the dotfiles to your home folder.
-1. Run `./setup` to set up the `./home/` files. You'll be asked if you'd like to proceed before the script makes any changes outside this folder.
+1. (Optional) Run `./setup` to set up the `./home/` files. You'll be asked if you'd like to proceed before the script makes any changes outside this folder.
 1. Configure the utilities using environment variables and source the `index` file:
 
 > If you decide to symlink the provided `./home/.zshrc` file in the `./setup` step: you can create a `./.rc-config` file to export these variables from.
@@ -43,14 +43,12 @@ source './dotfiles/file/you/like.bash'
 ## Directories
 - `./home/`<br>Contains files that can be symlinked to your home folder by running `./setup`
 
-- `./bootstrap/`<br>Contains a script and required assets to quickly set up a new machine.
-
 - `./scripts/`<br>
 Standalone executables to speed up various tasks
 
 - `./tests/`<br>Contains various tests for these dotfiles that are ran on CI or manually by running `./tests/run-all`
 
-- Everything else is utility code that can be used by sourcing `./index` (see setup instructions) or is self-explanatory (e.g. `./.circleci/`)
+- Everything else is utility code that can be used by sourcing `./index` (see setup instructions) or is self-explanatory (e.g. `./.circleci/`, `./zsh-themes/`)
 
 ## 🏗️ Contribute
 1. Make your changes.
