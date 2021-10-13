@@ -1,5 +1,9 @@
 #!/bin/bash
 
+__escape_backslashes() {
+  echo "$1" | sed 's/\//\\\//g'
+}
+
 __D_HISTORY_PATH="$DOTFILES_DIRECTORY/.d_history"
 
 __D_VERBOSE=''
