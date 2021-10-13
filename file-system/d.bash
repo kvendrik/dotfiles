@@ -4,17 +4,17 @@ _escape_backslashes() {
   echo "$1" | sed 's/\//\\\//g'
 }
 
-__D_HISTORY_PATH="$DOTFILES_DIRECTORY/.d_history"
+_D_HISTORY_PATH="$DOTFILES_DIRECTORY/.d_history"
 
-__D_VERBOSE=''
-__D_CURRENT_POINTS=0
-__D_CURRENT_TIMESTAMPS=''
+_D_VERBOSE=''
+_D_CURRENT_POINTS=0
+_D_CURRENT_TIMESTAMPS=''
 
 which d &> /dev/null && unset d
 
 d() {
-  if [ ! -f "$__D_HISTORY_PATH" ]; then
-    touch "$__D_HISTORY_PATH"
+  if [ ! -f "$_D_HISTORY_PATH" ]; then
+    touch "$_D_HISTORY_PATH"
   fi
 
   local path_regex
@@ -55,16 +55,16 @@ Isn’t this a more basic version of github.com/rupa/z?
   fi
 
   if [ -n "$(_check_contains_flag "$*" 'verbose' 'v')" ]; then
-    __D_VERBOSE='true'
+    _D_VERBOSE='true'
   else
-    __D_VERBOSE=''
+    _D_VERBOSE=''
   fi
 
   local entries
-  entries="$(cat "$__D_HISTORY_PATH")"
+  entries="$(cat "$_D_HISTORY_PATH")"
 
   if cd "$path_regex" &> /dev/null; then
-    _d_add_to_history "$entries" "$(pwd)" > "$__D_HISTORY_PATH"
+    _d_add_to_history "$entries" "$(pwd)" > "$_D_HISTORY_PATH"
     return
   fi
 
@@ -78,12 +78,12 @@ Isn’t this a more basic version of github.com/rupa/z?
     if [[ "$entry_path" =~ $path_regex ]]; then
       timestamps="$(echo "$entry" | grep -Eo '[^:]+$')"
 
-      if [ -n "$__D_VERBOSE" ]; then
+      if [ -n "$_D_VERBOSE" ]; then
         printf "match %s\n\n" "$entry_path"
       fi
 
       if [ ! -d "$entry_path" ]; then
-        if [ -n "$__D_VERBOSE" ]; then
+        if [ -n "$_D_VERBOSE" ]; then
           printf "%s doesn't exist anymore, removing...\n---\n" "$entry_path"
         fi
         entries="$(_d_remove_from_history "$entries" "$entry_path")"
@@ -91,51 +91,51 @@ Isn’t this a more basic version of github.com/rupa/z?
       fi
 
       _d_get_frecency_points "$timestamps" "$now_timestamp"
-      points=$__D_CURRENT_POINTS
+      points=$_D_CURRENT_POINTS
 
-      if [ "$__D_CURRENT_POINTS" -eq 0 ]; then
-        if [ -n "$__D_VERBOSE" ]; then
+      if [ "$_D_CURRENT_POINTS" -eq 0 ]; then
+        if [ -n "$_D_VERBOSE" ]; then
           printf "\n%s outdated, removing..." "$entry_path"
         fi
         entries="$(_d_remove_from_history "$entries" "$entry_path")"
       else
-        entries="$(_d_replace_timestamps_for_entry "$entries" "$entry_path" "$__D_CURRENT_TIMESTAMPS")"
+        entries="$(_d_replace_timestamps_for_entry "$entries" "$entry_path" "$_D_CURRENT_TIMESTAMPS")"
       fi
 
-      if [ -n "$__D_VERBOSE" ]; then
+      if [ -n "$_D_VERBOSE" ]; then
         printf "\n---\n\n"
       fi
 
       if ((points > most_points_count)); then
         most_points_count=$points
         most_points_path=$entry_path
-        most_points_timestamps="$__D_CURRENT_TIMESTAMPS"
+        most_points_timestamps="$_D_CURRENT_TIMESTAMPS"
       fi
     fi
   done < <(echo "$entries")
 
   if [ -n "$most_points_path" ]; then
-    if [ -n "$__D_VERBOSE" ]; then
+    if [ -n "$_D_VERBOSE" ]; then
       printf "winning path: '%s'\n" "$most_points_path"
     fi
 
     if cd "$most_points_path"; then
-       _d_replace_timestamps_for_entry "$entries" "$most_points_path" "$most_points_timestamps$now_timestamp," > "$__D_HISTORY_PATH"
+       _d_replace_timestamps_for_entry "$entries" "$most_points_path" "$most_points_timestamps$now_timestamp," > "$_D_HISTORY_PATH"
       return
     else
       echo "'$path_regex' matched '$most_points_path' but could not cd to it. Unknown error (exit code $?)."
-      echo "$entries" > "$__D_HISTORY_PATH"
+      echo "$entries" > "$_D_HISTORY_PATH"
       return $?
     fi
   fi
 
   echo "Could not find '$path_regex'."
 
-  if [ -n "$__D_VERBOSE" ]; then
+  if [ -n "$_D_VERBOSE" ]; then
     echo "'cd $path_regex' failed and no history matches for '$path_regex'."
   fi
 
-  echo "$entries" > "$__D_HISTORY_PATH"
+  echo "$entries" > "$_D_HISTORY_PATH"
   return 1
 }
 
@@ -181,43 +181,43 @@ _d_get_frecency_points() {
   new_timestamps="$timestamps"
   timestamp_entries="$(echo "$timestamps" | grep -Eo '[^,]+')"
 
-  if [ -n "$__D_VERBOSE" ]; then
+  if [ -n "$_D_VERBOSE" ]; then
     printf "now: %s\ntimestamps: %s\n\n" "$now_unix" "$timestamps"
   fi
 
   while IFS= read -r timestamp; do
     if [[ $timestamp > $((now_unix-$((min_ms*5)))) ]]; then
       points=$((points+4))
-      if [ -n "$__D_VERBOSE" ]; then
+      if [ -n "$_D_VERBOSE" ]; then
         echo "- '$timestamp' was last 5 min"
       fi
     elif [[ $timestamp > $((now_unix-hour_ms)) ]]; then
       points=$((points+3))
-      if [ -n "$__D_VERBOSE" ]; then
+      if [ -n "$_D_VERBOSE" ]; then
         echo "- '$timestamp' was last hour"
       fi
     elif [[ $timestamp > $((now_unix-day_ms)) ]]; then
       points=$((points+2))
-      if [ -n "$__D_VERBOSE" ]; then
+      if [ -n "$_D_VERBOSE" ]; then
         echo "- '$timestamp' was last day"
       fi
     elif [[ $timestamp > $((now_unix-$((day_ms*7)))) ]]; then
       points=$((points+1))
-      if [ -n "$__D_VERBOSE" ]; then
+      if [ -n "$_D_VERBOSE" ]; then
         echo "- '$timestamp' was last week"
       fi
     else
       new_timestamps="${timestamps//"$timestamp,"/""}"
-      if [ -n "$__D_VERBOSE" ]; then
+      if [ -n "$_D_VERBOSE" ]; then
         echo "- '$timestamp' is outdated, removing from string..."
       fi
     fi
   done < <(echo "$timestamp_entries")
 
-  __D_CURRENT_TIMESTAMPS="$new_timestamps"
-  __D_CURRENT_POINTS=$points
+  _D_CURRENT_TIMESTAMPS="$new_timestamps"
+  _D_CURRENT_POINTS=$points
 
-  if [ -n "$__D_VERBOSE" ]; then
+  if [ -n "$_D_VERBOSE" ]; then
     printf "\npoints: %s" "$points"
   fi
 }
