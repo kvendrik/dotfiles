@@ -18,9 +18,9 @@ Most of the aliases and methods should be pretty self-explanatory. Everything is
 ## Setup
 1. Clone the dotfiles to your home folder.
 1. (Optional) Run `./setup` if you'd like to use the home files `./home/*`, use the provided ZSH and Terminal themes, and/or want to install several (optional) dependencies.
-1. Configure the utilities using environment variables and source the `index` file:
+1. Configure the utilities using environment variables, source the `index` file, and add `./bin` to your `PATH`.
 
-> If you decide to symlink the provided `./home/.zshrc` file in the `./setup` step: you can create a `~/.rc-config` file to export these variables from.
+> The provided `./home/.zshrc` already sources the dotfiles and sets up the `PATH`. It also sources an optional `~/.rc-extra` file from which you can export the variables. The provided `./home/.zshrc` file gets symlinked to your home folder when running `./setup`.
 
 In your RC file: (`~/.zshrc` if you use ZSH):
 ```bash
@@ -28,6 +28,8 @@ export GITHUB_USERNAME='kvendrik'
 export REPOSITORIES_DIRECTORY='path/to/all/your/cloned/repositories'
 
 source ./dotfiles/index
+
+export PATH="$PATH:$HOME/dotfiles/bin"
 ```
 
 ### Cherry-picking
