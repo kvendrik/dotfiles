@@ -34,21 +34,21 @@ rps() {
   fi
 }
 
-__rps_autocomplete_insert() {
+_rps_autocomplete_insert() {
   ls "$REPOSITORIES_DIRECTORY"
 }
 
-__rps_autocomplete() {
-  complete -F __rps_autocomplete_insert "$1"
+_rps_autocomplete() {
+  complete -F _rps_autocomplete_insert "$1"
 }
 
 alias r='rps'
 
-__rps_autocomplete rpse
-__rps_autocomplete rps
+_rps_autocomplete rpse
+_rps_autocomplete rps
 
 for repo_directory in `ls "$REPOSITORIES_DIRECTORY"`; do
-  __add_custom_zsh_autosuggestion "r $repo_directory"
+  _add_custom_zsh_autosuggestion "r $repo_directory"
 done
 
 unset repo_directory

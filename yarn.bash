@@ -1,6 +1,6 @@
 #!/bin/bash
 
-__find_closest_npm_package() {
+_find_closest_npm_package() {
   if [ -f 'package.json' ]; then
     echo 'package.json'
     return
@@ -16,8 +16,8 @@ __find_closest_npm_package() {
   echo "$current_relative_path"package.json
 }
 
-__package_lookup() {
-  closest_package_path="$(__find_closest_npm_package)"
+_package_lookup() {
+  closest_package_path="$(_find_closest_npm_package)"
   if [ -z "$closest_package_path" ]; then
     return
   fi
@@ -25,16 +25,16 @@ __package_lookup() {
   COMPREPLY=($(jq "$1 | keys | join(\" \")" "$closest_package_path" | tr -d '"'))
 }
 
-__get_npm_package_scripts_autocomplete() {
-  __package_lookup '.scripts'
+_get_npm_package_scripts_autocomplete() {
+  _package_lookup '.scripts'
 }
 
-__get_package_dependencies() {
-  __package_lookup '.dependencies, .devDependencies'
+_get_package_dependencies() {
+  _package_lookup '.dependencies, .devDependencies'
 }
 
 yre() {
-  closest_package_path="$(__find_closest_npm_package)"
+  closest_package_path="$(_find_closest_npm_package)"
   if [ -z "$closest_package_path" ]; then
     echo 'package.json not found.'
     return
@@ -51,20 +51,20 @@ yr() {
   yarn run $@
 }
 
-complete -F __get_npm_package_scripts_autocomplete yr
+complete -F _get_npm_package_scripts_autocomplete yr
 
 yu() {
   # shellcheck disable=SC2068
   yarn remove $@
 }
 
-complete -F __get_package_dependencies yu
+complete -F _get_package_dependencies yu
 
 yua() {
   yarn remove "$1" && yarn add "$1"
 }
 
-complete -F __get_package_dependencies yua
+complete -F _get_package_dependencies yua
 
 alias yt="yarn test"
 alias ya="yarn add"

@@ -8,7 +8,7 @@ lc() {
   local folder_name command_name second_arg storage_path found_command entry_path
 
   # shellcheck disable=SC2086,SC2048
-  __strip_flags $*
+  _strip_flags $*
 
   folder_name="$(basename "$(pwd)")"
   command_name="${CURRENT_CLEAN_ARGUMENTS[1]}"
@@ -23,17 +23,17 @@ lc() {
 
   found_command="$( grep -Eo "$entry_path\: .+$" "$storage_path" | grep -Eo "\: .+" | grep -Eo "\s.+$" | sed 's/ //')"
 
-  if [ -n "$(__check_contains_flag "$*" 'path' 'p')" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'path' 'p')" ]; then
     echo "$storage_path"
     return
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'list' 'l')" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'list' 'l')" ]; then
     cat "$storage_path"
     return
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'help' 'h')" ]; then
     echo "Local Commands
 Usage: lc [flag] <alias> [<command>]
 
@@ -64,7 +64,7 @@ v8/test: out/x64.release/d8"
     return
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'remove' 'r')" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'remove' 'r')" ]; then
     local entry entries new_entries
     entries="$(cat "$storage_path")"
     entry="$(echo "$entries" | grep -Eo "$entry_path\:(.+)")"
@@ -77,7 +77,7 @@ v8/test: out/x64.release/d8"
     return
   fi
 
-  if [ -n "${second_arg[*]}" ] && [ -n "$(__check_contains_flag "$*" 'add' 'a')" ]; then
+  if [ -n "${second_arg[*]}" ] && [ -n "$(_check_contains_flag "$*" 'add' 'a')" ]; then
     if [ -n "$found_command" ]; then
       echo "$entry_path is already defined. Run 'lc --list' to learn more."
       return 1
@@ -86,7 +86,7 @@ v8/test: out/x64.release/d8"
     return
   fi
 
-  if [ -n "${second_arg[*]}" ] && [ -n "$(__check_contains_flag "$*" 'set' 's')" ]; then
+  if [ -n "${second_arg[*]}" ] && [ -n "$(_check_contains_flag "$*" 'set' 's')" ]; then
     if [ -n "$found_command" ]; then
       lc --remove "$entry_path"
     fi
@@ -113,11 +113,11 @@ v8/test: out/x64.release/d8"
   eval "$found_command ${second_arg[*]}"
 }
 
-__get_lc_autocomplete() {
+_get_lc_autocomplete() {
   local storage_path folder_name
   folder_name="$(basename "$(pwd)")"
   storage_path="$DOTFILES_DIRECTORY/.local_commands"
   cat "$storage_path" | grep -Eo "^$folder_name\/[^\:]+" | sed s/"$folder_name\/"//g
 }
 
-complete -F __get_lc_autocomplete lc
+complete -F _get_lc_autocomplete lc

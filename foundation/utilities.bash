@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Usage: __strip_flags <...all_arguments>
+# Usage: _strip_flags <...all_arguments>
 # Results are stored in CURRENT_CLEAN_ARGUMENTS
-# Example: __strip_flags -g hello there --open && echo $CURRENT_CLEAN_ARGUMENTS
+# Example: _strip_flags -g hello there --open && echo $CURRENT_CLEAN_ARGUMENTS
 CURRENT_CLEAN_ARGUMENTS=()
-__strip_flags() {
+_strip_flags() {
   CURRENT_CLEAN_ARGUMENTS=()
   for argument in "$@"; do
     if [[ "$argument" =~ ^- ]]; then
@@ -14,19 +14,19 @@ __strip_flags() {
   done
 }
 
-# Usage: __extract_flag_value <all_arguments> <flag_name>
-__extract_flag_value() {
+# Usage: _extract_flag_value <all_arguments> <flag_name>
+_extract_flag_value() {
   echo "$1" | grep -Eo "$2\=\w+" | grep -Eo '[^ \=]+$'
 }
 
-# Usage: __check_contains_flag <all_arguments> <flag_long_name> <flag_shorthand>
-# Example: __check_contains_flag "$*" 'help' 'h'
-__check_contains_flag() {
+# Usage: _check_contains_flag <all_arguments> <flag_long_name> <flag_shorthand>
+# Example: _check_contains_flag "$*" 'help' 'h'
+_check_contains_flag() {
   if [[ "$1" =~ --$2 ]] || [[ "$1" =~ -$3 ]]; then
     echo 'true'
   fi
 }
 
-__escape_backslashes() {
+_escape_backslashes() {
   echo "$1" | sed 's/\//\\\//g'
 }

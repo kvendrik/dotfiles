@@ -1,6 +1,6 @@
 #!/bin/bash
 
-__escape_backslashes() {
+_escape_backslashes() {
   echo "$1" | sed 's/\//\\\//g'
 }
 
@@ -20,10 +20,10 @@ d() {
   local path_regex
 
   # shellcheck disable=SC2086,SC2048
-  __strip_flags $*
+  _strip_flags $*
   path_regex="${CURRENT_CLEAN_ARGUMENTS[1]}"
 
-  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ] || [ -z "$path_regex" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'help' 'h')" ] || [ -z "$path_regex" ]; then
     # shellcheck disable=SC1112,SC2016
     echo 'Usage: d <path> [--verbose|-v] [--help|-h]
 
@@ -54,7 +54,7 @@ Isn’t this a more basic version of github.com/rupa/z?
     return
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'verbose' 'v')" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'verbose' 'v')" ]; then
     __D_VERBOSE='true'
   else
     __D_VERBOSE=''
@@ -64,7 +64,7 @@ Isn’t this a more basic version of github.com/rupa/z?
   entries="$(cat "$__D_HISTORY_PATH")"
 
   if cd "$path_regex" &> /dev/null; then
-    __d_add_to_history "$entries" "$(pwd)" > "$__D_HISTORY_PATH"
+    _d_add_to_history "$entries" "$(pwd)" > "$__D_HISTORY_PATH"
     return
   fi
 
@@ -86,20 +86,20 @@ Isn’t this a more basic version of github.com/rupa/z?
         if [ -n "$__D_VERBOSE" ]; then
           printf "%s doesn't exist anymore, removing...\n---\n" "$entry_path"
         fi
-        entries="$(__d_remove_from_history "$entries" "$entry_path")"
+        entries="$(_d_remove_from_history "$entries" "$entry_path")"
         continue
       fi
 
-      __d_get_frecency_points "$timestamps" "$now_timestamp"
+      _d_get_frecency_points "$timestamps" "$now_timestamp"
       points=$__D_CURRENT_POINTS
 
       if [ "$__D_CURRENT_POINTS" -eq 0 ]; then
         if [ -n "$__D_VERBOSE" ]; then
           printf "\n%s outdated, removing..." "$entry_path"
         fi
-        entries="$(__d_remove_from_history "$entries" "$entry_path")"
+        entries="$(_d_remove_from_history "$entries" "$entry_path")"
       else
-        entries="$(__d_replace_timestamps_for_entry "$entries" "$entry_path" "$__D_CURRENT_TIMESTAMPS")"
+        entries="$(_d_replace_timestamps_for_entry "$entries" "$entry_path" "$__D_CURRENT_TIMESTAMPS")"
       fi
 
       if [ -n "$__D_VERBOSE" ]; then
@@ -120,7 +120,7 @@ Isn’t this a more basic version of github.com/rupa/z?
     fi
 
     if cd "$most_points_path"; then
-       __d_replace_timestamps_for_entry "$entries" "$most_points_path" "$most_points_timestamps$now_timestamp," > "$__D_HISTORY_PATH"
+       _d_replace_timestamps_for_entry "$entries" "$most_points_path" "$most_points_timestamps$now_timestamp," > "$__D_HISTORY_PATH"
       return
     else
       echo "'$path_regex' matched '$most_points_path' but could not cd to it. Unknown error (exit code $?)."
@@ -139,15 +139,15 @@ Isn’t this a more basic version of github.com/rupa/z?
   return 1
 }
 
-__d_replace_timestamps_for_entry() {
+_d_replace_timestamps_for_entry() {
   local entries clean_entry_path new_timestamps
   entries="$1"
-  clean_entry_path="$(__escape_backslashes "$2")"
+  clean_entry_path="$(_escape_backslashes "$2")"
   new_timestamps="$3"
   echo "$entries" | sed -E "s/($clean_entry_path:).+/\1$new_timestamps/"
 }
 
-__d_add_to_history() {
+_d_add_to_history() {
   local entry_path entries now_unix
 
   entries="$1"
@@ -161,15 +161,15 @@ __d_add_to_history() {
   fi
 }
 
-__d_remove_from_history() {
+_d_remove_from_history() {
   local entries clean_entry_path
   entries="$1"
-  clean_entry_path="$(__escape_backslashes "$2")"
+  clean_entry_path="$(_escape_backslashes "$2")"
   echo "$entries" | sed -E "s/$clean_entry_path:.+//" | grep -Eo '.+'
 }
 
-# Usage: __d_get_frecency_points <comma_seperated_timestamps_string> <now_unix_timestamp>
-__d_get_frecency_points() {
+# Usage: _d_get_frecency_points <comma_seperated_timestamps_string> <now_unix_timestamp>
+_d_get_frecency_points() {
   local timestamps min_ms hour_ms now_unix points new_timestamps timestamp_entries
 
   min_ms=60

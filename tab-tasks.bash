@@ -23,7 +23,7 @@ Flags:
 -v|--verbose    Verbose messaging
 -h|--help       Print this help message'
 
-  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ] || [ -z "$1" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'help' 'h')" ] || [ -z "$1" ]; then
     echo "$help_message"
     return
   fi
@@ -31,9 +31,9 @@ Flags:
   local folder_names commands current_index message all_in_new_tab current_command verbose
 
   # shellcheck disable=SC2086,SC2048
-  __strip_flags $*
-  all_in_new_tab="$(__check_contains_flag "$*" 'all' 'a')"
-  verbose="$(__check_contains_flag "$*" 'verbose' 'v')"
+  _strip_flags $*
+  all_in_new_tab="$(_check_contains_flag "$*" 'all' 'a')"
+  verbose="$(_check_contains_flag "$*" 'verbose' 'v')"
   # shellcheck disable=SC2207
   folder_names=($(echo "$CURRENT_CLEAN_ARGUMENTS" | grep -Eo '([^ \:\,]+)\:' | sed 's/\:$//g'))
   current_index=1
@@ -64,8 +64,8 @@ Flags:
   done
 }
 
-__get_t_autocomplete() {
+_get_t_autocomplete() {
   find "$(rpse)" -type d -maxdepth 1 -execdir echo "{}:" \;
 }
 
-complete -F __get_t_autocomplete t
+complete -F _get_t_autocomplete t

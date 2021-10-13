@@ -1,10 +1,10 @@
 #!/bin/bash
 
-__git_is_repository() {
+_git_is_repository() {
   git -C "$1" rev-parse --is-inside-work-tree &> /dev/null
 }
 
-__git_get_remote_url() {
+_git_get_remote_url() {
   local remote_name remote_url repository_path
   remote_name=$([ -n "$1" ] && echo "$1" || echo origin)
   repository_path="$2"
@@ -16,15 +16,15 @@ __git_get_remote_url() {
   echo "$remote_url"
 }
 
-__git_ssh_to_web_url() {
+_git_ssh_to_web_url() {
   local base
   base=$(echo "$1" | sed -e "s/.git$//" -e "s/^git\@//" -e "s/\(.*[:/].*\)/\1/" -e "s/https\:\/\///" -e "s/\:/\//")
   echo "https://$base"
 }
 
 # Get a repository's web URL
-# Usage: __get_repository_web_url [<repository_path_or_name>] [<remote_name>]
-__get_repository_web_url() {
+# Usage: _get_repository_web_url [<repository_path_or_name>] [<remote_name>]
+_get_repository_web_url() {
   local remote_url repository_web_url repository_path
   repository_path="$1"
 
@@ -36,19 +36,19 @@ __get_repository_web_url() {
     fi
   fi
 
-  if ! __git_is_repository "$repository_path"; then
+  if ! _git_is_repository "$repository_path"; then
     echo 'Not a git repository.'
     return 1
   fi
 
-  remote_url=$(__git_get_remote_url "$2" "$repository_path")
+  remote_url=$(_git_get_remote_url "$2" "$repository_path")
 
   if [ -z "$remote_url" ]; then
     echo "Remote $2 does not exist."
     return 1
   fi
 
-  repository_web_url=$(__git_ssh_to_web_url "$remote_url")
+  repository_web_url=$(_git_ssh_to_web_url "$remote_url")
 
   echo "$repository_web_url"
 }
@@ -58,14 +58,14 @@ __get_repository_web_url() {
 or() {
   local current_branch_name repo_url
 
-  if ! repo_url="$(__get_repository_web_url "$1" "$2")"; then
+  if ! repo_url="$(_get_repository_web_url "$1" "$2")"; then
     echo "$repo_url"
     return
   fi
 
   current_branch_name="$(git symbolic-ref --short HEAD)"
 
-  if [ "$current_branch_name" != "$(__git_main_branch)" ]; then
+  if [ "$current_branch_name" != "$(_git_main_branch)" ]; then
     open "$repo_url/tree/$current_branch_name"
     return
   fi
@@ -73,18 +73,18 @@ or() {
   open "$repo_url"
 }
 
-__rps_autocomplete or
+_rps_autocomplete or
 
 # Open a PR against <base_branch> (master by default) for the current branch on <remote_name> (origin by default)
 # Usage: opr [<base_branch>] [<remote_name>]
 opr() {
   local base_branch_name pr_branch_name
   local repo_url
-  if ! repo_url="$(__get_repository_web_url "$(pwd)" "$2")"; then
+  if ! repo_url="$(_get_repository_web_url "$(pwd)" "$2")"; then
     echo "$repo_url"
     return
   fi
-  base_branch_name=$([ -n "$1" ] && echo "$1" || echo "$(__git_main_branch)")
+  base_branch_name=$([ -n "$1" ] && echo "$1" || echo "$(_git_main_branch)")
   pr_branch_name="$(git symbolic-ref --short HEAD)"
   open "$repo_url/compare/$base_branch_name...$pr_branch_name"
 }
@@ -92,7 +92,7 @@ opr() {
 # Open last commit
 olc() {
   local repo_url
-  if ! repo_url="$(__get_repository_web_url "$(pwd)" "$2")"; then
+  if ! repo_url="$(_get_repository_web_url "$(pwd)" "$2")"; then
     echo "$repo_url"
     return
   fi
@@ -107,32 +107,32 @@ oi() {
     return 1
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'help' 'h')" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'help' 'h')" ]; then
     printf 'Open Github list of issues or pull requests.\nUsage: oi [--me|-m] [--new|-n] [--search|-s] [-p|--pulls] [--repo=<path>].'
     return
   fi
 
   # shellcheck disable=SC2086,SC2048
-  __strip_flags $*
-  repository_path="$(__extract_flag_value "$*" 'repo')"
-  url_path="$([ -n "$(__check_contains_flag "$*" 'pulls' 'p')" ] && echo 'pulls' || echo 'issues')"
+  _strip_flags $*
+  repository_path="$(_extract_flag_value "$*" 'repo')"
+  url_path="$([ -n "$(_check_contains_flag "$*" 'pulls' 'p')" ] && echo 'pulls' || echo 'issues')"
 
-  if ! result="$(__get_repository_web_url "$repository_path")"; then
+  if ! result="$(_get_repository_web_url "$repository_path")"; then
     echo "$result"
     return
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'me' 'm')" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'me' 'm')" ]; then
     open "$result/$url_path/created_by/$GITHUB_USERNAME"
     return
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'new' 'n')" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'new' 'n')" ]; then
     open "$result/$url_path/new?title=${CURRENT_CLEAN_ARGUMENTS}"
     return
   fi
 
-  if [ -n "$(__check_contains_flag "$*" 'search' 's')" ]; then
+  if [ -n "$(_check_contains_flag "$*" 'search' 's')" ]; then
     open "$result/$url_path?utf8=✓&q=${CURRENT_CLEAN_ARGUMENTS}"
     return
   fi
