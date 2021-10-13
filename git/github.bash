@@ -65,7 +65,7 @@ or() {
 
   current_branch_name="$(git symbolic-ref --short HEAD)"
 
-  if [ "$current_branch_name" != 'master' ]; then
+  if [ "$current_branch_name" != "$(__git_main_branch)" ]; then
     open "$repo_url/tree/$current_branch_name"
     return
   fi
@@ -84,7 +84,7 @@ opr() {
     echo "$repo_url"
     return
   fi
-  base_branch_name=$([ -n "$1" ] && echo "$1" || echo master)
+  base_branch_name=$([ -n "$1" ] && echo "$1" || echo "$(__git_main_branch)")
   pr_branch_name="$(git symbolic-ref --short HEAD)"
   open "$repo_url/compare/$base_branch_name...$pr_branch_name"
 }

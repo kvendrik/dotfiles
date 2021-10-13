@@ -31,14 +31,14 @@ for folder_name in "$repos_path"/*; do
     continue
   fi
 
-  if [[ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]]; then
-    echo "$folder_path: could not check because project is not on master branch."
+  if [[ "$(git rev-parse --abbrev-ref HEAD)" != "$(__git_main_branch)" ]]; then
+    echo "$folder_path: could not check because project is not on main branch."
     error_found=1
     continue
   fi
 
-  if [[ "$(git rev-parse --abbrev-ref HEAD)" != "master" ]]; then
-    echo "$folder_path: could not check because project is not on master branch."
+  if [[ "$(git rev-parse --abbrev-ref HEAD)" != "$(__git_main_branch)" ]]; then
+    echo "$folder_path: could not check because project is not on main branch."
     error_found=1
     continue
   fi
@@ -49,7 +49,7 @@ for folder_name in "$repos_path"/*; do
     continue
   fi
 
-  if [ -n "$(git log origin/master..HEAD --oneline)" ]; then
+  if [ -n "$(git log origin/$(__git_main_branch)..HEAD --oneline)" ]; then
     echo "$folder_path: local copy is ahead of remote."
     error_found=1
     continue
