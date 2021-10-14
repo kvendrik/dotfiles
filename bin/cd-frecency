@@ -42,7 +42,7 @@ add_to_history() {
   entry_path="$2"
   now_unix="$(date +%s)"
 
-  if echo "$entries" | grep -q "$entry_path"; then
+  if echo "$entries" | grep -q "$entry_path:"; then
     echo "${entries//$entry_path:/$entry_path:$now_unix,}"
   else
     printf "%s\n%s:%s,\n" "$entries" "$entry_path" "$now_unix"
@@ -110,15 +110,19 @@ get_frecency_points() {
   fi
 }
 
+to_lower_case() {
+  echo "$1" | awk '{print tolower($0)}'
+}
+
 if [ ! -f "$HISTORY_PATH" ]; then
   touch "$HISTORY_PATH"
 fi
 
 # shellcheck disable=SC2086,SC2048
 strip_flags $*
-path_regex="${CURRENT_CLEAN_ARGUMENTS[0]}"
+input_path="${CURRENT_CLEAN_ARGUMENTS[0]}"
 
-if [ -n "$(check_contains_flag "$*" 'help' 'h')" ] || [ -z "$path_regex" ]; then
+if [ -n "$(check_contains_flag "$*" 'help' 'h')" ] || [ -z "$input_path" ]; then
   echo '''
 USAGE
 cd-frecency <path> [--verbose|-v] [--help|-h]
@@ -151,11 +155,12 @@ USING THIS AS YOUR CD
 
   which d &> /dev/null && unset -f d
   d() {
-    local output
-    output="$(cd-frecency "$1")"
-    if [ $? -eq 1 ]; then
+    local output exit_code
+    output="$(cd-frecency $*)"
+    exit_code=$?
+    if [ $exit_code -gt 0 ]; then
       echo $output
-      return $?
+      return $exit_code
     fi
     cd $output
   }
@@ -177,9 +182,10 @@ fi
 
 entries="$(cat "$HISTORY_PATH")"
 
-if [ -d "$path_regex" ]; then
-  echo $path_regex
+if [ -d "$input_path" ]; then
+  cd "$input_path"
   add_to_history "$entries" "$(pwd)" > "$HISTORY_PATH"
+  echo "$input_path"
   exit 0
 fi
 
@@ -187,9 +193,11 @@ most_points_count=0
 now_timestamp="$(date +%s)"
 
 while IFS= read -r entry; do
+  [ -z "$entry" ] && continue
+
   entry_path="$(echo "$entry" | grep -Eo '^[^:]+')"
 
-  if [[ "$entry_path" =~ $path_regex ]]; then
+  if [[ "$(to_lower_case "$entry_path")" =~ "$(to_lower_case "$input_path")" ]]; then
     timestamps="$(echo "$entry" | grep -Eo '[^:]+$')"
 
     if [ -n "$VERBOSE" ]; then
@@ -238,16 +246,16 @@ if [ -n "$most_points_path" ]; then
     echo $most_points_path
     exit 0
   else
-    echo "'$path_regex' matched '$most_points_path' but could not find the directory. Unknown error (exit code $?)."
+    echo "'$input_path' matched '$most_points_path' but could not find the directory. Unknown error (exit code $?)."
     echo "$entries" > "$HISTORY_PATH"
     exit 1
   fi
 fi
 
-echo "Could not find '$path_regex'."
+echo "Could not find '$input_path'."
 
 if [ -n "$VERBOSE" ]; then
-  echo "'$path_regex' is not a directory and no history matches for '$path_regex'."
+  echo "'$input_path' is not a directory and no history matches for '$input_path'."
 fi
 
 echo "$entries" > "$HISTORY_PATH"

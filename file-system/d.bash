@@ -3,12 +3,14 @@
 which d &> /dev/null && unset -f d
 
 d() {
-  local output
-  output="$(cd-frecency $*)"
+  local output exit_code
 
-  if [ $? -eq 1 ]; then
+  output="$(cd-frecency $*)"
+  exit_code=$?
+
+  if [ $exit_code -gt 0 ]; then
     echo $output
-    return $?
+    return $exit_code
   fi
 
   cd $output
