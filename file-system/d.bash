@@ -3,7 +3,7 @@
 which d &> /dev/null && unset -f d
 
 d() {
-  local output exit_code
+  local output exit_code extra_output
 
   output="$(cd-frecency $*)"
   exit_code=$?
@@ -13,13 +13,13 @@ d() {
     return $exit_code
   fi
 
-  if [ -n "$(_check_contains_flag "$*" 'verbose' 'v')" ]; then
-    echo "$output"
-    cd "$(echo "$output" | tail -1)"
-    return
+  extra_output="$(echo "$output" | sed '$d')"
+
+  if [ -n "$extra_output" ]; then
+    echo "$extra_output"
   fi
 
-  cd $output
+  cd "$(echo "$output" | tail -1)"
 }
 
 _get_d_autocomplete() {

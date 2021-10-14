@@ -160,15 +160,24 @@ USING THIS AS YOUR CD
 1. In your ~/.zshrc:
 
   which d &> /dev/null && unset -f d
+
   d() {
-    local output exit_code
+    local output exit_code extra_output
     output="$(cd-frecency $*)"
     exit_code=$?
+
     if [ $exit_code -gt 0 ]; then
       echo $output
       return $exit_code
     fi
-    cd $output
+
+    extra_output="$(echo "$output" | sed ’$d’)"
+
+    if [ -n "$extra_output" ]; then
+      echo "$extra_output"
+    fi
+
+    cd "$(echo "$output" | tail -1)"
   }
 
 2. Use it
