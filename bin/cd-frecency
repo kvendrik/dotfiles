@@ -122,10 +122,15 @@ fi
 strip_flags $*
 input_path="${CURRENT_CLEAN_ARGUMENTS[0]}"
 
+if [ -n "$(check_contains_flag "$*" 'path' 'p')" ]; then
+  echo "$HISTORY_PATH"
+  exit 1
+fi
+
 if [ -n "$(check_contains_flag "$*" 'help' 'h')" ] || [ -z "$input_path" ]; then
   echo '''
 USAGE
-cd-frecency <path> [--verbose|-v] [--help|-h]
+cd-frecency <path> [--verbose|-v] [--help|-h] [--path|-p]
 
 DESCRIPTION
 Prints suggestion for directory to change to using frecency
@@ -138,6 +143,7 @@ path                            the path you’d like to move to. if it doesn’
 FLAGS
 --verbose|-v                    prints debug data
 --help|-h                       prints this help message
+--path|-p                       prints path to the history file
 
 EXAMPLE
 1. Build up your history

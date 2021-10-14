@@ -21,3 +21,9 @@ d() {
 
   cd $output
 }
+
+_get_d_autocomplete() {
+  cat "$(cd-frecency -p)" | grep -Eo '^.+\:' | grep -Eo '[^:]+' | sed "s/$(echo "$HOME" | sed 's/\//\\\//g')//" | grep -Eo '[^/]+' | awk '{print tolower($0)}'
+}
+
+complete -F _get_d_autocomplete d
