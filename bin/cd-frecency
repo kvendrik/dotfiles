@@ -95,7 +95,7 @@ get_frecency_points() {
         echo "- '$timestamp' was last week"
       fi
     else
-      new_timestamps="${timestamps//"$timestamp,"/""}"
+      new_timestamps="${timestamps//"$timestamp,"/}"
       if [ -n "$VERBOSE" ]; then
         echo "- '$timestamp' is outdated, removing from string..."
       fi

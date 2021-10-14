@@ -13,5 +13,11 @@ d() {
     return $exit_code
   fi
 
+  if [ -n "$(_check_contains_flag "$*" 'verbose' 'v')" ]; then
+    echo "$output"
+    cd "$(echo "$output" | tail -1)"
+    return
+  fi
+
   cd $output
 }
