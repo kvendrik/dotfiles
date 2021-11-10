@@ -144,8 +144,12 @@ if [[ "$homebrew_installed" == 'n' ]]; then
   echo "7/$SETUP_STEPS. Install missing Homebrew dependencies. (skipped)"
   do_install_homebrew_deps='n'
 else
-  printf '%s' "7/$SETUP_STEPS. Install missing Homebrew dependencies? [y/N] "
-  read -r do_install_homebrew_deps
+  if [ -n "$SPIN" ]; then
+    do_install_homebrew_deps='y'
+  else
+    printf '%s' "7/$SETUP_STEPS. Install missing Homebrew dependencies? [y/N] "
+    read -r do_install_homebrew_deps
+  fi
 fi
 
 if [ ! -x "$(command -v fzf)" ]; then
