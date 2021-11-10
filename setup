@@ -174,4 +174,9 @@ else
   echo "9/$SETUP_STEPS. Installing kvendrik/git-squash. (already installed)"
 fi
 
+if [ -n "$SPIN" ]; then
+  git config --global user.name "Koen Vendrik"
+  git config --global user.email "k.vendrik@gmail.com"
+fi
+
 printf '\n%s' "[✓] Done. Check out the README.md for further instructions."
