@@ -3,6 +3,11 @@
 t() {
   local help_message
 
+  if ! command -v ttab; then
+    echo 'ttab is not installed. https://www.npmjs.com/package/ttab'
+    return 1
+  fi
+
   # shellcheck disable=SC2016
   help_message='Tab Tasks
 Opens Terminal tabs and executes shell commands in them.
