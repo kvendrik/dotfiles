@@ -110,7 +110,7 @@ if [ -n "$SPIN" ]; then
 
   echo """
 export GITHUB_USERNAME='kvendrik'
-export REPOSITORIES_DIRECTORY='/src/github.com/shopify'
+export REPOSITORIES_DIRECTORY='/home/spin/src/github.com/Shopify'
   """ > "$HOME/.rc-config"
 
   echo """
