@@ -51,7 +51,10 @@ alias gr="git rebase -i"
 alias gcom='git checkout $(_git_main_branch)'
 
 amend() {
-  _git_commit "amend" && git fetch origin "$(_git_main_branch)" && git squash --base="$(_git_main_branch)" --backup "$@"
+  local backup_branch_name
+  backup_branch_name="feature/$(_git_current_branch)-backup"
+  git rev-parse --verify "$backup_branch_name" && git branch -D "$backup_branch_name"
+  _git_commit "amend" && git fetch origin "$(_git_main_branch)" && git squash --base="origin/$(_git_main_branch)" --backup "$@"
 }
 
 ub() {
