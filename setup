@@ -6,7 +6,7 @@ if [ ! -d "$HOME/dotfiles/home" ]; then
 fi
 
 HOME_FILES="$(ls -a "$HOME/dotfiles/home" | grep -E '\.[a-z]+')"
-SETUP_STEPS='9'
+SETUP_STEPS='10'
 
 symlink_homefiles() {
   for file in $HOME_FILES
@@ -121,20 +121,6 @@ else
   read -r done_manually_importing_theme
 fi
 
-if [ -n "$SPIN" ]; then
-  git config --global user.name "Koen Vendrik"
-  git config --global user.email "k.vendrik@gmail.com"
-
-  if [[ "$SPIN_REPO_SOURCE_PATH" = "/src/github.com/shopify/shopify" ]]; then
-    cd "$SPIN_REPO_SOURCE_PATH"
-
-    cartridge insert shameelabd/shopify-reportify-config
-    . /cartridges/shopify-reportify-config/setup.sh
-
-    restart
-  fi
-fi
-
 homebrew_installed='y'
 
 if [ ! -x "$(command -v brew)" ]; then
@@ -186,6 +172,18 @@ if ! brew list git-squash &> /dev/null; then
   fi
 else
   echo "9/$SETUP_STEPS. Installing kvendrik/git-squash. (already installed)"
+fi
+
+if [ -n "$SPIN" ]; then
+  echo "10/$SETUP_STEPS. Extra Spin configuration"
+
+  git config --global user.name "Koen Vendrik"
+  git config --global user.email "k.vendrik@gmail.com"
+
+  cd /home/spin/src/github.com/Shopify/shopify
+  bin/rake dev:create_shopify_config
+else
+  echo "10/$SETUP_STEPS. Extra Spin configuration. (skipped)"
 fi
 
 printf '\n%s' "[✓] Done. Check out the README.md for further instructions."
