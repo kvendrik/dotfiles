@@ -124,6 +124,15 @@ fi
 if [ -n "$SPIN" ]; then
   git config --global user.name "Koen Vendrik"
   git config --global user.email "k.vendrik@gmail.com"
+
+  if [[ "$SPIN_REPO_SOURCE_PATH" = "/src/github.com/shopify/shopify" ]]; then
+    cd "$SPIN_REPO_SOURCE_PATH"
+
+    cartridge insert shameelabd/shopify-reportify-config
+    . /cartridges/shopify-reportify-config/setup.sh
+
+    restart
+  fi
 fi
 
 homebrew_installed='y'
@@ -177,17 +186,6 @@ if ! brew list git-squash &> /dev/null; then
   fi
 else
   echo "9/$SETUP_STEPS. Installing kvendrik/git-squash. (already installed)"
-fi
-
-if [ -n "$SPIN" ]; then
-  if [[ "$SPIN_REPO_SOURCE_PATH" = "/src/github.com/shopify/shopify" ]]; then
-    cd "$SPIN_REPO_SOURCE_PATH"
-
-    cartridge insert shameelabd/shopify-reportify-config
-    . /cartridges/shopify-reportify-config/setup.sh
-
-    restart
-  fi
 fi
 
 printf '\n%s' "[✓] Done. Check out the README.md for further instructions."
