@@ -82,7 +82,7 @@ ub() {
     return
   fi
 
-  git fetch origin "$base_branch" && git rebase -i "$base_branch"
+  git fetch origin "$base_branch" && git rebase -i "origin/$base_branch"
 }
 
 reset-branch() {
