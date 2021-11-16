@@ -180,4 +180,9 @@ else
   echo "9/$SETUP_STEPS. Installing kvendrik/git-squash. (already installed)"
 fi
 
+if [ -n "$SPIN" ]; then
+  # neccesary for the ./shopify_config to work
+  restart
+fi
+
 printf '\n%s' "[✓] Done. Check out the README.md for further instructions."
