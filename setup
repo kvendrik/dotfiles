@@ -37,7 +37,7 @@ install_zsh_autosuggestions() {
 }
 
 install_homebrew() {
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 }
@@ -163,7 +163,7 @@ else
   echo "8/$SETUP_STEPS. Installing fzf. (already installed)"
 fi
 
-if ! git squash -h &> /dev/null; then
+if ! brew list git-squash &> /dev/null; then
   if [[ "$do_install_homebrew_deps" == 'y' ]]; then
     echo "9/$SETUP_STEPS. Installing kvendrik/git-squash"
     brew install kvendrik/osx/git-squash
@@ -177,6 +177,15 @@ fi
 if [ -n "$SPIN" ]; then
   git config --global user.name "Koen Vendrik"
   git config --global user.email "k.vendrik@gmail.com"
+
+  if [[ "$SPIN_REPO_SOURCE_PATH" = "/src/github.com/shopify/shopify" ]]; then
+    cd "$SPIN_REPO_SOURCE_PATH"
+
+    cartridge insert shameelabd/shopify-reportify-config
+    . /cartridges/shopify-reportify-config/setup.sh
+
+    restart
+  fi
 fi
 
 printf '\n%s' "[✓] Done. Check out the README.md for further instructions."
