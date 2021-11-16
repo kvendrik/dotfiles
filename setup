@@ -1,7 +1,5 @@
 #!/bin/bash
 
-exit 0
-
 if [ ! -d "$HOME/dotfiles/home" ]; then
   echo "Place the dotfiles in your home folder."
   exit 1
