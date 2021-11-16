@@ -121,6 +121,11 @@ else
   read -r done_manually_importing_theme
 fi
 
+if [ -n "$SPIN" ]; then
+  git config --global user.name "Koen Vendrik"
+  git config --global user.email "k.vendrik@gmail.com"
+fi
+
 homebrew_installed='y'
 
 if [ ! -x "$(command -v brew)" ]; then
@@ -175,9 +180,6 @@ else
 fi
 
 if [ -n "$SPIN" ]; then
-  git config --global user.name "Koen Vendrik"
-  git config --global user.email "k.vendrik@gmail.com"
-
   if [[ "$SPIN_REPO_SOURCE_PATH" = "/src/github.com/shopify/shopify" ]]; then
     cd "$SPIN_REPO_SOURCE_PATH"
 
