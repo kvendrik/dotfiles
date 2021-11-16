@@ -119,6 +119,9 @@ eval \`dircolors ~/.dircolors\`
 
   git config --global user.name "Koen Vendrik"
   git config --global user.email "k.vendrik@gmail.com"
+
+  cd /home/spin/src/github.com/Shopify/shopify
+  bin/rake dev:create_shopify_config
 else
   printf '%s' "5/$SETUP_STEPS. Manually import the Terminal theme found in $HOME/dotfiles/CustomBasic.terminal into your Terminal preferences. Done? [y/n] "
   read -r done_manually_importing_theme
