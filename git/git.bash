@@ -50,6 +50,14 @@ alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %
 alias gr="git rebase -i"
 alias gcom='git checkout $(_git_main_branch)'
 
+fresh() {
+  local branch_name
+  branch_name="$1"
+  [ -z "$branch_name" ] && echo "Usage: fresh <branch_name>" && return
+  git rev-parse --verify "$branch_name" && git branch -D "$branch_name"
+  git fetch origin "$branch_name" && git checkout "$branch_name"
+}
+
 amend() {
   local backup_branch_name
   backup_branch_name="feature/$(_git_current_branch)-backup"
