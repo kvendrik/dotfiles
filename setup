@@ -106,7 +106,7 @@ else
 fi
 
 if [ -n "$SPIN" ]; then
-  echo "5/$SETUP_STEPS. Adding Spin configuration to $HOME/.rc-config and $HOME/.rc-extra"
+  echo "5/$SETUP_STEPS. Spin configuration"
 
   echo """
 export GITHUB_USERNAME='kvendrik'
@@ -116,6 +116,12 @@ export REPOSITORIES_DIRECTORY='/home/spin/src/github.com/Shopify'
   echo """
 eval \`dircolors ~/.dircolors\`
   """ > "$HOME/.rc-extra"
+
+  git config --global user.name "Koen Vendrik"
+  git config --global user.email "k.vendrik@gmail.com"
+
+  cd /home/spin/src/github.com/Shopify/shopify
+  bin/rake dev:create_shopify_config
 else
   printf '%s' "5/$SETUP_STEPS. Manually import the Terminal theme found in $HOME/dotfiles/CustomBasic.terminal into your Terminal preferences. Done? [y/n] "
   read -r done_manually_importing_theme
@@ -172,18 +178,6 @@ if ! brew list git-squash &> /dev/null; then
   fi
 else
   echo "9/$SETUP_STEPS. Installing kvendrik/git-squash. (already installed)"
-fi
-
-if [ -n "$SPIN" ]; then
-  echo "10/$SETUP_STEPS. Extra Spin configuration"
-
-  git config --global user.name "Koen Vendrik"
-  git config --global user.email "k.vendrik@gmail.com"
-
-  cd /home/spin/src/github.com/Shopify/shopify
-  bin/rake dev:create_shopify_config
-else
-  echo "10/$SETUP_STEPS. Extra Spin configuration. (skipped)"
 fi
 
 printf '\n%s' "[✓] Done. Check out the README.md for further instructions."
