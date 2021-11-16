@@ -37,7 +37,7 @@ install_zsh_autosuggestions() {
 }
 
 install_homebrew() {
-  echo | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" < /dev/null
   echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 }
