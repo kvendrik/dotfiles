@@ -51,9 +51,21 @@ alias gr="git rebase -i"
 alias gcom='git checkout $(_git_main_branch)'
 
 fresh() {
-  local branch_name
-  branch_name="$1"
-  [ -z "$branch_name" ] && echo "Usage: fresh <branch_name>" && return
+  local branch_name current_branch
+  current_branch="$(_git_current_branch)"
+  branch_name="[ -z "$1" ] && echo "$current_branch" || echo "$1""
+
+  if [ -n "$(_git_check_uncommited_changes)" ]; then
+    echo 'Uncommited changes found. Please commit/stash those first.'
+    return 1
+  fi
+
+  echo "Creating fresh copy of $branch_name"
+
+  if [[ "$branch_name" == "$current_branch" ]]; then
+    git checkout "$(_git_main_branch)"
+  fi
+
   git rev-parse --verify "$branch_name" && git branch -D "$branch_name"
   git fetch origin "$branch_name" && git checkout "$branch_name"
 }
@@ -101,30 +113,6 @@ ub() {
   fi
 
   git fetch origin "$base_branch" && git rebase -i "origin/$base_branch"
-}
-
-reset-branch() {
-  local branch_name
-  branch_name="$(_git_current_branch)"
-
-  if [ "$(_git_check_uncommited_changes)" != "" ]; then
-    echo 'Uncommited changes found. Please commit/stash those first.'
-    return
-  fi
-
-  echo -n "This will do a hard reset on your current branch ($branch_name). Continue? [y/N] "
-
-  local do_reset
-  read -r do_reset
-
-  if [ "$do_reset" != "y" ]; then
-    return
-  fi
-
-  git checkout "$(_git_main_branch)"
-  git branch -D "$branch_name"
-  git fetch origin "$branch_name"
-  git checkout "$branch_name"
 }
 
 branch-diff() {
