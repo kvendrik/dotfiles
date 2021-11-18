@@ -59,10 +59,28 @@ fresh() {
 }
 
 amend() {
-  local backup_branch_name
-  backup_branch_name="feature/$(_git_current_branch)-backup"
+  local backup_branch_name last_commit_message final_commit_message do_use_last_commit_message
+
+  final_commit_message="$@"
+
+  backup_branch_name="$(_git_current_branch)-backup"
   git rev-parse --verify "$backup_branch_name" && git branch -D "$backup_branch_name"
-  _git_commit "amend" && git fetch origin "$(_git_main_branch)" && git squash --base="origin/$(_git_main_branch)" --backup "$@"
+
+  if [ -z "$final_commit_message" ]; then
+    last_commit_message="$(git log -1 --pretty=%B)"
+
+    if [ -n "$last_commit_message" ]; then
+      echo -n "Use last commit message?\n'$last_commit_message'\n[Y/n] "
+
+      read -r do_use_last_commit_message
+
+      if [[ "$do_use_last_commit_message" != "n" ]]; then
+        final_commit_message="$last_commit_message"
+      fi
+    fi
+  fi
+
+  _git_commit "amend" && git fetch origin "$(_git_main_branch)" && git squash --base="origin/$(_git_main_branch)" --backup "$final_commit_message"
 }
 
 ub() {
