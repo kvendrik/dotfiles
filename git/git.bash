@@ -79,7 +79,7 @@ squash() {
   git rev-parse --verify "$backup_branch_name" &> /dev/null && git branch -D "$backup_branch_name" &> /dev/null
 
   if [ -z "$final_commit_message" ]; then
-    last_commit_message="$(git log -1 --pretty=%B)"
+    last_commit_message="$(git log -1 --pretty=%B | head -1)"
 
     if [ -n "$last_commit_message" ]; then
       echo -n ""$last_commit_message"\n\nUse this commit message? [Y/n] "
