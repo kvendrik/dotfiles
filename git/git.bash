@@ -82,7 +82,7 @@ squash() {
     last_commit_message="$(git log -1 --pretty=%B | head -1)"
 
     if [ -n "$last_commit_message" ]; then
-      echo -n ""$last_commit_message"\n\nUse this commit message? [Y/n] "
+      echo -n "\"$last_commit_message\"\n\nUse this commit message? [Y/n] "
 
       read -r do_use_last_commit_message
 
