@@ -70,7 +70,7 @@ fresh() {
   git fetch origin "$branch_name" && git checkout "$branch_name"
 }
 
-amend() {
+squash() {
   local backup_branch_name last_commit_message final_commit_message do_use_last_commit_message
 
   final_commit_message="$@"
