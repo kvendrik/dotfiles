@@ -50,6 +50,11 @@ alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %
 alias gr="git rebase -i"
 alias gcom='git checkout $(_git_main_branch)'
 
+cont() {
+  [ -n "$(_git_check_uncommited_changes)" ] && _git_commit
+  git rebase --continue
+}
+
 fresh() {
   local branch_name current_branch
   current_branch="$(_git_current_branch)"
