@@ -58,7 +58,7 @@ cont() {
 fresh() {
   local branch_name current_branch
   current_branch="$(_git_current_branch)"
-  branch_name="[ -z "$1" ] && echo "$current_branch" || echo "$1""
+  branch_name="[ -z \"$1\" ] && echo \"$current_branch\" || echo \"$1\""
 
   if [ -n "$(_git_check_uncommited_changes)" ]; then
     echo 'Uncommited changes found. Please commit/stash those first.'
