@@ -97,7 +97,8 @@ squash() {
     fi
   fi
 
-  _git_commit "amend" && git fetch origin "$(_git_main_branch)" && git squash --base="origin/$(_git_main_branch)" --backup "$final_commit_message"
+  [ -n "$(_git_check_uncommited_changes)" ] && _git_commit "amend"
+  git fetch origin "$(_git_main_branch)" && git squash --base="origin/$(_git_main_branch)" --backup "$final_commit_message"
 }
 
 ub() {
