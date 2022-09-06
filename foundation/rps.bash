@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "$REPOSITORIES_DIRECTORY" ]; then
-  echo "Warning: $REPOSITORIES_DIRECTORY directory is not set. Setting it to $HOME."
+  echo "Warning: \$REPOSITORIES_DIRECTORY directory is not set. Setting it to $HOME."
   REPOSITORIES_DIRECTORY="$HOME"
 fi
 
