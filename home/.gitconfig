@@ -8,3 +8,6 @@
 [pull]
 	rebase = false
 	ff = only
+[user]
+	name = Koen Vendrik
+	email = k.vendrik@gmail.com
