@@ -14,7 +14,7 @@ s() {
     return 0
   fi
 
-  if [[ "$cmd" == "clean" ]] || [[ "$cmd" == "c" ]]; then
+  if [[ "$cmd" == "clean" ]] || [[ "$cmd" == "cl" ]]; then
     spin list
 
     printf "%s" "Destroy all instances? [y/N] "
@@ -32,5 +32,6 @@ s() {
     return 0
   fi
 
-  [[ "$cmd" == "ssh" ]] || [[ "$cmd" == "s" ]] && spin ssh
+  [[ "$cmd" == "ssh" ]] || [[ "$cmd" == "s" ]] && spin ssh "$2"
+  [[ "$cmd" == "code" ]] || [[ "$cmd" == "c" ]] && spin code "$2"
 }
