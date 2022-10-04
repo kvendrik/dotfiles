@@ -1,7 +1,5 @@
 #!/bin/bash
 
-SPIN_CURRENT_INSTANCE=""
-
 s() {
   local cmd instance_id do_destroy
   cmd="$1"
@@ -10,7 +8,7 @@ s() {
 
   if [[ "$cmd" == "up" ]] || [[ "$cmd" == "u" ]]; then
     ([ -z "$2" ] || [ -z "$3" ]) && echo 'Usage: s up <repo> <name>' && return 1
-    spin up "$2" --name="$3" && spin open && spin code && spin ssh
+    spin up "$2" --name="$3"
     return 0
   fi
 
