@@ -30,9 +30,25 @@ s() {
     return 0
   fi
 
-  [[ "$cmd" == "s" ]] && spin ssh "$2" && return 0
-  [[ "$cmd" == "c" ]] && spin code "$2" && return 0
-  [[ "$cmd" == "l" ]] && spin list && return 0
+  if [[ "$cmd" == "s" ]]; then
+    spin ssh "$2"
+    return 0
+  fi
+
+  if [[ "$cmd" == "c" ]]; then
+    spin code "$2"
+    return 0
+  fi
+
+  if [[ "$cmd" == "l" ]]; then
+    spin list
+    return 0
+  fi
+
+  if [[ "$cmd" == "o" ]]; then
+    spin open "$2"
+    return 0
+  fi
 
   spin $*
 }
