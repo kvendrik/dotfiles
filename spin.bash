@@ -57,5 +57,15 @@ s() {
     return 0
   fi
 
+  if [[ "$cmd" == "permit" ]]; then
+    [ -n "$SPIN" ] && echo "Run this locally, not on a Spin instance" && return 1
+    for permit_id in $@; do
+      [[ "$permit_id" == "permit" ]] && continue
+      echo "> Requesting $permit_id"
+      open -a "Google Chrome" "https://clouddo.shopify.io/permits?request=$permit_id"
+    done
+    return 0
+  fi
+
   spin $*
 }
