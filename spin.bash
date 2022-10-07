@@ -4,7 +4,7 @@ s() {
   local cmd instance_id do_destroy
   cmd="$1"
 
-  [ -z "$cmd" ] && echo 'Usage: s <up|clean|ssh>' && return 1
+  [ -z "$cmd" ] && echo 'Usage: s <up|clean|ssh|gauth>' && return 1
 
   if [[ "$cmd" == "up" ]] || [[ "$cmd" == "u" ]]; then
     ([ -z "$2" ] || [ -z "$3" ]) && echo 'Usage: s up <repo> <name>' && return 1
@@ -47,6 +47,13 @@ s() {
 
   if [[ "$cmd" == "o" ]]; then
     spin open "$2"
+    return 0
+  fi
+
+  if [[ "$cmd" == "gauth" ]]; then
+    [ -n "$SPIN" ] && echo "Run this locally, not on a Spin instance" && return 1
+    [ -z "$2" ] && echo "Usage: s gauth <instance_id>" && return 1
+    spin gauth 300 --full "$2"
     return 0
   fi
 
