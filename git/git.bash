@@ -44,6 +44,7 @@ alias gpf='git push --force origin +$(_git_current_branch)'
 alias gpl="git pull"
 alias gac="_git_commit"
 alias gacp="_git_commit --push"
+alias p="gacp"
 alias grao="git remote add origin"
 alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
