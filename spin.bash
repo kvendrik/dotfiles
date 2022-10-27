@@ -67,5 +67,10 @@ s() {
     return 0
   fi
 
+  if [[ "$cmd" == "db:migrate" ]]; then
+    rake db:drop && rake db:create && rake db:migrate
+    return 0
+  fi
+
   spin $*
 }
