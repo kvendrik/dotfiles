@@ -30,3 +30,16 @@ _check_contains_flag() {
 _escape_backslashes() {
   echo "$1" | sed 's/\//\\\//g'
 }
+
+_random_string() {
+  local output
+  [ -z "$1" ] && echo "Usage: _random_string <character_count>" && return 1
+  output="$(openssl rand -base64 "$1" | grep -Eo "[a-zA-Z]{$1}" | head -1 | tr '[:upper:]' '[:lower:]')"
+  
+  if [ -z "$output" ]; then
+    _random_string "$1"
+    return 0
+  fi
+
+  echo "$output"
+}

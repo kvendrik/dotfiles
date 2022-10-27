@@ -1,14 +1,35 @@
 #!/bin/bash
 
 s() {
-  local cmd instance_id do_destroy
+  local cmd instance_id do_destroy repository_name randomized_instance_name do_create
   cmd="$1"
 
   [ -z "$cmd" ] && echo 'Usage: s <up|clean|ssh|gauth>' && return 1
 
   if [[ "$cmd" == "up" ]] || [[ "$cmd" == "u" ]]; then
-    ([ -z "$2" ] || [ -z "$3" ]) && echo 'Usage: s up <repo> <name>' && return 1
-    spin up "$2" --name="$3"
+    repository_name="$2"
+    instance_id="$3"
+
+    ([ -z "$repository_name" ]) && echo 'Usage: s up <repo> [<name>]' && return 1
+    
+    if [ -n "$instance_id" ]; then
+      spin up "$repository_name" --name="$instance_id"
+      return 0
+    fi
+
+    randomized_instance_id="$(_random_string 2)"
+
+    if [ -n "$(spin list | grep \"$randomized_instance_id\")" ]; then
+      s up "$repository_name"
+      return 0
+    fi
+
+    printf "%s \033[0;34m%s\033[0m%s" "Create instance with ID" "'$randomized_instance_id'" "? [Y/n] "
+    read -r do_create
+    [[ "$do_create" == 'n' ]] && return 0
+
+    spin up "$repository_name" --name="$randomized_instance_id"
+    
     return 0
   fi
 
