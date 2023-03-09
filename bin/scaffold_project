@@ -2,6 +2,16 @@
 
 set -e
 
+if [ -z "$SCAFFOLD_RUN" ]; then
+  printf "Don’t run scaffold_project directly. Instead add the following to your RC file:\n\n"
+  printf 'scaffold() {
+  export SCAFFOLD_RUN="1"  
+  scaffold_project $@ && [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "nvm" ] && cd "$HOME/Desktop/$(ls -t "$HOME/Desktop" | head -1)"
+  unset SCAFFOLD_RUN
+}\n\n'
+  exit 1
+fi
+
 SCAFFOLD_TEMPLATES_PATH="$HOME/.scaffold-templates"
 
 TEMPLATE_NAME="$1"
