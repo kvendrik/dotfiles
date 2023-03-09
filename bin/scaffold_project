@@ -16,7 +16,7 @@ LAST_UPDATED_FILE_PATH="$SCAFFOLD_TEMPLATES_PATH/.scaffold_last_fetch_date"
 LAST_SCAFFOLD_PATH="$SCAFFOLD_TEMPLATES_PATH/.scaffold_last_project_path"
 
 function edit_template() {
-  vim "$TEMPLATE_NAME.bash" && git add -A && git commit -m "update" && git push
+  vim "$TEMPLATE_NAME.bash" && git add -A && git commit -m "update" && git pull && git push
 }
 
 if [ "$1" = "nvm" ]; then
