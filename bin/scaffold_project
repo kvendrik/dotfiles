@@ -50,7 +50,9 @@ cd "$SCAFFOLD_TEMPLATES_PATH"
 
 if [ "$(cat "$LAST_UPDATED_FILE_PATH")" != "$TODAY_DATE" ]; then
   echo "Updating..."
-  git pull && echo "$TODAY_DATE" > "$LAST_UPDATED_FILE_PATH"
+  git pull
+  echo "$TODAY_DATE" > "$LAST_UPDATED_FILE_PATH"
+  [ -f "$LAST_SCAFFOLD_PATH" ] && rm "$LAST_SCAFFOLD_PATH"
 fi
 
 if [ -z "$TEMPLATE_NAME" ]; then
