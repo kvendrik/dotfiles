@@ -6,7 +6,7 @@ if [ -z "$SCAFFOLD_RUN" ]; then
   printf "Don’t run scaffold_project directly. Instead add the following to your RC file:\n\n"
   printf 'scaffold() {
   export SCAFFOLD_RUN="1"  
-  scaffold_project $@ && [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "nvm" ] && cd "$HOME/Desktop/$(ls -t "$HOME/Desktop" | head -1)"
+  scaffold_project $@ && [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "nvm" ] && cd "$SCAFFOLD_FOLDER/$(ls -t "$SCAFFOLD_FOLDER" | head -1)"
   unset SCAFFOLD_RUN
 }\n\n'
   exit 1
@@ -18,7 +18,7 @@ TEMPLATE_NAME="$1"
 TEMPLATE_PATH="$SCAFFOLD_TEMPLATES_PATH/$TEMPLATE_NAME.bash"
 
 PROJECT_NAME="$2"
-PROJECT_PATH="$HOME/Desktop/$PROJECT_NAME"
+PROJECT_PATH="$SCAFFOLD_FOLDER/$PROJECT_NAME"
 
 TODAY_DATE="$(date -I)"
 LAST_UPDATED_FILE_PATH="$SCAFFOLD_TEMPLATES_PATH/.scaffold_last_fetch_date"
