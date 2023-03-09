@@ -1,0 +1,100 @@
+#!/bin/bash
+
+set -e
+
+SCAFFOLD_TEMPLATES_PATH="$HOME/.scaffold-templates"
+
+TEMPLATE_NAME="$1"
+TEMPLATE_PATH="$SCAFFOLD_TEMPLATES_PATH/$TEMPLATE_NAME.bash"
+
+PROJECT_NAME="$2"
+PROJECT_PATH="$HOME/Desktop/$PROJECT_NAME"
+
+TODAY_DATE="$(date -I)"
+LAST_UPDATED_FILE_PATH="$SCAFFOLD_TEMPLATES_PATH/.scaffold_last_fetch_date"
+
+LAST_SCAFFOLD_PATH="$SCAFFOLD_TEMPLATES_PATH/.scaffold_last_project_path"
+
+function edit_template() {
+  vim "$TEMPLATE_NAME.bash" && git add -A && git commit -m "update" && git push
+}
+
+if [ "$1" = "nvm" ]; then
+  if [ ! -f "$LAST_SCAFFOLD_PATH" ]; then
+    echo "No last scaffold path"
+    exit 1
+  fi
+
+  last_project_path="$(cat "$LAST_SCAFFOLD_PATH")"
+
+  rm -rf "$last_project_path"
+  echo "🧹 Cleaned up "$last_project_path""
+  rm "$LAST_SCAFFOLD_PATH"
+
+  exit 0
+fi
+
+if [ ! -d "$SCAFFOLD_TEMPLATES_PATH" ]; then
+  git clone "$SCAFFOLD_GIST_CLONE_URL" "$SCAFFOLD_TEMPLATES_PATH"
+
+  if [ ! -f "$SCAFFOLD_TEMPLATES_PATH/.gitignore" ]; then
+    printf ".scaffold_last_fetch_date\n.scaffold_last_project_path" > "$SCAFFOLD_TEMPLATES_PATH/.gitignore"
+  fi
+fi
+
+if [ ! -f "$LAST_UPDATED_FILE_PATH" ]; then
+  echo "$TODAY_DATE" > "$LAST_UPDATED_FILE_PATH"
+fi
+
+cd "$SCAFFOLD_TEMPLATES_PATH"
+
+if [ "$(cat "$LAST_UPDATED_FILE_PATH")" != "$TODAY_DATE" ]; then
+  echo "Updating..."
+  git pull && echo "$TODAY_DATE" > "$LAST_UPDATED_FILE_PATH"
+fi
+
+if [ -z "$TEMPLATE_NAME" ]; then
+  echo "
+Usage: scaffold nvm|<template> [<project_name>]. 
+
+Commands:
+nvm            removes last scaffolded project
+
+Arguments:
+template       name of existing or new template
+project_name   name of project, leave out to edit script
+
+Templates:
+$(ls | grep -Eo "^[^\.]+")
+"
+  exit 0
+fi
+
+if [ -f "$TEMPLATE_NAME.bash" ]; then
+  if [ -z "$PROJECT_NAME" ]; then
+    edit_template
+    exit 0
+  fi
+
+  if [ -d "$PROJECT_PATH" ]; then
+    echo "$PROJECT_PATH exists"
+    exit 1
+  fi
+
+  printf "🎨 Creating $PROJECT_PATH...\n"
+  mkdir "$PROJECT_PATH"
+  cd "$PROJECT_PATH"
+  echo "$PROJECT_PATH" > "$LAST_SCAFFOLD_PATH"
+  printf "🧹 Created. Run 'scaffold nvm' at any time to remove.\n"
+
+  printf "✨ Running $TEMPLATE_PATH\n\n"
+
+  trap "echo '🧹 Template script failed. Cleaning up...' && rm -rf $PROJECT_PATH" ERR
+  eval "$(cat "$TEMPLATE_PATH")"
+
+  printf "\n\n✅ Template script ran successfully\n\n"
+
+  exit 0
+fi
+
+edit_template

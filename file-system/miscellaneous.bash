@@ -60,3 +60,7 @@ rn() {
 
   cd ../ && mv "$old_name" "$new_name" && cd "$new_name"
 }
+
+scaffold() {
+  scaffold_project $@ && [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "nvm" ] && cd "$HOME/Desktop/$(ls -t "$HOME/Desktop" | head -1)"
+}
