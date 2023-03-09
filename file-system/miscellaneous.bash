@@ -64,5 +64,6 @@ rn() {
 scaffold() {
   export SCAFFOLD_RUN="1"  
   scaffold_project $@ && [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "nvm" ] && cd "$SCAFFOLD_FOLDER/$(ls -t "$SCAFFOLD_FOLDER" | head -1)"
+  [ "$1" = "nvm" ] && cd "$SCAFFOLD_FOLDER"
   unset SCAFFOLD_RUN
 }
