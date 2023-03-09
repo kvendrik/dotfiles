@@ -2,6 +2,16 @@
 
 set -e
 
+if [ -z "$SCAFFOLD_GIST_CLONE_URL" ]; then
+  echo "Add 'export \$SCAFFOLD_GIST_CLONE_URL="..."' to your RC file"
+  exit 1
+fi
+
+if [ -z "$SCAFFOLD_FOLDER" ]; then
+  echo "Add 'export \$SCAFFOLD_FOLDER="..."' to your RC file"
+  exit 1
+fi
+
 if [ -z "$SCAFFOLD_RUN" ]; then
   printf "Don’t run scaffold_project directly. Instead add the following to your RC file:\n\n"
   printf 'scaffold() {
