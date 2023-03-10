@@ -57,10 +57,14 @@ fi
 
 if [ ! -d "$SCAFFOLD_TEMPLATES_PATH" ]; then
   git clone "$SCAFFOLD_GIST_CLONE_URL" "$SCAFFOLD_TEMPLATES_PATH"
+fi
 
-  if [ ! -f "$SCAFFOLD_TEMPLATES_PATH/.gitignore" ]; then
-    printf ".scaffold_last_fetch_date\n.scaffold_last_project_path" > "$SCAFFOLD_TEMPLATES_PATH/.gitignore"
-  fi
+if [ ! -f "$SCAFFOLD_TEMPLATES_PATH/.gitignore" ]; then
+  echo "$SCAFFOLD_TEMPLATES_PATH/.gitignore not found. Creating..."
+  cd "$SCAFFOLD_TEMPLATES_PATH"
+  git pull
+  printf ".scaffold_last_fetch_date\n.scaffold_last_project_path" > "$SCAFFOLD_TEMPLATES_PATH/.gitignore"
+  git add -A && git commit -m "adds .gitignore" && git push
 fi
 
 if [ ! -f "$LAST_UPDATED_FILE_PATH" ]; then
