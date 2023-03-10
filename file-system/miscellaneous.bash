@@ -4,6 +4,7 @@
 # Source: https://github.com/mathiasbynens/dotfiles/blob/master/.functions#L8
 alias cdf='cd $(osascript -e "tell app \"Finder\" to POSIX path of (insertion location as alias)")'
 alias dt="cd ~/Desktop"
+alias h="cd ~"
 
 co() {
   local open_path other_args
