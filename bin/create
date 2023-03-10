@@ -3,10 +3,10 @@
 set -e
 
 if [ -z "$1" ] || [ -t 0 ]; then
-  echo "Creates nested files at given path and with given content.
+  echo "Creates nested file at given path and with given content.
   
 Usage: create <path>. Use stdin for content.
-Example: echo '{}' | create_file nested/path/you/want/to/create/data.json"
+Example: echo '{}' | create nested/path/you/want/to/create/data.json"
   exit 1
 fi
 

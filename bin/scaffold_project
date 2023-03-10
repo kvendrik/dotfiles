@@ -16,7 +16,7 @@ if [ -z "$SCAFFOLD_RUN" ]; then
   printf "Don’t run scaffold_project directly. Instead add the following to your RC file:\n\n"
   printf 'scaffold() {
   export SCAFFOLD_RUN="1"  
-  scaffold_project $@ && [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "nvm" ] && cd "$SCAFFOLD_FOLDER/$(ls -t "$SCAFFOLD_FOLDER" | head -1)" 
+  scaffold_project $@ && [ -n "$1" ] && [ -n "$2" ] && [ "$1" != "nvm" ] && [ "$1" != "rm" ] && cd "$SCAFFOLD_FOLDER/$(ls -t "$SCAFFOLD_FOLDER" | head -1)" 
   [ "$1" = "nvm" ] && cd "$SCAFFOLD_FOLDER"
   unset SCAFFOLD_RUN
 }\n\n'
@@ -73,6 +73,21 @@ fi
 
 cd "$SCAFFOLD_TEMPLATES_PATH"
 
+if [ "$1" = "rm" ]; then
+  if [ -z "$2" ]; then
+    echo "Usage: scaffold rm <template>"
+    exit 1
+  fi
+  if [ ! -f "$SCAFFOLD_TEMPLATES_PATH/$2.bash" ]; then
+    echo "Template '$2' does not exist."
+    exit 1
+  fi
+  rm "$SCAFFOLD_TEMPLATES_PATH/$2.bash"
+  git add -A && git commit -m "removes template '$2'" && git push
+  printf "🧹 Template '$2' removed.\n"
+  exit 0
+fi
+
 if [ "$(cat "$LAST_UPDATED_FILE_PATH")" != "$TODAY_DATE" ]; then
   echo "Updating..."
   git pull
@@ -82,9 +97,10 @@ fi
 
 if [ -z "$TEMPLATE_NAME" ]; then
   echo "
-Usage: scaffold nvm|<template> [<project_name>]. 
+Usage: scaffold rm|nvm|<template> [<project_name>]. 
 
 Commands:
+rm             removes template
 nvm            removes last scaffolded project
 
 Arguments:
