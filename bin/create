@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+if [ -z "$1" ] || [ -t 0 ]; then
+  echo "Creates nested files at given path and with given content.
+  
+Usage: create <path>. Use stdin for content.
+Example: echo '{}' | create_file nested/path/you/want/to/create/data.json"
+  exit 1
+fi
+
+FILE_PATH="$1"
+FILE_CONTENT="$(cat < /dev/stdin)"
+
+folder_path="$(dirname "$FILE_PATH")"
+file_name="$(basename "$FILE_PATH")"
+
+if [ -z "$file_name" ] || [[ "${FILE_PATH:0-1}" == "/" ]]; then
+  echo "Path '$FILE_PATH' is missing file name."
+  exit 1
+fi
+
+mkdir -p "$folder_path"
+cd "$folder_path"
+echo "$FILE_CONTENT" > "$file_name"
