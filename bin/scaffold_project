@@ -108,7 +108,7 @@ template       name of existing or new template
 project_name   name of project, leave out to edit script
 
 Templates:
-$(ls | grep -Eo "^[^\.]+")
+$(ls | grep -Eo "^[^\.]+" | awk '{print "- " $1 }')
 "
   exit 0
 fi
