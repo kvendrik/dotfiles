@@ -117,7 +117,7 @@ squash() {
     return
   fi
 
-  git fetch origin "$main_branch" && git-squash --base="origin/$main_branch" "$final_commit_message"
+  git fetch origin "$main_branch" && git-squash --base="origin/$main_branch" "$final_commit_message" && echo "✅ Done. Please check commits and force push."
 }
 
 ub() {
