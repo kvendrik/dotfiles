@@ -100,7 +100,7 @@ if [ -z "$(check_contains_flag "$*" "reset" "r")" ]; then
     fi
     exit 0
   else
-    if ! GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\'$'\n&/g'" git_rebase "$base_branch"; then
+    if ! GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\''\n&/g'" git_rebase "$base_branch"; then
       exit 1
     fi
     exit 0
