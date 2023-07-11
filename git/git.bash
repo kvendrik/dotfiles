@@ -55,6 +55,7 @@ alias gs="git status"
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cgreen<%an>" --abbrev-commit'
 alias gr="git rebase -i"
 alias gcom='git checkout $(_git_main_branch)'
+alias amend='git commit --amend'
 
 cont() {
   [ -n "$(_git_check_uncommited_changes)" ] && _git_commit
