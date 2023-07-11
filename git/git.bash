@@ -82,9 +82,10 @@ fresh() {
 }
 
 squash() {
-  local first_commit_message final_commit_message do_use_first_commit_message main_branch
+  local main_branch commit_message
 
   main_branch="$(_git_main_branch)"
+  commit_message="$@"
 
   if [ -n "$(_git_check_uncommited_changes)" ]; then
     echo "Commit changes first."
@@ -96,28 +97,12 @@ squash() {
     return 1
   fi
 
-  final_commit_message="$@"
-
-  if [ -z "$final_commit_message" ]; then
-    first_commit_message="$(git log $main_branch..HEAD | tail -1 | xargs)"
-
-    if [ -n "$first_commit_message" ]; then
-      echo -n "\"$first_commit_message\"\n\nUse this commit message? [Y/n] "
-
-      read -r do_use_first_commit_message
-
-      if [[ "$do_use_first_commit_message" != "n" ]]; then
-        final_commit_message="$first_commit_message"
-      fi
-    fi
-  fi
-
-  if [ -z "$final_commit_message" ]; then
-    echo "No commit message to use. Usage: squash <commit_message>"
+  if [ -z "$commit_message" ]; then
+    echo "No commit message given. Usage: squash <commit_message>"
     return
   fi
 
-  git fetch origin "$main_branch" && git-squash --base="origin/$main_branch" "$final_commit_message" && echo "✅ Done. Please check commits and force push."
+  git fetch origin "$main_branch" && git-squash --base="origin/$main_branch" "$commit_message" && echo "✅ Done. Please check commits and force push."
 }
 
 ub() {
