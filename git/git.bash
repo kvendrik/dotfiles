@@ -8,6 +8,10 @@ _git_check_uncommited_changes() {
   git diff-index --quiet HEAD -- || echo "uncommited changes found"
 }
 
+_git_check_unpushed_changes() {
+  git log origin/$(_git_current_branch)..HEAD
+}
+
 _folder_name_from_git_uri() {
   basename "$1" .git
 }
@@ -77,29 +81,42 @@ fresh() {
 }
 
 squash() {
-  local backup_branch_name last_commit_message final_commit_message do_use_last_commit_message
+  local first_commit_message final_commit_message do_use_first_commit_message main_branch
+
+  main_branch="$(_git_main_branch)"
+
+  if [ -n "$(_git_check_uncommited_changes)" ]; then
+    echo "Commit changes first."
+    return 1
+  fi
+
+  if [ -n "$(_git_check_unpushed_changes)" ]; then
+    echo "Push changes first so you have a backup in case something goes awry."
+    return 1
+  fi
 
   final_commit_message="$@"
 
-  backup_branch_name="$(_git_current_branch)-backup"
-  git rev-parse --verify "$backup_branch_name" &> /dev/null && git branch -D "$backup_branch_name" &> /dev/null
-
   if [ -z "$final_commit_message" ]; then
-    last_commit_message="$(git log -1 --pretty=%B | head -1)"
+    first_commit_message="$(git log $main_branch..HEAD | tail -1 | xargs)"
 
-    if [ -n "$last_commit_message" ]; then
-      echo -n "\"$last_commit_message\"\n\nUse this commit message? [Y/n] "
+    if [ -n "$first_commit_message" ]; then
+      echo -n "\"$first_commit_message\"\n\nUse this commit message? [Y/n] "
 
-      read -r do_use_last_commit_message
+      read -r do_use_first_commit_message
 
-      if [[ "$do_use_last_commit_message" != "n" ]]; then
-        final_commit_message="$last_commit_message"
+      if [[ "$do_use_first_commit_message" != "n" ]]; then
+        final_commit_message="$first_commit_message"
       fi
     fi
   fi
 
-  [ -n "$(_git_check_uncommited_changes)" ] && _git_commit "amend"
-  git fetch origin "$(_git_main_branch)" && git squash --base="origin/$(_git_main_branch)" --backup "$final_commit_message"
+  if [ -z "$final_commit_message" ]; then
+    echo "No commit message to use. Usage: squash <commit_message>"
+    return
+  fi
+
+  git fetch origin "$main_branch" && git-squash --base="origin/$main_branch" "$final_commit_message"
 }
 
 ub() {
