@@ -40,6 +40,7 @@ _git_commit() {
 }
 
 _git_main_branch() {
+  [[ "$(basename $(pwd))" == 'web' ]] && echo 'main' && return
   [ -n "$(git show-ref master)" ] && echo 'master' || echo 'main'
 }
 
