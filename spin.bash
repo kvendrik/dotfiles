@@ -4,7 +4,12 @@ s() {
   local cmd instance_id do_destroy repository_name randomized_instance_name do_create
   cmd="$1"
 
-  [ -z "$cmd" ] && echo 'Usage: s <up|clean|ssh|gauth>' && return 1
+  [ -z "$cmd" ] && spin ssh && return 0
+
+  if [[ "$cmd" == "--help" ]] || [[ "$cmd" == "-h" ]]; then
+    echo 'Usage: s <up|clean|ssh|gauth>. Default: spin ssh'
+    return 0
+  fi
 
   if [[ "$cmd" == "up" ]] || [[ "$cmd" == "u" ]]; then
     repository_name="$2"
