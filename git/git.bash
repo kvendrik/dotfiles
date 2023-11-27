@@ -166,6 +166,10 @@ gcor() {
   git reflog | grep -Eo 'moving from [^ ]+' | grep -Eo '[^ ]+$' | awk '!a[$0]++' | head -n 20 | awk '{if(system("[ -z \"$(git branch --list "$0")\" ]")){print}}' | fzf | xargs git checkout
 }
 
+gcol() {
+  git reflog | grep -Eo 'moving from [^ ]+' | grep -Eo '[^ ]+$' | awk '!a[$0]++' | head -n 1 | awk '{if(system("[ -z \"$(git branch --list "$0")\" ]")){print}}' | xargs git checkout
+}
+
 gccd() {
   if [ -z "$1" ]; then
     echo 'Usage: gccd <clone_url>'
