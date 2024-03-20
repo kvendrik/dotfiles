@@ -54,16 +54,18 @@ alias gcom='git checkout $(_git_main_branch)'
 alias amend='git commit --amend'
 
 squash() {
+  local branch_name commit_message
+
+  [ -n "$(_git_check_uncommited_changes)" ] && echo "Commit changes first." && return 1
+
   if [[ "$1" == "continue" ]]; then
-    [ -n "$(_git_check_uncommited_changes)" ] && echo "Commit changes first." && return 1
     git rebase --continue
     return
   fi
 
-  [ -n "$(_git_check_uncommited_changes)" ] && echo "Commit changes first." && return 1
-  local branch_name commit_message
   branch_name="$1"
   commit_message="${@:2}"
+
   GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\'$'\n&/g'" GIT_SEQUENCE_EDITOR="sed -i -e '1 ! s/pick/squash/g'" git rebase -i "$branch_name"
 }
 
