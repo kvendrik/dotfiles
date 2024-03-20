@@ -56,15 +56,19 @@ alias amend='git commit --amend'
 squash() {
   local branch_name commit_message
 
-  [ -n "$(_git_check_uncommited_changes)" ] && echo "Commit changes first." && return 1
-
   if [[ "$1" == "continue" ]]; then
+    [ -n "$(_git_check_uncommited_changes)" ] && git commit
     git rebase --continue
     return
   fi
 
   branch_name="$1"
   commit_message="${@:2}"
+
+  if [ -n "$(_git_check_uncommited_changes)" ]; then
+    [ -z "$commit_message" ] && echo "Please provide a commit message, or commit your changes before running the command again." && return 1
+    git commit -m "$commit_message"
+  fi
 
   GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\'$'\n&/g'" GIT_SEQUENCE_EDITOR="sed -i -e '1 ! s/pick/squash/g'" git rebase -i "$branch_name"
 }
