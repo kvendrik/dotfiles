@@ -53,12 +53,13 @@ alias gr="git rebase -i"
 alias gcom='git checkout $(_git_main_branch)'
 alias amend='git commit --amend'
 
-continue() {
-  [ -n "$(_git_check_uncommited_changes)" ] && echo "Commit changes first." && return 1
-  git rebase --continue
-}
-
 squash() {
+  if [[ "$1" == "continue" ]]; then
+    [ -n "$(_git_check_uncommited_changes)" ] && echo "Commit changes first." && return 1
+    git rebase --continue
+    return
+  fi
+
   [ -n "$(_git_check_uncommited_changes)" ] && echo "Commit changes first." && return 1
   local branch_name commit_message
   branch_name="$1"
