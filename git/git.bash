@@ -77,7 +77,7 @@ squash() {
 
   upstream_name="origin"
 
-  git fetch "$upstream_name" "$branch_name" && GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\'$'\n&/g'" GIT_SEQUENCE_EDITOR="sed -i -e '1 ! s/pick/squash/g'" git rebase -i "$upstream_name/$branch_name"
+  git fetch "$upstream_name" "$branch_name" && GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\''\n&/g'" GIT_SEQUENCE_EDITOR="sed -i -e '1 ! s/pick/squash/g'" git rebase -i "$upstream_name/$branch_name"
 }
 
 # Git Checkout Recent
