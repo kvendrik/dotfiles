@@ -65,10 +65,14 @@ squash() {
   branch_name="$1"
   commit_message="${@:2}"
 
+  [ -z "$branch_name" ] && echo "Please provide a branch name to rebase onto." && return 1
+
   if [ -n "$(_git_check_uncommited_changes)" ]; then
     [ -z "$commit_message" ] && echo "Please provide a commit message, or commit your changes before running the command again." && return 1
     git commit -m "$commit_message"
   fi
+
+  [ -z "$commit_message" ] && echo "Please provide a commit message for the rebase." && return 1
 
   GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\'$'\n&/g'" GIT_SEQUENCE_EDITOR="sed -i -e '1 ! s/pick/squash/g'" git rebase -i "$branch_name"
 }
