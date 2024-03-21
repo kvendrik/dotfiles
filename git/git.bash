@@ -54,7 +54,7 @@ alias gcom='git checkout $(_git_main_branch)'
 alias amend='git commit --amend'
 
 squash() {
-  local branch_name commit_message
+  local branch_name upstream_name commit_message
 
   if [[ "$1" == "continue" ]]; then
     [ -n "$(_git_check_uncommited_changes)" ] && git commit
@@ -66,6 +66,7 @@ squash() {
   commit_message="${@:2}"
 
   [ -z "$branch_name" ] && echo "Please provide a branch name to rebase onto." && return 1
+  [ -n "$(echo "$branch_name" | grep "/")" ] && echo "Please provide a name without the upstream. So ’main’ instead of ’origin/main’" && return 1
 
   if [ -n "$(_git_check_uncommited_changes)" ]; then
     [ -z "$commit_message" ] && echo "Please provide a commit message, or commit your changes before running the command again." && return 1
@@ -74,7 +75,9 @@ squash() {
 
   [ -z "$commit_message" ] && echo "Please provide a commit message for the rebase." && return 1
 
-  GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\'$'\n&/g'" GIT_SEQUENCE_EDITOR="sed -i -e '1 ! s/pick/squash/g'" git rebase -i "$branch_name"
+  upstream_name="origin"
+
+  git fetch "$upstream_name" "$branch_name" && GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\'$'\n&/g'" GIT_SEQUENCE_EDITOR="sed -i -e '1 ! s/pick/squash/g'" git rebase -i "$upstream_name/$branch_name"
 }
 
 # Git Checkout Recent
