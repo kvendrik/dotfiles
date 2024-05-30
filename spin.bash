@@ -1,5 +1,12 @@
 #!/bin/bash
 
+t() {
+  local file_path
+  file_path="$1"
+  [ -z "$file_path" ] && echo "Usage: t <file_path>" && return 1
+  pnpm test "$file_path" -- --watch
+}
+
 s() {
   local cmd instance_id do_destroy repository_name randomized_instance_name do_create
   cmd="$1"
