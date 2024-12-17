@@ -53,36 +53,36 @@ alias gr="git rebase -i"
 alias gcom='git checkout $(_git_main_branch)'
 alias amend='git commit --amend'
 
-squash() {
-  local branch_name upstream_name commit_message
+# squash() {
+#   local branch_name upstream_name commit_message
 
-  if [[ "$1" == "continue" ]]; then
-    [ -n "$(_git_check_uncommited_changes)" ] && git commit
-    git rebase --continue
-    return
-  fi
+#   if [[ "$1" == "continue" ]]; then
+#     [ -n "$(_git_check_uncommited_changes)" ] && git commit
+#     git rebase --continue
+#     return
+#   fi
 
-  branch_name="$1"
-  commit_message="${@:2}"
+#   branch_name="$1"
+#   commit_message="${@:2}"
 
-  [ -z "$branch_name" ] && echo "Please provide a branch name to rebase onto." && return 1
-  [ -n "$(echo "$branch_name" | grep "/")" ] && echo "Please provide a name without the upstream. So ’main’ instead of ’origin/main’" && return 1
+#   [ -z "$branch_name" ] && echo "Please provide a branch name to rebase onto." && return 1
+#   [ -n "$(echo "$branch_name" | grep "/")" ] && echo "Please provide a name without the upstream. So ’main’ instead of ’origin/main’" && return 1
 
-  if [ -n "$(_git_check_uncommited_changes)" ]; then
-    [ -z "$commit_message" ] && echo "Please provide a commit message, or commit your changes before running the command again." && return 1
-    git commit -m "$commit_message"
-  fi
+#   if [ -n "$(_git_check_uncommited_changes)" ]; then
+#     [ -z "$commit_message" ] && echo "Please provide a commit message, or commit your changes before running the command again." && return 1
+#     git commit -m "$commit_message"
+#   fi
 
-  [ -z "$commit_message" ] && echo "Please provide a commit message for the rebase." && return 1
+#   [ -z "$commit_message" ] && echo "Please provide a commit message for the rebase." && return 1
 
-  upstream_name="origin"
+#   upstream_name="origin"
 
-  echo "Branch: $upstream_name/$branch_name"
-  echo "Commit message: $commit_message"
-  echo "---"
+#   echo "Branch: $upstream_name/$branch_name"
+#   echo "Commit message: $commit_message"
+#   echo "---"
 
-  git fetch "$upstream_name" "$branch_name" && GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\''\n&/g'" GIT_SEQUENCE_EDITOR="sed -i -e '1 ! s/pick/squash/g'" git rebase -i "$upstream_name/$branch_name"
-}
+#   git fetch "$upstream_name" "$branch_name" && GIT_EDITOR="sed -i -e '2 s/^#/$commit_message\''\n&/g'" GIT_SEQUENCE_EDITOR="sed -i -e '1 ! s/pick/squash/g'" git rebase -i "$upstream_name/$branch_name"
+# }
 
 # Git Checkout Recent
 # Shows list of recently used branches

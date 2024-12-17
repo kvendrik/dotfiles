@@ -11,3 +11,7 @@
 [user]
 	name = Koen Vendrik
 	email = k.vendrik@gmail.com
+[credential]
+	helper = osxkeychain
+[include]
+	path = ~/.config/dev/gitconfig
