@@ -14,3 +14,7 @@ source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 [ -f "$HOME/.rc-extra" ] && source "$HOME/.rc-extra"
 
 export PATH="$PATH:$HOME/dotfiles/bin"
+
+[[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
+
+[[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
